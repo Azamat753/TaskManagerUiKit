@@ -155,4 +155,14 @@
     <string name="crane">두루미</string>
     <string name="important_message">중요한 메시지!</string>
     <string name="you_got">당신은 제목을 얻었다: </string>
+    <string name="done">끝난</string>
+    <string name="help_bubble">팁을 보려면 클릭하세요</string>
+    <string name="timer_text">타이머를 사용할 수 있습니다</string>
+    <string name="stopwatch_text">스톱워치를 사용할 수 있습니다</string>
+    <string name="dialog_title">사진 및 이름 변경</string>
+    <string name="move_title">작업 위치 변경</string>
+    <string name="delete_title">작업 삭제</string>
+    <string name="timer_title">시간제 노동자</string>
+    <string name="stopwatch_title">스톱워치</string>
+    <string name="intro">소개</string>
 </resources>

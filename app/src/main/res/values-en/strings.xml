@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Planner</string>
-
     <string name="your_api_key">my_api_key</string>
 
     <string name="clear_list">Clear the list</string>
@@ -128,19 +127,19 @@
     <string name="board_theme_desc"> You can pick your theme here by clicking on one of the options or go to Settings</string>
     <string name="are_you_sure_that">Are you sure you want to delete all the notes?</string>
     <string name="done">Done</string>
-    <string name="help_bubble">Нажмите чтобы увидеть подсказки</string>
-    <string name="timer_text">Вы можете использовать таймер</string>
-    <string name="stopwatch_text">Вы можете использовать секундомер</string>
-    <string name="dialog_title">Смена картинки и названия</string>
-    <string name="move_title">Смена положения задачи</string>
-    <string name="delete_title">Удаление задачи</string>
-    <string name="timer_title">Таймер</string>
-    <string name="stopwatch_title">Секундомер</string>
-    <string name="intro">Интро</string>
+    <string name="help_bubble">Click to see tips</string>
+    <string name="timer_text">You can use a timer</string>
+    <string name="stopwatch_text">You can use a stopwatch</string>
+    <string name="dialog_title">Change of picture and name</string>
+    <string name="move_title">Repositioning a task</string>
+    <string name="delete_title">Deleting a task</string>
+    <string name="timer_title">Timer</string>
+    <string name="stopwatch_title">Stopwatch</string>
+    <string name="intro">Intro</string>
     <string name="fox">Fox</string>
     <string name="deer">Doe</string>
     <string name="bull">Bull</string>
-    <string name="dog">\" Dog\"</string>
+    <string name="dog">Dog</string>
     <string name="cat">Cat</string>
     <string name="rat">Rat</string>
     <string name="giraffe">Giraffe</string>
@@ -161,7 +160,7 @@
     <string name="review_on_app">Planner app review</string>
     <string name="hello">Hello! </string>
     <string name="attaboy">Attaboy </string>
-    <string name="Persistent">Настойчивый </string>
+    <string name="Persistent">Persistent </string>
     <string name="Overwhelming">Overwhelming </string>
     <string name="crane">Crane</string>
     <string name="important_message">Important message!</string>

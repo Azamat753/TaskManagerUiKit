@@ -153,6 +153,16 @@
     <string name="crane">Журавель</string>
     <string name="hippo">Бегемот</string>
     <string name="patronum">Экспекто патронум</string>
-    <string name="important_message">Mensagem importante!</string>
-    <string name="you_got">Você tem o título: </string>
+    <string name="important_message">Важливе повідомлення!</string>
+    <string name="you_got">Ви отримали звання: </string>
+    <string name="done">Готово</string>
+    <string name="help_bubble">Натисніть щоб побачити підказки</string>
+    <string name="timer_text">Ви можете використовувати таймер</string>
+    <string name="stopwatch_text">Ви можете використовувати секундомір</string>
+    <string name="dialog_title">Зміна картинки і назви</string>
+    <string name="move_title">Зміна положення завдання</string>
+    <string name="delete_title">Видалення завдання</string>
+    <string name="timer_title">Таймер</string>
+    <string name="stopwatch_title">Секундомір</string>
+    <string name="intro">Iнтро</string>
 </resources>

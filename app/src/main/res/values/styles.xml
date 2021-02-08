@@ -100,7 +100,6 @@
     </style>
 
     <style name="helpText">
-        <item name="android:fontFamily">@font/my_font</item>
         <item name="android:textColor">@color/myWhite</item>
         <item name="android:textSize">20sp</item>
         <item name="android:padding">10sp</item>

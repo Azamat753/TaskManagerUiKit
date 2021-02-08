@@ -155,4 +155,14 @@
     <string name="Overwhelming">Opressor </string>
     <string name="important_message">Mensagem importante!</string>
     <string name="you_got">Você tem o título: </string>
+    <string name="done">Feito</string>
+    <string name="help_bubble">Clique para ver dicas</string>
+    <string name="timer_text">Você pode usar um cronômetro</string>
+    <string name="stopwatch_text">Você pode usar um cronômetro</string>
+    <string name="dialog_title">Mudança de imagem e nome</string>
+    <string name="move_title">Reposicionando uma tarefa</string>
+    <string name="delete_title">Excluindo uma tarefa</string>
+    <string name="timer_title">Cronômetro</string>
+    <string name="stopwatch_title">Cronômetro</string>
+    <string name="intro">Introdução</string>
 </resources>
