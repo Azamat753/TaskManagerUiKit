@@ -3,7 +3,10 @@ package com.lawlett.taskmanageruikit.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.lawlett.taskmanageruikit.R;
+
 public class TaskDialogPreference {
+    Context context;
     private static SharedPreferences sharedPreferences;
     private final static String PREF_NAME = "pref name";
     private final static String TITLE = "title";

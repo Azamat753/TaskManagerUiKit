@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.PrivateModel;
+import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
 import com.lawlett.taskmanageruikit.tasksPage.privateTask.recycler.PrivateAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
@@ -71,6 +72,12 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
             if (privateModels != null) {
                 list.clear();
                 list.addAll(privateModels);
+                Collections.sort(list, new java.util.Comparator<PrivateModel>() {
+                    @Override
+                    public int compare(PrivateModel privateModel, PrivateModel t1) {
+                        return Boolean.compare(t1.isDone, privateModel.isDone);
+                    }
+                });
                 Collections.reverse(list);
                 adapter.updateList(list);
             }

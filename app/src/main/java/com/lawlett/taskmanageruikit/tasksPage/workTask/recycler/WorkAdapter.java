@@ -12,6 +12,7 @@ import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class WorkAdapter extends RecyclerView.Adapter<WorkAdapter.WorkViewHolder> {
@@ -58,6 +59,7 @@ public class WorkAdapter extends RecyclerView.Adapter<WorkAdapter.WorkViewHolder
                 @Override
                 public void onClick(View v) {
                     listener.onItemCheckClick(getAdapterPosition());
+//                    Collections.rotate(list, -1);
                 }
             });
         }

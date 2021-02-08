@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Planner</string>
+
     <string name="your_api_key">my_api_key</string>
 
     <string name="clear_list">Clear the list</string>
@@ -126,6 +127,16 @@
     <string name="changing_theme">Change theme</string>
     <string name="board_theme_desc"> You can pick your theme here by clicking on one of the options or go to Settings</string>
     <string name="are_you_sure_that">Are you sure you want to delete all the notes?</string>
+    <string name="done">Done</string>
+    <string name="help_bubble">Нажмите чтобы увидеть подсказки</string>
+    <string name="timer_text">Вы можете использовать таймер</string>
+    <string name="stopwatch_text">Вы можете использовать секундомер</string>
+    <string name="dialog_title">Смена картинки и названия</string>
+    <string name="move_title">Смена положения задачи</string>
+    <string name="delete_title">Удаление задачи</string>
+    <string name="timer_title">Таймер</string>
+    <string name="stopwatch_title">Секундомер</string>
+    <string name="intro">Интро</string>
     <string name="fox">Fox</string>
     <string name="deer">Doe</string>
     <string name="bull">Bull</string>

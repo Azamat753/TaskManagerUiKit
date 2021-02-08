@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.MeetModel;
+import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
 import com.lawlett.taskmanageruikit.tasksPage.meetTask.recyclerview.MeetAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
@@ -74,6 +75,12 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             if (meetModels != null) {
                 list.clear();
                 list.addAll(meetModels);
+                Collections.sort(list, new java.util.Comparator<MeetModel>() {
+                    @Override
+                    public int compare(MeetModel meetModel, MeetModel t1) {
+                        return Boolean.compare(t1.isDone, meetModel.isDone);
+                    }
+                });
                 Collections.reverse(list);
                 adapter.updateList(list);
             }

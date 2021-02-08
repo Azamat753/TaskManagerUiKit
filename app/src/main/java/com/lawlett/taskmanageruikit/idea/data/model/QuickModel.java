@@ -25,8 +25,6 @@ public class QuickModel implements Serializable {
         this.personalTask = personalTask;
     }
 
-    public QuickModel() {
-    }
 
     public long getId() {
         return id;

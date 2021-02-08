@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.PersonalModel;
+import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
 import com.lawlett.taskmanageruikit.tasksPage.personalTask.recyclerview.PersonalAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
@@ -72,6 +73,12 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             if (personalModels != null) {
                 list.clear();
                 list.addAll(personalModels);
+                Collections.sort(list, new java.util.Comparator<PersonalModel>() {
+                    @Override
+                    public int compare(PersonalModel personalModel, PersonalModel t1) {
+                        return Boolean.compare(t1.isDone, personalModel.isDone);
+                    }
+                });
                 Collections.reverse(list);
                 adapter.updateList(list);
             }

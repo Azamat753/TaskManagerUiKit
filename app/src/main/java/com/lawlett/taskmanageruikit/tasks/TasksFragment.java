@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,7 @@ public class TasksFragment extends Fragment {
             home_title, meet_title, personal_title, work_title;
     Integer doneAmount, personalAmount, workAmount, meetAmount, homeAmount, privateAmount;
     ConstraintLayout personConst, workConst, meetConst, homeConst, privateConst, gifContainer;
-    LinearLayout addConst, doneConst;
+    LinearLayout addConst, doneConst, bubble;
     List<DoneModel> list;
     int buttonListen;
 
@@ -98,6 +99,8 @@ public class TasksFragment extends Fragment {
         meet_title = view.findViewById(R.id.meet_task_title);
         personal_title = view.findViewById(R.id.person_task_title);
         work_title = view.findViewById(R.id.work_task_title);
+
+        bubble = view.findViewById(R.id.bubble);
 
         setLongClickListeners();
 
@@ -152,6 +155,11 @@ public class TasksFragment extends Fragment {
         if (!TaskDialogPreference.getHomeTitle().isEmpty()) {
             home_title.setText(TaskDialogPreference.getHomeTitle());
             homeImage.setImageResource(TaskDialogPreference.getHomeImage());
+        }else{
+            home_title.setText(getResources().getString(R.string.home));
+            homeImage.setImageResource(R.drawable.ic_home);
+            TaskDialogPreference.saveHomeImage(R.drawable.ic_home);
+            TaskDialogPreference.saveHomeTitle(getResources().getString(R.string.home));
         }
         if (!TaskDialogPreference.getMeetTitle().isEmpty()) {
             meet_title.setText(TaskDialogPreference.getMeetTitle());
@@ -167,22 +175,22 @@ public class TasksFragment extends Fragment {
         }
 
         if(!TaskDialogPreference.isShown()){
-//            CustomDialogHelper customDialogHelper = new CustomDialogHelper();
-//            customDialogHelper.show();
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            View view1 = LayoutInflater.from(getContext()).inflate(R.layout.item_helper_dialog,
-                    (ConstraintLayout)view.findViewById(R.id.dialog_helper_container));
-            builder.setView(view1);
-            final AlertDialog alertDialog = builder.create();
-            view1.findViewById(R.id.dialog_helper_button).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    TaskDialogPreference.saveShown();
-                    alertDialog.dismiss();
-                }
-            });
-            alertDialog.show();
+            bubble.setVisibility(View.VISIBLE);
+//            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//            View view1 = LayoutInflater.from(getContext()).inflate(R.layout.item_helper_dialog,
+//                    (ConstraintLayout)view.findViewById(R.id.dialog_helper_container));
+//            builder.setView(view1);
+//            final AlertDialog alertDialog = builder.create();
+//            view1.findViewById(R.id.dialog_helper_button).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    TaskDialogPreference.saveShown();
+//                    alertDialog.dismiss();
+//                }
+//            });
+//            alertDialog.show();
+        }else {
+            bubble.setVisibility(View.GONE);
         }
 
         doneConst.setOnClickListener(new View.OnClickListener() {
