@@ -9,9 +9,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera.flash" />
 
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
@@ -29,15 +30,13 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-
-        <activity android:name=".help.HelpActivity"></activity>
-
+        <activity android:name=".auth.GoogleSignInActivity"></activity>
+        <activity android:name=".help.HelpActivity" />
         <activity
             android:name=".tasksPage.addTask.DoneActivity"
             android:screenOrientation="portrait"
             tools:ignore="InnerclassSeparator,LockedOrientationActivity" />
-
-        <activity android:name=".achievement.AchievementActivity"></activity>
+        <activity android:name=".achievement.AchievementActivity" />
         <activity
             android:name=".timing.activity.TimerActivity"
             android:screenOrientation="portrait"
@@ -45,12 +44,11 @@
         <activity
             android:name=".timing.activity.StopwatchActivity"
             android:screenOrientation="portrait"
-            tools:ignore="InnerclassSeparator,LockedOrientationActivity"/>
+            tools:ignore="InnerclassSeparator,LockedOrientationActivity" />
         <activity
             android:name=".settings.SettingsActivity"
             android:screenOrientation="portrait"
             tools:ignore="InnerclassSeparator,LockedOrientationActivity" />
-
         <activity
             android:name=".utils.PassCodeActivity"
             android:screenOrientation="portrait"
@@ -85,16 +83,15 @@
             tools:ignore="InnerclassSeparator,LockedOrientationActivity" />
         <activity
             android:name=".splash.SplashActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             tools:ignore="InnerclassSeparator,LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
 
             <meta-data
                 android:name="android.app.shortcuts"
@@ -116,10 +113,10 @@
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
     </application>
-
 
 </manifest>

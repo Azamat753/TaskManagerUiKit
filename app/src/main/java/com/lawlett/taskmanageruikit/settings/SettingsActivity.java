@@ -28,6 +28,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.AchievementActivity;
+import com.lawlett.taskmanageruikit.auth.GoogleSignInActivity;
 import com.lawlett.taskmanageruikit.splash.SplashActivity;
 import com.lawlett.taskmanageruikit.utils.LanguagePreference;
 import com.lawlett.taskmanageruikit.utils.PassCodeActivity;
@@ -42,7 +43,7 @@ import java.util.Random;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    LinearLayout language_tv, clear_password_layout, clearMinutes_layout, share_layout, achievement_layout,reviews;
+    LinearLayout language_tv, clear_password_layout, clearMinutes_layout, share_layout, achievement_layout, reviews,sign_in;
     ImageView magick;
     ListView listView;
     public static final int VOICE_RECOGNITION_REQUEST_CODE = 1234;
@@ -63,7 +64,8 @@ public class SettingsActivity extends AppCompatActivity {
         language_tv = findViewById(R.id.four_layout);
         share_layout = findViewById(R.id.five_layout);
         imageSettings = findViewById(R.id.image_settings);
-        reviews=findViewById(R.id.six_layout);
+        reviews = findViewById(R.id.six_layout);
+        sign_in=findViewById(R.id.seven_layout);
 
         achievement_layout = findViewById(R.id.achievement_layout);
         magick = findViewById(R.id.btn_magick);
@@ -89,6 +91,12 @@ public class SettingsActivity extends AppCompatActivity {
                     ThemePreference.getInstance(SettingsActivity.this).saveThemeFalse();
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 }
+            }
+        });
+        sign_in.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SettingsActivity.this, GoogleSignInActivity.class));
             }
         });
 
@@ -197,7 +205,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent mailIntent = new Intent(Intent.ACTION_VIEW);
-                Uri data = Uri.parse("mailto:?subject=" + getString(R.string.review_on_app)+ "&body=" + getString(R.string.hello) + "&to=" + "azamat.nazar99@gmail.com");
+                Uri data = Uri.parse("mailto:?subject=" + getString(R.string.review_on_app) + "&body=" + getString(R.string.hello) + "&to=" + "azamat.nazar99@gmail.com");
                 mailIntent.setData(data);
                 startActivity(Intent.createChooser(mailIntent, "Send mail..."));
             }
@@ -206,7 +214,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void showChangeLanguageDialog() {
-        final String[] listItems = {"English", "Русский", "Кыргызча", "Português", "한국어","Український"};
+        final String[] listItems = {"English", "Русский", "Кыргызча", "Português", "한국어", "Український"};
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(SettingsActivity.this);
         mBuilder.setTitle(R.string.choose_language);
         mBuilder.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
@@ -227,7 +235,7 @@ public class SettingsActivity extends AppCompatActivity {
                 } else if (i == 4) {
                     setLocale("ko");
                     startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
-                }else if (i == 5){
+                } else if (i == 5) {
                     setLocale("uk");
                     startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
                 }

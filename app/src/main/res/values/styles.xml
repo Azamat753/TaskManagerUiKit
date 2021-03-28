@@ -84,12 +84,13 @@
     <style name="todoTextColor">
         <item name="android:fontFamily">@font/m_light</item>
         <item name="android:textColor">@color/myWhite</item>
-</style>
+    </style>
 
     <style name="ideaTextColor">
         <item name="android:fontFamily">@font/m_light</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
     <style name="dashboardTextColor">
         <item name="android:fontFamily">@font/m_light</item>
         <item name="android:textColor">@color/myWhite</item>
@@ -104,6 +105,5 @@
         <item name="android:textSize">20sp</item>
         <item name="android:padding">10sp</item>
     </style>
-
 
 </resources>

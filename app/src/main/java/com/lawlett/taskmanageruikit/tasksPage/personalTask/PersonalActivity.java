@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -26,10 +27,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.PersonalModel;
-import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
 import com.lawlett.taskmanageruikit.tasksPage.personalTask.recyclerview.PersonalAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
@@ -43,6 +51,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class PersonalActivity extends AppCompatActivity implements PersonalAdapter.ICheckedListener, ActionForDialog {
     EditText editText;
@@ -56,6 +65,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     private static final int REQUEST_CODE_SPEECH_INPUT = 22;
     boolean knopka = false;
     Animation animationAlpha;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +80,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         adapter = new PersonalAdapter(this);
 
         App.getDataBase().personalDao().getAllLive().observe(this, personalModels -> {
-            if (personalModels != null) {
+            if (personalModels != null &&personalModels.size()!=0) {
                 list.clear();
                 list.addAll(personalModels);
                 Collections.sort(list, new java.util.Comparator<PersonalModel>() {
@@ -81,6 +91,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                 });
                 Collections.reverse(list);
                 adapter.updateList(list);
+            }else {
+                readDataFromFireStore();
             }
         });
 
@@ -182,19 +194,14 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                             final ColorDrawable background = new ColorDrawable(Color.RED);
                             background.setBounds(0, itemView.getTop(), (int) (itemView.getLeft() + dX), itemView.getBottom());
                             background.draw(c);
-
                             break;
-
                         case DIRECTION_LEFT:
-
                             View itemView2 = viewHolder.itemView;
                             final ColorDrawable background2 = new ColorDrawable(Color.RED);
                             background2.setBounds(itemView2.getRight(), itemView2.getBottom(), (int) (itemView2.getRight() + dX), itemView2.getTop());
                             background2.draw(c);
-
                             break;
                     }
-
                 }
             }
         }).attachToRecyclerView(recyclerView);
@@ -203,6 +210,25 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         personalBack.setOnClickListener(v -> onBackPressed());
 
         editListener();
+    }
+
+    private void writeDataToFireStore() {
+
+        db.collection(TaskDialogPreference.getPersonTitle())
+                .add(personalModel)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.e("ololo", "onSuccess: ");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
     }
 
     private void editListener() {
@@ -261,8 +287,9 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
     public void addPersonalTask(View view) {
         recordDataRoom();
-    }
+        writeDataToFireStore();
 
+    }
     public void recordDataRoom() {
         if (editText.getText().toString().trim().isEmpty()) {
             Toast.makeText(this, R.string.empty, Toast.LENGTH_SHORT).show();
@@ -272,6 +299,23 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             App.getDataBase().personalDao().insert(personalModel);
             editText.setText("");
         }
+    }
+
+    private void readDataFromFireStore() {
+        db.collection("tasks")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                Log.d("ololo", document.getId() + " => " + document.getData());
+                            }
+                        } else {
+                            Log.w("ololo", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
     }
 
     public void changeView() {

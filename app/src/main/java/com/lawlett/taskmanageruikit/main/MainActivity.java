@@ -35,6 +35,7 @@ import com.lawlett.taskmanageruikit.timing.fragment.TimingFragment;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.LanguagePreference;
 import com.lawlett.taskmanageruikit.utils.PasswordPassDonePreference;
+import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 import com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationItem;
 import com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationView;
 import com.luseen.luseenbottomnavigation.BottomNavigation.OnBottomNavigationItemClickListener;
@@ -84,18 +85,11 @@ public class MainActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             }
         });
-        settings_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-            }
-        });
-        btnHelp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, HelpActivity.class));
-                finish();
-            }
+        settings_view.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
+        btnHelp.setOnClickListener(v -> {
+            TaskDialogPreference.saveShown();
+            startActivity(new Intent(MainActivity.this, HelpActivity.class));
+            finish();
         });
 
     }
