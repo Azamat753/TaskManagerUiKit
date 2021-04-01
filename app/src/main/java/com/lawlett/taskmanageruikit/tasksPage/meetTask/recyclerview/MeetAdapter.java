@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,20 +45,29 @@ public class MeetAdapter extends RecyclerView.Adapter<MeetAdapter.MeetViewHolder
     }
 
     public class MeetViewHolder extends RecyclerView.ViewHolder {
-        CheckBox meetTask;
+        CheckBox meetTaskCheck;
+        TextView meetTaskTv;
 
         public MeetViewHolder(@NonNull View itemView) {
             super(itemView);
-            meetTask = itemView.findViewById(R.id.meet_task);
+            meetTaskCheck = itemView.findViewById(R.id.meet_task_check);
+            meetTaskTv = itemView.findViewById(R.id.meet_task_tv);
         }
 
         public void onBind(MeetModel meetModel) {
-            meetTask.setText(meetModel.getMeetTask());
-            meetTask.setChecked(meetModel.isDone);
-            meetTask.setOnClickListener(new View.OnClickListener() {
+            meetTaskTv.setText(meetModel.getMeetTask());
+            meetTaskCheck.setChecked(meetModel.isDone);
+            meetTaskCheck.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onItemCheckClick(getAdapterPosition());
+                }
+            });
+            meetTaskTv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    listener.onItemLongClick(getAdapterPosition());
+                    return false;
                 }
             });
         }
@@ -65,5 +75,6 @@ public class MeetAdapter extends RecyclerView.Adapter<MeetAdapter.MeetViewHolder
 
     public interface IMCheckedListener {
         void onItemCheckClick(int id);
+        void onItemLongClick(int id);
     }
 }

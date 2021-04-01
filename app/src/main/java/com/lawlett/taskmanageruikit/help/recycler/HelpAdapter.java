@@ -28,7 +28,6 @@ public class HelpAdapter extends RecyclerView.Adapter<HelpAdapter.HelpViewHolder
 
     public void setOnItemClickListener(MyOnItemClickListener myOnItemClickListener){
         onItemClickListener = myOnItemClickListener;
-
     }
 
     @NonNull

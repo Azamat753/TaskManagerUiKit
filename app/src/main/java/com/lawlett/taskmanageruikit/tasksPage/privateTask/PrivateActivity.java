@@ -26,6 +26,7 @@ import com.lawlett.taskmanageruikit.tasksPage.privateTask.recycler.PrivateAdapte
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
+import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.PrivateDoneSizePreference;
 
 import java.util.ArrayList;
@@ -37,8 +38,9 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
     ArrayList<PrivateModel> list;
     EditText editText;
     PrivateModel privateModel;
-    int pos, previousData, currentData, updateData;
+    int pos, previousData, currentData, updateData, id;
     ImageView privateBack;
+    KeyboardHelper keyboardHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -240,5 +242,37 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
     public void pressOk() {
         App.getDataBase().privateDao().deleteAll(list);
         PrivateDoneSizePreference.getInstance(PrivateActivity.this).clearSettings();
+    }
+
+    @Override
+    public void onItemLongClick(int id) {
+        findViewById(R.id.add_task_private).setVisibility(View.GONE);
+        findViewById(R.id.change_task_private).setVisibility(View.VISIBLE);
+        privateModel = list.get(id);
+        editText.setText(privateModel.getPrivateTask());
+        this.id=id;
+        keyboardHelper.openKeyboard(PrivateActivity.this);
+        editText.requestFocus();
+        editText.setSelection(editText.getText().length());
+    }
+
+    public void addPrivateChangeTask(View view) {
+        if(editText.getText().toString().trim().isEmpty()){
+            Toast.makeText(this, R.string.empty, Toast.LENGTH_SHORT).show();
+
+        }else {
+            updatePrivateTask(id);
+            findViewById(R.id.change_task_private).setVisibility(View.GONE);
+            findViewById(R.id.add_task_private).setVisibility(View.VISIBLE);
+            editText.getText().clear();
+            keyboardHelper.hideKeyboard(PrivateActivity.this, view);
+        }
+    }
+
+    private void updatePrivateTask(int id) {
+        privateModel = list.get(id);
+        privateModel.setPrivateTask(editText.getText().toString());
+        App.getDataBase().privateDao().update(list.get(id));
+        adapter.notifyDataSetChanged();
     }
 }

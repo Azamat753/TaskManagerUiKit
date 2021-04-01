@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearHome">
     <CheckBox
-        android:id="@+id/home_task"
-        style="@style/todoTextColor"
-        android:layout_width="match_parent"
+        android:id="@+id/home_task_check"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:fontFamily="@font/m_light"
-        android:textSize="20sp" />
-
-</LinearLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+    <TextView
+        android:id="@+id/home_task_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Text"
+        app:layout_constraintTop_toTopOf="@+id/home_task_check"
+        app:layout_constraintBottom_toBottomOf="@+id/home_task_check"
+        app:layout_constraintStart_toEndOf="@+id/home_task_check"
+        style="@style/todoTextColor"
+        android:textSize="20sp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

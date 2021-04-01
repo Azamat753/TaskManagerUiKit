@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,21 +46,29 @@ public class WorkAdapter extends RecyclerView.Adapter<WorkAdapter.WorkViewHolder
     }
 
     public class WorkViewHolder extends RecyclerView.ViewHolder {
-        CheckBox workTask;
+        CheckBox workTaskCheck;
+        TextView workTaskTv;
 
         public WorkViewHolder(@NonNull View itemView) {
             super(itemView);
-            workTask = itemView.findViewById(R.id.work_task);
+            workTaskCheck = itemView.findViewById(R.id.work_task_check);
+            workTaskTv = itemView.findViewById(R.id.work_task_tv);
         }
 
         public void onBind(WorkModel workModel) {
-            workTask.setText(workModel.getWorkTask());
-            workTask.setChecked(workModel.isDone);
-            workTask.setOnClickListener(new View.OnClickListener() {
+            workTaskTv.setText(workModel.getWorkTask());
+            workTaskCheck.setChecked(workModel.isDone);
+            workTaskCheck.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onItemCheckClick(getAdapterPosition());
-//                    Collections.rotate(list, -1);
+                }
+            });
+            workTaskTv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    listener.onItemLongClick(getAdapterPosition());
+                    return false;
                 }
             });
         }
@@ -67,5 +76,6 @@ public class WorkAdapter extends RecyclerView.Adapter<WorkAdapter.WorkViewHolder
 
     public interface IWCheckedListener {
         void onItemCheckClick(int id);
+        void onItemLongClick(int id);
     }
 }

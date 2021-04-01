@@ -3,7 +3,9 @@ package com.lawlett.taskmanageruikit.tasksPage.homeTask;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,6 +25,7 @@ import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.HomeDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 
 import java.util.ArrayList;
@@ -35,9 +38,11 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
     List<HomeModel> list;
     HomeModel homeModel;
     EditText editText;
-    int pos, previousData, currentData, updateData;
+    int pos, previousData, currentData, updateData,id;
     ImageView homeBack, homeSettings;
     DialogHelper dialogHelper = new DialogHelper();
+    KeyboardHelper keyboardHelper;
+    ImageView homeTaskCheck, homeTaskTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,4 +217,38 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
         App.getDataBase().homeDao().deleteAll(list);
         HomeDoneSizePreference.getInstance(HomeActivity.this).clearSettings();
     }
+
+
+    @Override
+    public void onItemLongClick(int id) {
+        findViewById(R.id.add_task_home).setVisibility(View.GONE);
+        findViewById(R.id.change_task_home).setVisibility(View.VISIBLE);
+        homeModel = list.get(id);
+        editText.setText(homeModel.getHomeTask());
+        this.id=id;
+        keyboardHelper.openKeyboard(HomeActivity.this);
+        editText.requestFocus();
+        editText.setSelection(editText.getText().length());
+    }
+
+    public void addHomeChangeTask(View view) {
+        if(editText.getText().toString().trim().isEmpty()){
+            Toast.makeText(this, R.string.empty, Toast.LENGTH_SHORT).show();
+
+        }else {
+            updateHomeTask(id);
+            findViewById(R.id.change_task_home).setVisibility(View.GONE);
+            findViewById(R.id.add_task_home).setVisibility(View.VISIBLE);
+            editText.getText().clear();
+            keyboardHelper.hideKeyboard(HomeActivity.this, view);
+        }
+    }
+
+    private void updateHomeTask(int id) {
+        homeModel = list.get(id);
+        homeModel.setHomeTask(editText.getText().toString());
+        App.getDataBase().homeDao().update(list.get(id));
+        adapter.notifyDataSetChanged();
+    }
+
 }

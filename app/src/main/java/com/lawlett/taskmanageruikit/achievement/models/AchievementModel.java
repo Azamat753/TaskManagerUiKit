@@ -45,6 +45,7 @@ public class AchievementModel {
         WORK,
         MEET,
         HOME,
+        PRIVATE,
         DONE
     }
 }

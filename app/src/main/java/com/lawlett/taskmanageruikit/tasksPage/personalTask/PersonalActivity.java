@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ import com.lawlett.taskmanageruikit.tasksPage.personalTask.recyclerview.Personal
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
+import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.PersonDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 
@@ -40,7 +42,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     List<PersonalModel> list;
     String personal;
     ImageView personalBack;
-    int pos, previousPersonalDone, currentData, updateData;
+    int pos, previousPersonalDone, currentData, updateData, id;
+    KeyboardHelper keyboardHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,5 +255,37 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     public void pressOk() {
         App.getDataBase().personalDao().deleteAll(list);
         PersonDoneSizePreference.getInstance(PersonalActivity.this).clearSettings();
+    }
+
+    @Override
+    public void onItemLongClick(int id) {
+        findViewById(R.id.add_task_personal).setVisibility(View.GONE);
+        findViewById(R.id.change_task_personal).setVisibility(View.VISIBLE);
+        personalModel = list.get(id);
+        editText.setText(personalModel.getPersonalTask());
+        this.id=id;
+        keyboardHelper.openKeyboard(PersonalActivity.this);
+        editText.requestFocus();
+        editText.setSelection(editText.getText().length());
+    }
+
+    public void addPersonalChangeTask(View view) {
+        if(editText.getText().toString().trim().isEmpty()){
+            Toast.makeText(this, R.string.empty, Toast.LENGTH_SHORT).show();
+
+        }else {
+            updatePersonalTask(id);
+            findViewById(R.id.change_task_personal).setVisibility(View.GONE);
+            findViewById(R.id.add_task_personal).setVisibility(View.VISIBLE);
+            editText.getText().clear();
+            keyboardHelper.hideKeyboard(PersonalActivity.this, view);
+        }
+    }
+
+    private void updatePersonalTask(int id) {
+        personalModel = list.get(id);
+        personalModel.setPersonalTask(editText.getText().toString());
+        App.getDataBase().personalDao().update(list.get(id));
+        adapter.notifyDataSetChanged();
     }
 }

@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,20 +45,29 @@ public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.PrivateV
     }
 
     public class PrivateViewHolder extends RecyclerView.ViewHolder {
-        CheckBox privateTask;
+        CheckBox privateTaskCheck;
+        TextView privateTaskTv;
 
         public PrivateViewHolder(@NonNull View itemView) {
             super(itemView);
-            privateTask = itemView.findViewById(R.id.private_task);
+            privateTaskCheck = itemView.findViewById(R.id.private_task_check);
+            privateTaskTv = itemView.findViewById(R.id.private_task_tv);
         }
 
         public void onBind(PrivateModel privateModel) {
-            privateTask.setText(privateModel.getPrivateTask());
-            privateTask.setChecked(privateModel.isDone);
-            privateTask.setOnClickListener(new View.OnClickListener() {
+            privateTaskTv.setText(privateModel.getPrivateTask());
+            privateTaskCheck.setChecked(privateModel.isDone);
+            privateTaskCheck.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onItemCheckClick(getAdapterPosition());
+                }
+            });
+            privateTaskTv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    listener.onItemLongClick(getAdapterPosition());
+                    return false;
                 }
             });
         }
@@ -65,6 +75,7 @@ public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.PrivateV
 
     public interface IPCheckedListener {
         void onItemCheckClick(int id);
+        void onItemLongClick(int id);
     }
 }
 

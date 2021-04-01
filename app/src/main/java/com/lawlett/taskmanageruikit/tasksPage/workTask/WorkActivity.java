@@ -25,6 +25,7 @@ import com.lawlett.taskmanageruikit.tasksPage.workTask.recycler.WorkAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
+import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 import com.lawlett.taskmanageruikit.utils.WorkDoneSizePreference;
 
@@ -38,8 +39,9 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
     EditText editText;
     WorkModel workModel;
     List<WorkModel> list;
-    int pos, previousData, currentData, updateData;
+    int pos, previousData, currentData, updateData, id;
     ImageView workBack;
+    KeyboardHelper keyboardHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,5 +251,38 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         App.getDataBase().workDao().deleteAll(list);
         WorkDoneSizePreference.getInstance(WorkActivity.this).clearSettings();
     }
+
+    @Override
+    public void onItemLongClick(int id) {
+        findViewById(R.id.add_task_work).setVisibility(View.GONE);
+        findViewById(R.id.change_task_work).setVisibility(View.VISIBLE);
+        workModel = list.get(id);
+        editText.setText(workModel.getWorkTask());
+        this.id=id;
+        keyboardHelper.openKeyboard(WorkActivity.this);
+        editText.requestFocus();
+        editText.setSelection(editText.getText().length());
+    }
+
+    public void addWorkChangeTask(View view) {
+        if(editText.getText().toString().trim().isEmpty()){
+            Toast.makeText(this, R.string.empty, Toast.LENGTH_SHORT).show();
+
+        }else {
+            updateWorkTask(id);
+            findViewById(R.id.change_task_work).setVisibility(View.GONE);
+            findViewById(R.id.add_task_work).setVisibility(View.VISIBLE);
+            editText.getText().clear();
+            keyboardHelper.hideKeyboard(WorkActivity.this, view);
+        }
+    }
+
+    private void updateWorkTask(int id) {
+        workModel = list.get(id);
+        workModel.setWorkTask(editText.getText().toString());
+        App.getDataBase().workDao().update(list.get(id));
+        adapter.notifyDataSetChanged();
+    }
+
 }
 

@@ -5,17 +5,19 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.TextView;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.adapter.AchievementAdapter;
 import com.lawlett.taskmanageruikit.achievement.models.AchievementModel;
+import com.lawlett.taskmanageruikit.utils.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.HomeDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.MeetDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.PersonDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.PrivateDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 import com.lawlett.taskmanageruikit.utils.WorkDoneSizePreference;
 
 import java.util.Calendar;
@@ -26,8 +28,9 @@ import static com.lawlett.taskmanageruikit.achievement.models.AchievementModel.*
 public class AchievementActivity extends AppCompatActivity {
 
     private AchievementViewModel mViewModel;
-    private RecyclerView recyclerViewPersonal, recyclerViewWork, recyclerViewMeet, recyclerViewHome, recyclerViewDone;
-    private AchievementAdapter personalAdapter, workAdapter, meetAdapter, homeAdapter, doneAdapter;
+    private RecyclerView recyclerViewPersonal, recyclerViewWork, recyclerViewMeet, recyclerViewHome, recyclerViewPrivate, recyclerViewDone;
+    private AchievementAdapter personalAdapter, workAdapter, meetAdapter, homeAdapter, privateAdapter, doneAdapter;
+    private TextView personalTitle, workTitle, meetTitle, homeTitle, privateTitle, doneTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,32 @@ public class AchievementActivity extends AppCompatActivity {
         initRecyclerView();
         subscribeAchievementData();
         insertedAchievements();
+        initViews();
+//        checkOnEmptyCategory();
+        subscribeCategoryTitles();
+    }
+
+    private void subscribeCategoryTitles() {
+        mViewModel.homeTitle.observe(this, title -> {
+            homeTitle.setText(title);
+            if (!title.isEmpty())
+             homeTitle.setVisibility(View.VISIBLE);
+        });
+    }
+
+    private void checkOnEmptyCategory() {
+        if(App.getDataBase().achievementDao().getAllByCategory(Category.HOME).isEmpty()){
+            homeTitle.setVisibility(View.GONE);
+        }
+    }
+
+    private void initViews() {
+        personalTitle = findViewById(R.id.text_view_personal);
+        workTitle = findViewById(R.id.text_view_work);
+        meetTitle = findViewById(R.id.text_view_meet);
+        homeTitle = findViewById(R.id.text_view_home);
+        privateTitle = findViewById(R.id.text_view_private);
+        doneTitle = findViewById(R.id.text_view_done);
     }
 
     private void insertedAchievements() {
@@ -45,7 +74,8 @@ public class AchievementActivity extends AppCompatActivity {
         insertedAchievementsCategory(WorkDoneSizePreference.getInstance(this).getDataSize(), Category.WORK);
         insertedAchievementsCategory(MeetDoneSizePreference.getInstance(this).getDataSize(), Category.MEET);
         insertedAchievementsCategory(HomeDoneSizePreference.getInstance(this).getDataSize(), Category.HOME);
-        insertedAchievementsCategory(PrivateDoneSizePreference.getInstance(this).getDataSize(), Category.DONE);
+        insertedAchievementsCategory(PrivateDoneSizePreference.getInstance(this).getDataSize(), Category.PRIVATE);
+        insertedAchievementsCategory(AddDoneSizePreference.getInstance(this).getDataSize(), Category.DONE);
     }
 
     private void insertedAchievementsCategory(int size, Category category) {
@@ -56,6 +86,7 @@ public class AchievementActivity extends AppCompatActivity {
                 App.getDataBase().achievementDao().insert(new AchievementModel(Calendar.getInstance().getTime(), (i + 1) * 5, category));
             }
         }
+
     }
 
     private void initRecyclerView() {
@@ -69,6 +100,7 @@ public class AchievementActivity extends AppCompatActivity {
         recyclerViewWork.setAdapter(workAdapter);
         recyclerViewMeet.setAdapter(meetAdapter);
         recyclerViewHome.setAdapter(homeAdapter);
+        recyclerViewPrivate.setAdapter(privateAdapter);
         recyclerViewDone.setAdapter(doneAdapter);
     }
 
@@ -77,6 +109,7 @@ public class AchievementActivity extends AppCompatActivity {
         workAdapter = new AchievementAdapter();
         meetAdapter = new AchievementAdapter();
         homeAdapter = new AchievementAdapter();
+        privateAdapter = new AchievementAdapter();
         doneAdapter = new AchievementAdapter();
     }
 
@@ -85,6 +118,7 @@ public class AchievementActivity extends AppCompatActivity {
         recyclerViewWork = findViewById(R.id.recycler_view_work);
         recyclerViewMeet = findViewById(R.id.recycler_view_meet);
         recyclerViewHome = findViewById(R.id.recycler_view_home);
+        recyclerViewPrivate = findViewById(R.id.recycler_view_private);
         recyclerViewDone = findViewById(R.id.recycler_view_done);
 
     }
@@ -100,6 +134,7 @@ public class AchievementActivity extends AppCompatActivity {
             workAdapter.clearAll();
             meetAdapter.clearAll();
             homeAdapter.clearAll();
+            privateAdapter.clearAll();
             doneAdapter.clearAll();
             for (AchievementModel achievementModel : achievementModels) {
                 switch (achievementModel.getCategory()) {
@@ -115,8 +150,12 @@ public class AchievementActivity extends AppCompatActivity {
                     case HOME:
                         homeAdapter.addItem(achievementModel);
                         break;
+                    case PRIVATE:
+                        privateAdapter.addItem(achievementModel);
+                        break;
                     case DONE:
                         doneAdapter.addItem(achievementModel);
+                        break;
                 }
             }
         });

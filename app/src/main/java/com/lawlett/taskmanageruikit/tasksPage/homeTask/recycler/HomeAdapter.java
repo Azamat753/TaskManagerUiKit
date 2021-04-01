@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,27 +45,38 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
     }
 
     public class HomeViewHolder extends RecyclerView.ViewHolder {
-        CheckBox homeTask;
+        CheckBox homeTaskCheck;
+        TextView homeTaskTv;
 
         public HomeViewHolder(@NonNull View itemView) {
             super(itemView);
-            homeTask = itemView.findViewById(R.id.home_task);
+            homeTaskCheck = itemView.findViewById(R.id.home_task_check);
+            homeTaskTv = itemView.findViewById(R.id.home_task_tv);
         }
 
         public void onBind(HomeModel homeModel) {
-            homeTask.setText(homeModel.getHomeTask());
-            homeTask.setChecked(homeModel.isDone);
-            homeTask.setOnClickListener(new View.OnClickListener() {
+            homeTaskTv.setText(homeModel.getHomeTask());
+            homeTaskCheck.setChecked(homeModel.isDone);
+            homeTaskCheck.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onItemCheckClick(getAdapterPosition());
                 }
             });
+            homeTaskTv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    listener.onItemLongClick(getAdapterPosition());
+                    return false;
+                }
+            });
+
         }
     }
 
     public interface IHCheckedListener {
         void onItemCheckClick(int id);
+        void onItemLongClick(int id);
     }
 }
 

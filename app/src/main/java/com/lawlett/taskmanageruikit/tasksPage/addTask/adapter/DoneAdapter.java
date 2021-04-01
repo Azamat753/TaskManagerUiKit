@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,25 +47,35 @@ public class DoneAdapter extends RecyclerView.Adapter<DoneAdapter.DoneViewHolder
 
 
     public class DoneViewHolder extends RecyclerView.ViewHolder {
-        CheckBox doneTask;
+        CheckBox doneTaskCheck;
+        TextView doneTaskTv;
 
         public DoneViewHolder(@NonNull View itemView) {
             super(itemView);
-            doneTask = itemView.findViewById(R.id.done_task);
+            doneTaskCheck = itemView.findViewById(R.id.done_task_check);
+            doneTaskTv = itemView.findViewById(R.id.done_task_tv);
         }
 
         public void onBind(DoneModel doneModel) {
-            doneTask.setText(doneModel.getDoneTask());
-            doneTask.setChecked(doneModel.isDone);
-            doneTask.setOnClickListener(new View.OnClickListener() {
+            doneTaskTv.setText(doneModel.getDoneTask());
+            doneTaskCheck.setChecked(doneModel.isDone);
+            doneTaskCheck.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onItemCheckClick(getAdapterPosition());
+                }
+            });
+            doneTaskTv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    listener.onItemLongClick(getAdapterPosition());
+                    return false;
                 }
             });
         }
     }
     public interface IMCheckedListener {
         void onItemCheckClick(int id);
+        void onItemLongClick(int id);
     }
 }

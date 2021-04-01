@@ -23,6 +23,7 @@ import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
+import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 
 import java.util.ArrayList;
@@ -34,8 +35,9 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
     List<DoneModel> list;
     DoneModel doneModel;
     EditText editText;
-    int pos, previousData, currentData, updateData;
+    int pos, previousData, currentData, updateData, id;
     ImageView doneBack;
+    KeyboardHelper keyboardHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,5 +200,36 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
     public void pressOk() {
         App.getDataBase().doneDao().deleteAll(list);
         AddDoneSizePreference.getInstance(DoneActivity.this).clearSettings();
+    }
+    @Override
+    public void onItemLongClick(int id) {
+        findViewById(R.id.add_task_done).setVisibility(View.GONE);
+        findViewById(R.id.change_task_done).setVisibility(View.VISIBLE);
+        doneModel = list.get(id);
+        editText.setText(doneModel.getDoneTask());
+        this.id=id;
+        keyboardHelper.openKeyboard(DoneActivity.this);
+        editText.requestFocus();
+        editText.setSelection(editText.getText().length());
+    }
+
+    public void addDoneChangeTask(View view) {
+        if(editText.getText().toString().trim().isEmpty()){
+            Toast.makeText(this, R.string.empty, Toast.LENGTH_SHORT).show();
+
+        }else {
+            updateDoneTask(id);
+            findViewById(R.id.change_task_done).setVisibility(View.GONE);
+            findViewById(R.id.add_task_done).setVisibility(View.VISIBLE);
+            editText.getText().clear();
+            keyboardHelper.hideKeyboard(DoneActivity.this, view);
+        }
+    }
+
+    private void updateDoneTask(int id) {
+        doneModel = list.get(id);
+        doneModel.setDoneTask(editText.getText().toString());
+        App.getDataBase().doneDao().update(list.get(id));
+        adapter.notifyDataSetChanged();
     }
 }

@@ -26,6 +26,7 @@ import com.lawlett.taskmanageruikit.tasksPage.meetTask.recyclerview.MeetAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
+import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.MeetDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 
@@ -39,8 +40,9 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
     private List<MeetModel> list;
     EditText editText;
     MeetModel meetModel;
-    int position, currentData, updateData, previousData;
+    int position, currentData, updateData, previousData, id;
     ImageView meetBack;
+    KeyboardHelper keyboardHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,5 +252,37 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
     public void pressOk() {
         App.getDataBase().meetDao().deleteAll(list);
         MeetDoneSizePreference.getInstance(MeetActivity.this).clearSettings();
+    }
+
+    @Override
+    public void onItemLongClick(int id) {
+        findViewById(R.id.add_task_meet).setVisibility(View.GONE);
+        findViewById(R.id.change_task_meet).setVisibility(View.VISIBLE);
+        meetModel = list.get(id);
+        editText.setText(meetModel.getMeetTask());
+        this.id=id;
+        keyboardHelper.openKeyboard(MeetActivity.this);
+        editText.requestFocus();
+        editText.setSelection(editText.getText().length());
+    }
+
+    public void addMeetChangeTask(View view) {
+        if(editText.getText().toString().trim().isEmpty()){
+            Toast.makeText(this, R.string.empty, Toast.LENGTH_SHORT).show();
+
+        }else {
+            updateMeetTask(id);
+            findViewById(R.id.change_task_meet).setVisibility(View.GONE);
+            findViewById(R.id.add_task_meet).setVisibility(View.VISIBLE);
+            editText.getText().clear();
+            keyboardHelper.hideKeyboard(MeetActivity.this, view);
+        }
+    }
+
+    private void updateMeetTask(int id) {
+        meetModel = list.get(id);
+        meetModel.setMeetTask(editText.getText().toString());
+        App.getDataBase().meetDao().update(list.get(id));
+        adapter.notifyDataSetChanged();
     }
 }
