@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
@@ -26,6 +25,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
@@ -34,12 +36,14 @@ import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
+import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 import com.lawlett.taskmanageruikit.utils.WorkDoneSizePreference;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,36 +58,28 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
     ImageView workBack, imageAdd, imageMic;
     boolean knopka = false;
     Animation animationAlpha;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    String userId;
+    HashMap<String, String> documentMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_work);
-
         init();
-        if (Build.VERSION.SDK_INT >= 21)
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.statusBarC));
+        initClickers();
+        App.setNavBarColor(this);
+        changeToolbarName();
+        initListFromRoom();
+        initItemTouchHelper();
+        editListener();
+    }
 
-        changeView();
+    private void initClickers() {
+        workBack.setOnClickListener(v -> onBackPressed());
+    }
 
-        list = new ArrayList<>();
-        adapter = new WorkAdapter(this);
-
-        App.getDataBase().workDao().getAllLive().observe(this, workModels -> {
-            if (workModels != null) {
-                list.clear();
-                list.addAll(workModels);
-                Collections.reverse(list);
-                adapter.updateList(list);
-            }
-        });
-
-        RecyclerView recyclerView = findViewById(R.id.recycler_work);
-        recyclerView.setAdapter(adapter);
-
-        editText = findViewById(R.id.editText_work);
-
-
+    private void initItemTouchHelper() {
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
             @Override
@@ -146,6 +142,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                                     decrementDone();
                                     App.getDataBase().workDao().update(list.get(pos));
                                     App.getDataBase().workDao().delete(list.get(pos));
+                                    FireStoreTools.deleteDataByFireStore(userId, getString(R.string.work), db);
                                     adapter.notifyDataSetChanged();
                                     Toast.makeText(WorkActivity.this, "Удалено", Toast.LENGTH_SHORT).show();
                                 }
@@ -160,37 +157,51 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
                 final int DIRECTION_RIGHT = 1;
                 final int DIRECTION_LEFT = 0;
-
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
                     int direction = dX > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
-                    int absoluteDisplacement = Math.abs((int) dX);
-
                     switch (direction) {
-
                         case DIRECTION_RIGHT:
-
                             View itemView = viewHolder.itemView;
                             final ColorDrawable background = new ColorDrawable(Color.RED);
                             background.setBounds(0, itemView.getTop(), (int) (itemView.getLeft() + dX), itemView.getBottom());
                             background.draw(c);
-
                             break;
-
                         case DIRECTION_LEFT:
-
                             View itemView2 = viewHolder.itemView;
                             final ColorDrawable background2 = new ColorDrawable(Color.RED);
                             background2.setBounds(itemView2.getRight(), itemView2.getBottom(), (int) (itemView2.getRight() + dX), itemView2.getTop());
                             background2.draw(c);
-
                             break;
                     }
 
                 }
             }
         }).attachToRecyclerView(recyclerView);
-        workBack.setOnClickListener(v -> onBackPressed());
-        editListener();
+    }
+
+    private void initListFromRoom() {
+        list = new ArrayList<>();
+        App.getDataBase().workDao().getAllLive().observe(this, workModels -> {
+            if (workModels != null) {
+                list.clear();
+                list.addAll(workModels);
+                Collections.reverse(list);
+                adapter.updateList(list);
+            } else {
+                FireStoreTools.readDataFromFireStore(db, getString(R.string.work));
+            }
+        });
+    }
+
+    private void writeDataOrUpdateToFireStore() {
+        db.collection(getString(R.string.work)).add(workModel).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                userId = documentReference.getId();
+                documentMap = new HashMap<>();
+                documentMap.put(workModel.getWorkTask(), userId);
+            }
+        });
     }
 
     private void editListener() {
@@ -211,7 +222,6 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                     imageMic.setVisibility(View.VISIBLE);
                     knopka = false;
                 }
-
             }
 
             @Override
@@ -235,6 +245,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         recyclerView = findViewById(R.id.recycler_work);
         recyclerView.setAdapter(adapter);
         editText = findViewById(R.id.editText_work);
+        editText = findViewById(R.id.editText_work);
         imageAdd = findViewById(R.id.add_task_work);
         imageMic = findViewById(R.id.mic_task_done);
         workBack = findViewById(R.id.personal_back);
@@ -243,6 +254,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
 
     public void addWorkTask(View view) {
         recordDataRoom();
+        writeDataOrUpdateToFireStore();
     }
 
     public void recordDataRoom() {
@@ -251,18 +263,17 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         } else {
             workModel = new WorkModel(editText.getText().toString().trim(), false);
             App.getDataBase().workDao().insert(workModel);
-            editText.setText("");
+            editText.getText().clear();
         }
     }
 
-    public void changeView() {
+    public void changeToolbarName() {
         TextView toolbar = findViewById(R.id.toolbar_title);
         if (TaskDialogPreference.getWorkTitle().isEmpty()) {
             toolbar.setText(R.string.work);
         } else {
             toolbar.setText(TaskDialogPreference.getWorkTitle());
         }
-
     }
 
     @Override
@@ -276,6 +287,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
             decrementDone();
         }
         App.getDataBase().workDao().update(list.get(id));
+        FireStoreTools.updateDataByFireStore(documentMap.get(workModel.getWorkTask()), getString(R.string.work), db, workModel);
     }
 
     private void setLevel(int size) {
@@ -293,7 +305,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
-        }else if (size>51 &&size <76){
+        } else if (size > 51 && size < 76) {
             if (size % 5 == 0) {
                 int lev = size / 5;
                 String level = getString(R.string.Overwhelming) + lev;

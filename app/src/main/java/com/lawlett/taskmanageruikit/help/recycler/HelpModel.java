@@ -3,12 +3,12 @@ package com.lawlett.taskmanageruikit.help.recycler;
 public class HelpModel {
     String title;
     String description;
-    int image;
+    int video;
 
     public HelpModel(String title, String description, int image) {
         this.title = title;
         this.description = description;
-        this.image = image;
+        this.video = image;
     }
 
     public String getTitle() {
@@ -19,12 +19,12 @@ public class HelpModel {
         this.title = title;
     }
 
-    public int getImage() {
-        return image;
+    public int getVideo() {
+        return video;
     }
 
-    public void setImage(int image) {
-        this.image = image;
+    public void setVideo(int video) {
+        this.video = video;
     }
 
     public String getDescription() {

@@ -1,5 +1,6 @@
 package com.lawlett.taskmanageruikit.utils;
 
+import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,6 +10,7 @@ import android.os.Build;
 import androidx.multidex.MultiDex;
 import androidx.room.Room;
 
+import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.room.AppDataBase;
 
 import java.util.ArrayList;
@@ -19,16 +21,13 @@ public class App extends Application {
     private static AppDataBase dataBase;
     public static final String CHANNEL_ID = "exampleChannel";
     public static final String CHANNEL_ID_HOURS = "exampleChannelHours";
-//    public static final String CHANNEL_ID_DAY = "exampleChannelDay";
 
     @Override
     public void onCreate() {
         super.onCreate();
         dataBase = Room.databaseBuilder(this, AppDataBase.class, "database")
              .fallbackToDestructiveMigration().allowMainThreadQueries().build();
-//
-//        Room.databaseBuilder(this,AppDataBase.class,"database")
-//                .addMigrations(MIGRATION_2_3).build();
+
         createNotificationChannel();
 
     }
@@ -59,6 +58,10 @@ public class App extends Application {
             manager.createNotificationChannels(notificationChannels);
 
         }
+    }
+    public static void setNavBarColor(Activity activity){
+        if (Build.VERSION.SDK_INT >= 21)
+            activity.getWindow().setNavigationBarColor(activity.getResources().getColor(R.color.statusBarC));
     }
 
 

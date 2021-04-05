@@ -26,6 +26,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.AchievementActivity;
 import com.lawlett.taskmanageruikit.auth.GoogleSignInActivity;
@@ -55,79 +57,40 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         loadLocale();
         setContentView(R.layout.activity_settings);
+        initViews();
+        initClickers();
+        checkUser();
+        setNavBarColor();
+        setThemeImage();
 
-        clear_password_layout = findViewById(R.id.first_layout);
-        clearMinutes_layout = findViewById(R.id.second_layout);
-        theme_layout = findViewById(R.id.third_layout);
-        back = findViewById(R.id.back_view);
-        imageTheme = findViewById(R.id.image_day_night);
-        language_tv = findViewById(R.id.four_layout);
-        share_layout = findViewById(R.id.five_layout);
-        imageSettings = findViewById(R.id.image_settings);
-        reviews = findViewById(R.id.six_layout);
-        sign_in=findViewById(R.id.seven_layout);
+    }
+    private void initClickers() {
+         theme_layout.setOnClickListener(v -> {
+             if (!ThemePreference.getInstance(SettingsActivity.this).isTheme()) {
+                 ThemePreference.getInstance(SettingsActivity.this).saveThemeTrue();
+                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+             } else {
+                 ThemePreference.getInstance(SettingsActivity.this).saveThemeFalse();
+                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+             }
+         });
+        sign_in.setOnClickListener(view -> startActivity(new Intent(SettingsActivity.this, GoogleSignInActivity.class)));
 
-        achievement_layout = findViewById(R.id.achievement_layout);
-        magick = findViewById(R.id.btn_magick);
-        listView = findViewById(R.id.listView);
+        magick.setOnClickListener(v -> startVoiceRecognitionActivity());
 
+        back.setOnClickListener(v -> onBackPressed());
 
-        if (Build.VERSION.SDK_INT >= 21)
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.statusBarC));
-
-        if (ThemePreference.getInstance(SettingsActivity.this).isTheme()) {
-            imageTheme.setImageResource(R.drawable.ic_day);
-        } else {
-            imageTheme.setImageResource(R.drawable.ic_nights);
-        }
-
-        theme_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!ThemePreference.getInstance(SettingsActivity.this).isTheme()) {
-                    ThemePreference.getInstance(SettingsActivity.this).saveThemeTrue();
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                } else {
-                    ThemePreference.getInstance(SettingsActivity.this).saveThemeFalse();
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                }
-            }
-        });
-        sign_in.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(SettingsActivity.this, GoogleSignInActivity.class));
-            }
-        });
-
-        magick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startVoiceRecognitionActivity();
-            }
-        });
-
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-        share_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                    shareIntent.setType("text/plain");
-                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Planner");
-                    String shareMessage = "\nPlanner\n";
-                    shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=com.lawlett.taskmanageruikit";
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
-                    startActivity(Intent.createChooser(shareIntent, getString(R.string.choose_app)));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        share_layout.setOnClickListener(v -> {
+            try {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Planner");
+                String shareMessage = "\nPlanner\n";
+                shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=com.lawlett.taskmanageruikit";
+                shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+                startActivity(Intent.createChooser(shareIntent, getString(R.string.choose_app)));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
@@ -177,40 +140,65 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
-        clearMinutes_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(SettingsActivity.this);
-                dialog.setTitle(R.string.are_you_sure).setMessage(R.string.clear_minute)
-                        .setNegativeButton(R.string.no, (dialog1, which) ->
-                                dialog1.cancel())
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                TimingSizePreference.getInstance(SettingsActivity.this).clearSettings();
-                                Toast.makeText(SettingsActivity.this, R.string.data_about_minutes_clear, Toast.LENGTH_SHORT).show();
-                            }
-                        }).show();
-            }
+        clearMinutes_layout.setOnClickListener(v -> {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(SettingsActivity.this);
+            dialog.setTitle(R.string.are_you_sure).setMessage(R.string.clear_minute)
+                    .setNegativeButton(R.string.no, (dialog1, which) ->
+                            dialog1.cancel())
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            TimingSizePreference.getInstance(SettingsActivity.this).clearSettings();
+                            Toast.makeText(SettingsActivity.this, R.string.data_about_minutes_clear, Toast.LENGTH_SHORT).show();
+                        }
+                    }).show();
         });
 
-        language_tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showChangeLanguageDialog();
-            }
-        });
+        language_tv.setOnClickListener(v -> showChangeLanguageDialog());
 
-        reviews.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent mailIntent = new Intent(Intent.ACTION_VIEW);
-                Uri data = Uri.parse("mailto:?subject=" + getString(R.string.review_on_app) + "&body=" + getString(R.string.hello) + "&to=" + "azamat.nazar99@gmail.com");
-                mailIntent.setData(data);
-                startActivity(Intent.createChooser(mailIntent, "Send mail..."));
-            }
+        reviews.setOnClickListener(view -> {
+            Intent mailIntent = new Intent(Intent.ACTION_VIEW);
+            Uri data = Uri.parse("mailto:?subject=" + getString(R.string.review_on_app) + "&body=" + getString(R.string.hello) + "&to=" + "azamat.nazar99@gmail.com");
+            mailIntent.setData(data);
+            startActivity(Intent.createChooser(mailIntent, "Send mail..."));
         });
+    }
 
+    private void setThemeImage() {
+        if (ThemePreference.getInstance(SettingsActivity.this).isTheme()) {
+            imageTheme.setImageResource(R.drawable.ic_day);
+        } else {
+            imageTheme.setImageResource(R.drawable.ic_nights);
+        }
+    }
+
+    private void setNavBarColor() {
+        if (Build.VERSION.SDK_INT >= 21)
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.statusBarC));
+    }
+
+    private void initViews() {
+        clear_password_layout = findViewById(R.id.first_layout);
+        clearMinutes_layout = findViewById(R.id.second_layout);
+        theme_layout = findViewById(R.id.third_layout);
+        back = findViewById(R.id.back_view);
+        imageTheme = findViewById(R.id.image_day_night);
+        language_tv = findViewById(R.id.four_layout);
+        share_layout = findViewById(R.id.five_layout);
+        imageSettings = findViewById(R.id.image_settings);
+        reviews = findViewById(R.id.six_layout);
+        sign_in=findViewById(R.id.seven_layout);
+        achievement_layout = findViewById(R.id.achievement_layout);
+        magick = findViewById(R.id.btn_magick);
+        listView = findViewById(R.id.listView);
+    }
+
+    private void checkUser() {
+        FirebaseAuth mAuth= FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+           sign_in.setVisibility(View.GONE);
+        }
     }
 
     private void showChangeLanguageDialog() {

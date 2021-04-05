@@ -1,19 +1,15 @@
 package com.lawlett.taskmanageruikit.tasksPage.meetTask;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,15 +22,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.MeetModel;
-import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
 import com.lawlett.taskmanageruikit.tasksPage.meetTask.recyclerview.MeetAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
+import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.MeetDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 
@@ -44,54 +41,49 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMCheckedListener,ActionForDialog {
-    RecyclerView recyclerView;
-    MeetAdapter adapter;
+public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMCheckedListener, ActionForDialog {
+    private RecyclerView recyclerView;
+    private MeetAdapter adapter;
     private List<MeetModel> list;
-    EditText editText;
-    MeetModel meetModel;
-    int position, currentData, updateData, previousData;
-    ImageView meetBack, imageMic, imageAdd;
+    private EditText editText;
+    private MeetModel meetModel;
+    private int position;
+    private ImageView meetBack, imageMic, imageAdd;
     private static final int REQUEST_CODE_SPEECH_INPUT = 22;
-
-    boolean knopka = false;
-    Animation animationAlpha;
+    private boolean isAddBtn = false;
+    private FirebaseFirestore db=FirebaseFirestore.getInstance();
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meet);
         init();
-        if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.statusBarC));
-        }
-
+        initClickers();
+        App.setNavBarColor(this);
         changeView();
+        initListFromRoom();
+        initItemTouchHelper();
+        editListener();
+    }
 
-        list = new ArrayList<>();
-        adapter = new MeetAdapter(this);
-
-        App.getDataBase().meetDao().getAllLive().observe(this, meetModels -> {
-            if (meetModels != null) {
-                list.clear();
-                list.addAll(meetModels);
-                Collections.sort(list, new java.util.Comparator<MeetModel>() {
-                    @Override
-                    public int compare(MeetModel meetModel, MeetModel t1) {
-                        return Boolean.compare(t1.isDone, meetModel.isDone);
-                    }
-                });
-                Collections.reverse(list);
-                adapter.updateList(list);
-            }
+    private void initClickers() {
+        imageAdd.setOnClickListener(view -> {
+            recordRoom();
+            writeDataOrUpdateToFireStore();
         });
+        meetBack.setOnClickListener(v -> onBackPressed());
+        findViewById(R.id.settings_for_task).setOnClickListener((View.OnClickListener) v -> {
+            DialogHelper dialogHelper = new DialogHelper();
+            dialogHelper.myDialog(MeetActivity.this, (ActionForDialog) MeetActivity.this);
+        });
+    }
 
+    private void writeDataOrUpdateToFireStore() {
+        db.collection(getString(R.string.meets)).add(meetModel).addOnSuccessListener(documentReference -> userId = documentReference.getId());
+    }
 
-        recyclerView = findViewById(R.id.recycler_meet);
-        recyclerView.setAdapter(adapter);
-        editText = findViewById(R.id.editText_meet);
-
-
+    private void initItemTouchHelper() {
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
             @Override
@@ -105,11 +97,9 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 int fromPosition = viewHolder.getAdapterPosition();
                 int toPosition = target.getAdapterPosition();
-
                 if (fromPosition < toPosition) {
                     for (int i = fromPosition; i < toPosition; i++) {
                         Collections.swap(list, i, i + 1);
-
                         int order1 = (int) list.get(i).getId();
                         int order2 = (int) list.get(i + 1).getId();
                         list.get(i).setId(order2);
@@ -144,21 +134,19 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                             adapter.notifyDataSetChanged();
                             dialog1.cancel();
                         })
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                position = viewHolder.getAdapterPosition();
-                                meetModel = list.get(position);
-                                if (!meetModel.isDone) {
-                                    App.getDataBase().meetDao().delete(list.get(position));
-                                } else {
-                                    decrementDone();
+                        .setPositiveButton(R.string.yes, (dialog12, which) -> {
+                            position = viewHolder.getAdapterPosition();
+                            meetModel = list.get(position);
+                            if (!meetModel.isDone) {
+                                App.getDataBase().meetDao().delete(list.get(position));
+                            } else {
+                                decrementDone();
 
-                                    App.getDataBase().meetDao().update(list.get(position));
-                                    App.getDataBase().meetDao().delete(list.get(position));
-                                    adapter.notifyDataSetChanged();
-                                    Toast.makeText(MeetActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                                }
+                                App.getDataBase().meetDao().update(list.get(position));
+                                App.getDataBase().meetDao().delete(list.get(position));
+                                FireStoreTools.deleteDataByFireStore(userId, getString(R.string.meets), db);
+                                adapter.notifyDataSetChanged();
+                                Toast.makeText(MeetActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
                             }
                         }).show();
                 adapter.notifyDataSetChanged();
@@ -170,39 +158,41 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
                 final int DIRECTION_RIGHT = 1;
                 final int DIRECTION_LEFT = 0;
-
-                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive){
-                    int direction = dX > 0? DIRECTION_RIGHT : DIRECTION_LEFT;
-                    int absoluteDisplacement = Math.abs((int)dX);
-
-                    switch (direction){
-
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
+                    int direction = dX > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+                    switch (direction) {
                         case DIRECTION_RIGHT:
-
                             View itemView = viewHolder.itemView;
                             final ColorDrawable background = new ColorDrawable(Color.RED);
                             background.setBounds(0, itemView.getTop(), (int) (itemView.getLeft() + dX), itemView.getBottom());
                             background.draw(c);
-
                             break;
-
                         case DIRECTION_LEFT:
-
                             View itemView2 = viewHolder.itemView;
                             final ColorDrawable background2 = new ColorDrawable(Color.RED);
                             background2.setBounds(itemView2.getRight(), itemView2.getBottom(), (int) (itemView2.getRight() + dX), itemView2.getTop());
                             background2.draw(c);
-
                             break;
                     }
 
                 }
             }
         }).attachToRecyclerView(recyclerView);
+    }
 
-        meetBack.setOnClickListener(v -> onBackPressed());
-
-        editListener();
+    private void initListFromRoom() {
+        list = new ArrayList<>();
+        App.getDataBase().meetDao().getAllLive().observe(this, meetModels -> {
+            if (meetModels != null) {
+                list.clear();
+                list.addAll(meetModels);
+                Collections.sort(list, (meetModel, t1) -> Boolean.compare(t1.isDone, meetModel.isDone));
+                Collections.reverse(list);
+                adapter.updateList(list);
+            } else {
+                FireStoreTools.readDataFromFireStore(db, getString(R.string.meets));
+            }
+        });
     }
 
     private void editListener() {
@@ -210,21 +200,19 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
-
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence != null && !knopka && !editText.getText().toString().trim().isEmpty()) {
+                if (charSequence != null && !isAddBtn && !editText.getText().toString().trim().isEmpty()) {
                     imageMic.setVisibility(View.INVISIBLE);
                     imageAdd.setVisibility(View.VISIBLE);
-                    knopka = true;
+                    isAddBtn = true;
                 }
-                if (editText.getText().toString().isEmpty() && knopka) {
+                if (editText.getText().toString().isEmpty() && isAddBtn) {
                     imageAdd.setVisibility(View.INVISIBLE);
                     imageMic.setVisibility(View.VISIBLE);
-                    knopka = false;
+                    isAddBtn = false;
                 }
             }
-
             @Override
             public void afterTextChanged(Editable editable) {
             }
@@ -235,32 +223,13 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
     private void init() {
         list = new ArrayList<>();
         adapter = new MeetAdapter(this);
-        animationAlpha = AnimationUtils.loadAnimation(this, R.anim.alpha);
-
         recyclerView = findViewById(R.id.recycler_meet);
         recyclerView.setAdapter(adapter);
         editText = findViewById(R.id.editText_meet);
         meetBack = findViewById(R.id.personal_back);
-        meetBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-        findViewById(R.id.settings_for_task).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogHelper dialogHelper = new DialogHelper();
-                dialogHelper.myDialog(MeetActivity.this, (ActionForDialog) MeetActivity.this);
-            }
-        });
+        meetBack.setOnClickListener(v -> onBackPressed());
         imageAdd = findViewById(R.id.add_task_meet);
         imageMic = findViewById(R.id.mic_task_meet);
-    }
-
-    public void addMeetTask(View view) {
-        recordRoom();
     }
 
     public void recordRoom() {
@@ -293,6 +262,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             decrementDone();
         }
         App.getDataBase().meetDao().update(list.get(id));
+        FireStoreTools.updateDataByFireStore(userId, getString(R.string.meets), db, meetModel);
     }
 
     private void setLevel(int size) {
@@ -310,7 +280,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
-        }else if (size>51 &&size <76){
+        } else if (size > 51 && size < 76) {
             if (size % 5 == 0) {
                 int lev = size / 5;
                 String level = getString(R.string.Overwhelming) + lev;
@@ -319,32 +289,31 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             }
         }
     }
-    private void addToLocalDate(int id,String level){
-        LevelModel levelModel = new LevelModel(id,new Date(System.currentTimeMillis()),level);
+
+    private void addToLocalDate(int id, String level) {
+        LevelModel levelModel = new LevelModel(id, new Date(System.currentTimeMillis()), level);
         App.getDataBase().levelDao().insert(levelModel);
     }
 
     private void showDialogLevel(String l) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.important_message))
-                .setMessage(getString(R.string.you_got) + l)
-                .setPositiveButton(getString(R.string.apply), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Закрываем окно
-                        dialog.cancel();
-                    }
+                .setMessage(getString(R.string.you_got) + " " + l)
+                .setPositiveButton(getString(R.string.apply), (dialog, id) -> {
+                    // Закрываем окно
+                    dialog.cancel();
                 });
         builder.create();
         builder.show();
     }
 
-    private void incrementAllDone(){
+    private void incrementAllDone() {
         int previousSize = DoneTasksPreferences.getInstance(this).getDataSize();
         DoneTasksPreferences.getInstance(this).saveDataSize(previousSize + 1);
         setLevel(DoneTasksPreferences.getInstance(this).getDataSize());
     }
 
-    private void decrementAllDone(){
+    private void decrementAllDone() {
         int currentSize = DoneTasksPreferences.getInstance(this).getDataSize();
         int updateSize = currentSize - 1;
         if (updateSize >= 0) {
@@ -353,14 +322,14 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
     }
 
     private void incrementDone() {
-        previousData = MeetDoneSizePreference.getInstance(this).getDataSize();
+        int previousData = MeetDoneSizePreference.getInstance(this).getDataSize();
         MeetDoneSizePreference.getInstance(this).saveDataSize(previousData + 1);
         incrementAllDone();
     }
 
     private void decrementDone() {
-        currentData = MeetDoneSizePreference.getInstance(this).getDataSize();
-        updateData = currentData - 1;
+        int currentData = MeetDoneSizePreference.getInstance(this).getDataSize();
+        int updateData = currentData - 1;
         MeetDoneSizePreference.getInstance(this).saveDataSize(updateData);
         decrementAllDone();
     }

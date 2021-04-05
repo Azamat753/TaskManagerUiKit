@@ -21,11 +21,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.addTask.adapter.DoneAdapter;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.DoneModel;
-import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.App;
@@ -48,6 +48,8 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
     ImageView doneBack, addTask, imageMic;
     private static final int REQUEST_CODE_SPEECH_INPUT = 22;
     boolean knopka = false;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,12 +213,19 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
         setLevel(DoneTasksPreferences.getInstance(this).getDataSize());
     }
 
-    private void decrementDone() {
+    private void decrementAllDone() {
         int currentSize = DoneTasksPreferences.getInstance(this).getDataSize();
         int updateSize = currentSize - 1;
         if (updateSize >= 0) {
             DoneTasksPreferences.getInstance(this).saveDataSize(updateSize);
         }
+    }
+
+    private void decrementDone() {
+        currentData = AddDoneSizePreference.getInstance(this).getDataSize();
+        updateData = currentData - 1;
+        AddDoneSizePreference.getInstance(this).saveDataSize(updateData);
+        decrementAllDone();
     }
 
     @Override

@@ -164,4 +164,5 @@
     <string name="patronum">Экспекто патронум</string>
     <string name="important_message">Важное сообщение!</string>
     <string name="you_got">Вы получили звание</string>
+    <string name="speak_something">Hi speak something</string>
 </resources>

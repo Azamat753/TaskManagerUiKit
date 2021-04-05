@@ -50,9 +50,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView settings_view;
     ImageView btnGrid, btnHelp;
     private List<QuickModel> list;
-
     QuickAdapter adapter;
-
     AlarmManager mAlarm;
     long time;
 
@@ -62,18 +60,23 @@ public class MainActivity extends AppCompatActivity {
         loadLocale();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        if (Build.VERSION.SDK_INT >= 21)
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.statusBarC));
-
+        App.setNavBarColor(this);
         initBottomNavigation();
         checkInstance();
+        initViews();
+        initListFromRoom();
 
-        toolbar_title = findViewById(R.id.toolbar_title);
-        settings_view = findViewById(R.id.settings_view);
-        btnGrid = findViewById(R.id.tool_btn_grid);
-        btnHelp = findViewById(R.id.tool_btn_help);
 
+        settings_view.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
+        btnHelp.setOnClickListener(v -> {
+            TaskDialogPreference.saveShown();
+            startActivity(new Intent(MainActivity.this, HelpActivity.class));
+            finish();
+        });
+
+    }
+
+    private void initListFromRoom() {
         list = new ArrayList<>();
         adapter = new QuickAdapter(list, null, this);
         list = App.getDataBase().taskDao().getAll();
@@ -85,13 +88,13 @@ public class MainActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             }
         });
-        settings_view.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
-        btnHelp.setOnClickListener(v -> {
-            TaskDialogPreference.saveShown();
-            startActivity(new Intent(MainActivity.this, HelpActivity.class));
-            finish();
-        });
+    }
 
+    private void initViews() {
+        toolbar_title = findViewById(R.id.toolbar_title);
+        settings_view = findViewById(R.id.settings_view);
+        btnGrid = findViewById(R.id.tool_btn_grid);
+        btnHelp = findViewById(R.id.tool_btn_help);
     }
 
     private void checkInstance() {

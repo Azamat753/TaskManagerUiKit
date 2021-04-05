@@ -76,7 +76,6 @@ dependencies {
     implementation "ss.anoop:awesome-textinput-layout:1.0.3"
     //passCode
     implementation 'com.hanks:passcodeview:0.1.2'
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.21'
     //auth
     implementation platform('com.google.firebase:firebase-bom:26.5.0')
     implementation 'com.google.firebase:firebase-auth'

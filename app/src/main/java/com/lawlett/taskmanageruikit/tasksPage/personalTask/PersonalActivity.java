@@ -1,17 +1,14 @@
 package com.lawlett.taskmanageruikit.tasksPage.personalTask;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -27,14 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.PersonalModel;
@@ -43,6 +33,7 @@ import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
+import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.PersonDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 
@@ -51,7 +42,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class PersonalActivity extends AppCompatActivity implements PersonalAdapter.ICheckedListener, ActionForDialog {
     EditText editText;
@@ -66,55 +56,41 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     boolean knopka = false;
     Animation animationAlpha;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal);
         init();
-        if (Build.VERSION.SDK_INT >= 21)
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.statusBarC));
-
+        initClickers();
+        App.setNavBarColor(this);
         changeView();
-        list = new ArrayList<>();
-        adapter = new PersonalAdapter(this);
+        initListFromRoom();
+        initItemTouchHelper();
+        editListener();
+    }
 
-        App.getDataBase().personalDao().getAllLive().observe(this, personalModels -> {
-            if (personalModels != null &&personalModels.size()!=0) {
-                list.clear();
-                list.addAll(personalModels);
-                Collections.sort(list, new java.util.Comparator<PersonalModel>() {
-                    @Override
-                    public int compare(PersonalModel personalModel, PersonalModel t1) {
-                        return Boolean.compare(t1.isDone, personalModel.isDone);
-                    }
-                });
-                Collections.reverse(list);
-                adapter.updateList(list);
-            }else {
-                readDataFromFireStore();
-            }
+    private void initClickers() {
+        findViewById(R.id.settings_for_task).setOnClickListener((View.OnClickListener) v -> {
+            DialogHelper dialogHelper = new DialogHelper();
+            dialogHelper.myDialog(PersonalActivity.this, (ActionForDialog) PersonalActivity.this);
         });
+        imageAdd.setOnClickListener(view -> {
+            recordDataRoom();
+            writeDataOrUpdateToFireStore();
+        });
+    }
 
-
-        RecyclerView recyclerView = findViewById(R.id.recycler_personal);
-        recyclerView.setAdapter(adapter);
-
-        editText = findViewById(R.id.editText_personal);
-
-
+    private void initItemTouchHelper() {
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-
             @Override
             public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
             }
-
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-
-
                 int fromPosition = viewHolder.getAdapterPosition();
                 int toPosition = target.getAdapterPosition();
 
@@ -156,20 +132,18 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                             dialog1.cancel();
                             adapter.notifyDataSetChanged();
                         })
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                pos = viewHolder.getAdapterPosition();
-                                personalModel = list.get(pos);
-                                if (!personalModel.isDone) {
-                                    App.getDataBase().personalDao().delete(list.get(pos));
-                                } else {
-                                    decrementDone();
-                                    App.getDataBase().personalDao().update(list.get(pos));
-                                    App.getDataBase().personalDao().delete(list.get(pos));
-                                    adapter.notifyDataSetChanged();
-                                    Toast.makeText(PersonalActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                                }
+                        .setPositiveButton(R.string.yes, (dialog12, which) -> {
+                            pos = viewHolder.getAdapterPosition();
+                            personalModel = list.get(pos);
+                            if (!personalModel.isDone) {
+                                App.getDataBase().personalDao().delete(list.get(pos));
+                            } else {
+                                decrementDone();
+                                App.getDataBase().personalDao().update(list.get(pos));
+                                App.getDataBase().personalDao().delete(list.get(pos));
+                                FireStoreTools.deleteDataByFireStore(personalModel.getPersonalTask(), getString(R.string.personal), db);
+                                adapter.notifyDataSetChanged();
+                                Toast.makeText(PersonalActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
                             }
                         }).show();
                 adapter.notifyDataSetChanged();
@@ -184,8 +158,6 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
                     int direction = dX > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
-                    int absoluteDisplacement = Math.abs((int) dX);
-
                     switch (direction) {
 
                         case DIRECTION_RIGHT:
@@ -205,30 +177,26 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                 }
             }
         }).attachToRecyclerView(recyclerView);
-
-
-        personalBack.setOnClickListener(v -> onBackPressed());
-
-        editListener();
     }
 
-    private void writeDataToFireStore() {
+    private void initListFromRoom() {
+        App.getDataBase().personalDao().getAllLive().observe(this, personalModels -> {
+            if (personalModels != null && personalModels.size() != 0) {
+                list.clear();
+                list.addAll(personalModels);
+                Collections.sort(list, (personalModel, t1) -> Boolean.compare(t1.isDone, personalModel.isDone));
+                Collections.reverse(list);
+                adapter.updateList(list);
+            } else {
+                FireStoreTools.readDataFromFireStore(db, getString(R.string.personal));
+            }
+        });
 
-        db.collection(TaskDialogPreference.getPersonTitle())
-                .add(personalModel)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.e("ololo", "onSuccess: ");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        e.printStackTrace();
-                    }
-                });
+    }
 
+    private void writeDataOrUpdateToFireStore() {
+        String documentId = personalModel.getPersonalTask();
+        db.collection(getString(R.string.personal)).add(personalModel).addOnSuccessListener(documentReference -> userId = documentReference.getId());
     }
 
     private void editListener() {
@@ -240,13 +208,11 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence != null && !knopka && !editText.getText().toString().trim().isEmpty()) {
-//                    imageAdd.startAnimation(animationAlpha);
                     imageMic.setVisibility(View.INVISIBLE);
                     imageAdd.setVisibility(View.VISIBLE);
                     knopka = true;
                 }
                 if (editText.getText().toString().isEmpty() && knopka) {
-//                    imageMic.startAnimation(animationAlpha);
                     imageAdd.setVisibility(View.INVISIBLE);
                     imageMic.setVisibility(View.VISIBLE);
                     knopka = false;
@@ -269,27 +235,10 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         imageAdd = findViewById(R.id.add_task_personal);
         imageMic = findViewById(R.id.mic_task_personal);
         personalBack = findViewById(R.id.personal_back);
-        personalBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-        findViewById(R.id.settings_for_task).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogHelper dialogHelper = new DialogHelper();
-                dialogHelper.myDialog(PersonalActivity.this, (ActionForDialog) PersonalActivity.this);
-            }
-        });
+        editText = findViewById(R.id.editText_personal);
+        personalBack.setOnClickListener(v -> onBackPressed());
     }
 
-    public void addPersonalTask(View view) {
-        recordDataRoom();
-        writeDataToFireStore();
-
-    }
     public void recordDataRoom() {
         if (editText.getText().toString().trim().isEmpty()) {
             Toast.makeText(this, R.string.empty, Toast.LENGTH_SHORT).show();
@@ -299,23 +248,6 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             App.getDataBase().personalDao().insert(personalModel);
             editText.setText("");
         }
-    }
-
-    private void readDataFromFireStore() {
-        db.collection("tasks")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                Log.d("ololo", document.getId() + " => " + document.getData());
-                            }
-                        } else {
-                            Log.w("ololo", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
     }
 
     public void changeView() {
@@ -337,6 +269,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             personalModel.isDone = false;
             decrementDone();
         }
+        FireStoreTools.updateDataByFireStore(personalModel.getPersonalTask(), getString(R.string.personal), db, personalModel);
         App.getDataBase().personalDao().update(list.get(id));
     }
 
@@ -393,12 +326,9 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     private void showDialogLevel(String l) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.important_message))
-                .setMessage(getString(R.string.you_got) + l)
-                .setPositiveButton(getString(R.string.apply), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Закрываем окно
-                        dialog.cancel();
-                    }
+                .setMessage(getString(R.string.you_got) + " " + l)
+                .setPositiveButton(getString(R.string.apply), (dialog, id) -> {
+                    dialog.cancel();
                 });
         builder.create();
         builder.show();
@@ -422,7 +352,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Hi speak something");
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speak_something));
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e) {
