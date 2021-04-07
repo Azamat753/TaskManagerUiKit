@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -24,7 +25,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.PersonalModel;
@@ -35,6 +39,7 @@ import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.PersonDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 
 import java.util.ArrayList;
@@ -42,6 +47,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 public class PersonalActivity extends AppCompatActivity implements PersonalAdapter.ICheckedListener, ActionForDialog {
     EditText editText;
@@ -56,7 +63,9 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     boolean knopka = false;
     Animation animationAlpha;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    String userId;
+    String collectionName;
+    FirebaseAuth mAuth=FirebaseAuth.getInstance();;
+    FirebaseUser user = mAuth.getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +74,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         init();
         initClickers();
         App.setNavBarColor(this);
-        changeView();
-        initListFromRoom();
+        initToolbar();
+        getRecordsFromRoom();
         initItemTouchHelper();
         editListener();
     }
@@ -78,7 +87,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         });
         imageAdd.setOnClickListener(view -> {
             recordDataRoom();
-            writeDataOrUpdateToFireStore();
+            FireStoreTools.writeOrUpdateDataByFireStore(personalModel.getPersonalTask(), collectionName+"-"+"("+user.getDisplayName()+")"+ user.getUid(), db, personalModel);
         });
     }
 
@@ -89,6 +98,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                 return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
             }
+
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 int fromPosition = viewHolder.getAdapterPosition();
@@ -126,26 +136,23 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(PersonalActivity.this);
-                dialog.setTitle(R.string.are_you_sure).setMessage(R.string.to_delete)
-                        .setNegativeButton(R.string.no, (dialog1, which) -> {
-                            dialog1.cancel();
+                PlannerDialog.deletion(PersonalActivity.this, new PlannerDialog.PlannerDialogClick() {
+                    @Override
+                    public void clickOnYes() {
+                        pos = viewHolder.getAdapterPosition();
+                        personalModel = list.get(pos);
+                        if (!personalModel.isDone) {
+                            App.getDataBase().personalDao().delete(list.get(pos));
+                        } else {
+                            decrementDone();
+                            App.getDataBase().personalDao().update(list.get(pos));
+                            App.getDataBase().personalDao().delete(list.get(pos));
+                            FireStoreTools.deleteDataByFireStore(personalModel.getPersonalTask(), collectionName, db);
                             adapter.notifyDataSetChanged();
-                        })
-                        .setPositiveButton(R.string.yes, (dialog12, which) -> {
-                            pos = viewHolder.getAdapterPosition();
-                            personalModel = list.get(pos);
-                            if (!personalModel.isDone) {
-                                App.getDataBase().personalDao().delete(list.get(pos));
-                            } else {
-                                decrementDone();
-                                App.getDataBase().personalDao().update(list.get(pos));
-                                App.getDataBase().personalDao().delete(list.get(pos));
-                                FireStoreTools.deleteDataByFireStore(personalModel.getPersonalTask(), getString(R.string.personal), db);
-                                adapter.notifyDataSetChanged();
-                                Toast.makeText(PersonalActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                            }
-                        }).show();
+                            Toast.makeText(PersonalActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
                 adapter.notifyDataSetChanged();
             }
 
@@ -159,9 +166,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
                     int direction = dX > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
                     switch (direction) {
-
                         case DIRECTION_RIGHT:
-
                             View itemView = viewHolder.itemView;
                             final ColorDrawable background = new ColorDrawable(Color.RED);
                             background.setBounds(0, itemView.getTop(), (int) (itemView.getLeft() + dX), itemView.getBottom());
@@ -179,7 +184,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         }).attachToRecyclerView(recyclerView);
     }
 
-    private void initListFromRoom() {
+    private void getRecordsFromRoom() {
         App.getDataBase().personalDao().getAllLive().observe(this, personalModels -> {
             if (personalModels != null && personalModels.size() != 0) {
                 list.clear();
@@ -188,15 +193,29 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                 Collections.reverse(list);
                 adapter.updateList(list);
             } else {
-                FireStoreTools.readDataFromFireStore(db, getString(R.string.personal));
+                readDataFromFireStore();
             }
         });
-
     }
 
-    private void writeDataOrUpdateToFireStore() {
-        String documentId = personalModel.getPersonalTask();
-        db.collection(getString(R.string.personal)).add(personalModel).addOnSuccessListener(documentReference -> userId = documentReference.getId());
+    private void readDataFromFireStore() {
+        db.collection(collectionName)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            Map<String, Object> dataFromFireBase;
+                            dataFromFireBase = document.getData();
+                            Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
+                            String personalTask = dataFromFireBase.get("personalTask").toString();
+                            personalModel = new PersonalModel(personalTask, taskBoolean);
+                            App.getDataBase().personalDao().insert(personalModel);
+                        }
+                    } else {
+                        Log.w("ololo", "Error getting documents.", task.getException());
+                    }
+                });
     }
 
     private void editListener() {
@@ -250,13 +269,14 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         }
     }
 
-    public void changeView() {
+    public void initToolbar() {
         TextView toolbar = findViewById(R.id.toolbar_title);
         if (TaskDialogPreference.getPersonTitle().isEmpty()) {
             toolbar.setText(R.string.personal);
         } else {
             toolbar.setText(TaskDialogPreference.getPersonTitle());
         }
+        collectionName = toolbar.getText().toString();
     }
 
     @Override
@@ -269,7 +289,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             personalModel.isDone = false;
             decrementDone();
         }
-        FireStoreTools.updateDataByFireStore(personalModel.getPersonalTask(), getString(R.string.personal), db, personalModel);
+        FireStoreTools.writeOrUpdateDataByFireStore(personalModel.getPersonalTask(), collectionName, db, personalModel);
         App.getDataBase().personalDao().update(list.get(id));
     }
 

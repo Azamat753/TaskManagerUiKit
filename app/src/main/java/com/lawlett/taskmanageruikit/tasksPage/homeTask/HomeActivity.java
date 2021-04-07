@@ -12,6 +12,7 @@ import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -25,9 +26,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.HomeModel;
@@ -38,6 +41,7 @@ import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.HomeDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 
 import java.util.ArrayList;
@@ -45,6 +49,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHCheckedListener, ActionForDialog {
     RecyclerView recyclerView;
@@ -59,7 +64,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
     boolean knopka = false;
     ImageView homeSettings;
     DialogHelper dialogHelper = new DialogHelper();
-    private FirebaseFirestore db=FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     String userId;
 
     @Override
@@ -135,29 +140,23 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(HomeActivity.this);
-                dialog.setTitle(R.string.are_you_sure).setMessage(R.string.to_delete)
-                        .setNegativeButton(R.string.no, (dialog1, which) -> {
+                PlannerDialog.deletion(HomeActivity.this, new PlannerDialog.PlannerDialogClick() {
+                    @Override
+                    public void clickOnYes() {
+                        pos = viewHolder.getAdapterPosition();
+                        homeModel = list.get(pos);
+                        if (!homeModel.isDone) {
+                            App.getDataBase().homeDao().delete(list.get(pos));
+                        } else {
+                            decrementDone();
+                            App.getDataBase().homeDao().update(list.get(pos));
+                            App.getDataBase().homeDao().delete(list.get(pos));
+                            FireStoreTools.deleteDataByFireStore(homeModel.getHomeTask(), getString(R.string.personal), db);
                             adapter.notifyDataSetChanged();
-                            dialog1.cancel();
-                        })
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                pos = viewHolder.getAdapterPosition();
-                                homeModel = list.get(pos);
-                                if (!homeModel.isDone) {
-                                    App.getDataBase().homeDao().delete(list.get(pos));
-                                } else {
-                                    decrementDone();
-                                    App.getDataBase().homeDao().update(list.get(pos));
-                                    App.getDataBase().homeDao().delete(list.get(pos));
-                                    FireStoreTools.deleteDataByFireStore(userId,getString(R.string.home),db);
-                                    adapter.notifyDataSetChanged();
-                                    Toast.makeText(HomeActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }).show();
+                            Toast.makeText(HomeActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
                 adapter.notifyDataSetChanged();
             }
 
@@ -221,23 +220,31 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
                 Collections.reverse(list);
                 adapter.updateList(list);
             } else {
-                FireStoreTools.readDataFromFireStore(db, getString(R.string.home));
+                readDataFromFireStore(db, getString(R.string.home));
             }
         });
+    }
+
+    private void readDataFromFireStore(FirebaseFirestore firebaseFirestore, String collectionName) {
+        firebaseFirestore.collection(collectionName)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+
+                            }
+                        } else {
+                            Log.w("ololo", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
     }
 
     public void addHomeTask(View view) {
         recordRoom();
-        writeDataOrUpdateToFireStore();
-    }
-
-    private void writeDataOrUpdateToFireStore() {
-        db.collection(getString(R.string.home)).add(homeModel).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                userId = documentReference.getId();
-            }
-        });
+        FireStoreTools.writeOrUpdateDataByFireStore(homeModel.getHomeTask(), getString(R.string.home), db, homeModel);
     }
 
     private void recordRoom() {
@@ -271,7 +278,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
             decrementDone();
         }
         App.getDataBase().homeDao().update(list.get(id));
-        FireStoreTools.updateDataByFireStore(userId, getString(R.string.home), db,homeModel);
+        FireStoreTools.writeOrUpdateDataByFireStore(homeModel.getHomeTask(), getString(R.string.home), db, homeModel);
     }
 
     private void setLevel(int size) {
@@ -292,7 +299,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
         } else if (size > 51 && size < 76) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Overwhelming)+ " " + lev;
+                String level = getString(R.string.Overwhelming) + " " + lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }

@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.lawlett.taskmanageruikit.R;
+import com.lawlett.taskmanageruikit.settings.SettingsActivity;
 
 public class GoogleSignInActivity extends AppCompatActivity {
 
@@ -89,7 +90,16 @@ public class GoogleSignInActivity extends AppCompatActivity {
         });
     }
 
-//    @Override
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user!=null) {
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(intent);
+        }
+    }
+    //    @Override
 //    protected void onStart() { //Проверка зарегистрировался ли пользователь
 //        super.onStart();
 //        FirebaseUser user = mAuth.getCurrentUser();

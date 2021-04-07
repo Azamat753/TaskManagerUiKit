@@ -1,7 +1,6 @@
 package com.lawlett.taskmanageruikit.calendarEvents;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
@@ -48,114 +47,67 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
     List<CalendarTaskModel> list;
     CalendarEventAdapter adapter;
     TextView calendarText;
-    View colorView;
     int position, pos;
-
-    public CalendarEventsFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_calendar_events, container, false);
-        calendarText = root.findViewById(R.id.calendar_tv);
+        return inflater.inflate(R.layout.fragment_calendar_events, container, false);
+    }
 
+    private void initRoom() {
         list = new ArrayList<>();
-
         App.getDataBase().dataDao().getAllLive().observe(this, calendarTaskModels -> {
             if (calendarTaskModels != null) {
                 list.clear();
-//                list.addAll(calendarTaskModels);
                 list.addAll(App.getDataBase().dataDao().getSortedCalendarTaskModel());
                 adapter.notifyDataSetChanged();
                 calendarText.setVisibility(View.GONE);
             }
-            if(calendarTaskModels.isEmpty()){
+            assert calendarTaskModels != null;
+            if (calendarTaskModels.isEmpty()) {
                 calendarText.setVisibility(View.VISIBLE);
             }
         });
-
-        return root;
+        adapter = new CalendarEventAdapter((ArrayList<CalendarTaskModel>) list, this, getContext());
+        recyclerViewToday.setAdapter(adapter);
     }
 
+    private void initViews(View view) {
+        calendarText = view.findViewById(R.id.calendar_tv);
+        addEventBtn = view.findViewById(R.id.add_task_btn);
+        recyclerViewToday = view.findViewById(R.id.today_recycler);
+    }
     @SuppressLint("ResourceAsColor")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initViews(view);
+        initRoom();
+        initCalendar();
+        initAddEventButton();
+        initItemTouchHelper();
+        loadLocale();
+    }
 
-        /* starts before 1 month from now */
-
-
-        colorView = view.findViewById(R.id.color_view);
-
-        Calendar startDate = Calendar.getInstance();
-        startDate.add(Calendar.MONTH, -1);
-
-        /* ends after 1 month from now */
-        Calendar endDate = Calendar.getInstance();
-        endDate.add(Calendar.MONTH, 1);
-
-        final HorizontalCalendar horizontalCalendar = new HorizontalCalendar.Builder(getActivity(), R.id.calendarView)
-                .range(startDate, endDate)
-                .datesNumberOnScreen(5)
-                .build();
-
-        horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
-            @SuppressLint({"LogNotTimber", "NewApi"})
-            @Override
-            public void onDateSelected(Calendar date, int position) {
-//                Intent intent = new Intent(getContext(), TodayEvent.class);
-//                intent.putExtra("month",String.valueOf(date.getTime().getMonth()));
-//                intent.putExtra("day",String.valueOf(date.getTime().getDate()));
-//                startActivity(intent);
-            }
-
-            @Override
-            public void onCalendarScroll(HorizontalCalendarView calendarView, int dx, int dy) {
-
-            }
-
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @SuppressLint("LogNotTimber")
-            @Override
-            public boolean onDateLongClicked(Calendar date, int position) {
-
-                return true;
-            }
-        });
-
-        recyclerViewToday = view.findViewById(R.id.today_recycler);
-        adapter = new CalendarEventAdapter((ArrayList<CalendarTaskModel>) list, this, getContext());
-        recyclerViewToday.setAdapter(adapter);
-
-        addEventBtn = view.findViewById(R.id.add_task_btn);
-        addEventBtn.setColorFilter(Color.WHITE);
-        addEventBtn.setBackgroundColor(R.color.plus_background);
-        addEventBtn.setOnClickListener(v -> startActivity(new Intent(getContext(), AddEventActivity.class)));
-
-
+    private void initItemTouchHelper() {
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
             }
-
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 int fromPosition = viewHolder.getAdapterPosition();
                 int toPosition = target.getAdapterPosition();
-
                 if (fromPosition < toPosition) {
                     for (int i = fromPosition; i < toPosition; i++) {
                         Collections.swap(list, i, i + 1);
-
                         int order1 = (int) list.get(i).getId();
                         int order2 = (int) list.get(i + 1).getId();
                         list.get(i).setId(order2);
@@ -164,7 +116,6 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
                 } else {
                     for (int i = fromPosition; i > toPosition; i--) {
                         Collections.swap(list, i, i - 1);
-
                         int order1 = (int) list.get(i).getId();
                         int order2 = (int) list.get(i - 1).getId();
                         list.get(i).setId(order2);
@@ -184,42 +135,32 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                AlertDialog.Builder dialog = new AlertDialog.Builder(requireContext());
                 dialog.setTitle(R.string.are_you_sure).setMessage(R.string.to_delete)
                         .setNegativeButton(R.string.no, (dialog1, which) ->
                                 dialog1.cancel())
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                pos = viewHolder.getAdapterPosition();
-                                App.getDataBase().dataDao().delete(list.get(pos));
-                                adapter.notifyDataSetChanged();
-                                Toast.makeText(getContext(), R.string.delete, Toast.LENGTH_SHORT).show();
-                            }
+                        .setPositiveButton(R.string.yes, (dialog12, which) -> {
+                            pos = viewHolder.getAdapterPosition();
+                            App.getDataBase().dataDao().delete(list.get(pos));
+                            adapter.notifyDataSetChanged();
+                            Toast.makeText(getContext(), R.string.delete, Toast.LENGTH_SHORT).show();
                         }).show();
                 adapter.notifyDataSetChanged();
             }
-
             @SuppressLint("ResourceAsColor")
             @Override
             public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
                 final int DIRECTION_RIGHT = 1;
                 final int DIRECTION_LEFT = 0;
-
-                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive){
-                    int direction = dX > 0? DIRECTION_RIGHT : DIRECTION_LEFT;
-                    int absoluteDisplacement = Math.abs((int)dX);
-
-                    switch (direction){
-
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
+                    int direction = dX > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+                    switch (direction) {
                         case DIRECTION_RIGHT:
-
                             View itemView = viewHolder.itemView;
                             final ColorDrawable background = new ColorDrawable(Color.RED);
                             background.setBounds(0, itemView.getTop(), (int) (itemView.getLeft() + dX), itemView.getBottom());
                             background.draw(c);
-
                             break;
 
                         case DIRECTION_LEFT:
@@ -228,15 +169,50 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
                             final ColorDrawable background2 = new ColorDrawable(Color.RED);
                             background2.setBounds(itemView2.getRight(), itemView2.getBottom(), (int) (itemView2.getRight() + dX), itemView2.getTop());
                             background2.draw(c);
-
                             break;
                     }
 
                 }
             }
         }).attachToRecyclerView(recyclerViewToday);
+    }
 
-        loadLocale();
+    @SuppressLint("ResourceAsColor")
+    private void initAddEventButton() {
+        addEventBtn.setColorFilter(Color.WHITE);
+        addEventBtn.setBackgroundColor(R.color.plus_background);
+        addEventBtn.setOnClickListener(v -> startActivity(new Intent(getContext(), AddEventActivity.class)));
+    }
+
+    private void initCalendar() {
+        Calendar startDate = Calendar.getInstance();
+        startDate.add(Calendar.MONTH, -1);
+        Calendar endDate = Calendar.getInstance();
+        endDate.add(Calendar.MONTH, 1);
+
+        final HorizontalCalendar horizontalCalendar = new HorizontalCalendar.Builder(requireActivity(), R.id.calendarView)
+                .range(startDate, endDate)
+                .datesNumberOnScreen(5)
+                .build();
+
+        horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
+            @SuppressLint({"LogNotTimber", "NewApi"})
+            @Override
+            public void onDateSelected(Calendar date, int position) {
+            }
+
+            @Override
+            public void onCalendarScroll(HorizontalCalendarView calendarView, int dx, int dy) {
+
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @SuppressLint("LogNotTimber")
+            @Override
+            public boolean onDateLongClicked(Calendar date, int position) {
+                return true;
+            }
+        });
     }
 
     @Override

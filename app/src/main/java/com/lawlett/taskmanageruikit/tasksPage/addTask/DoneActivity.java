@@ -1,9 +1,7 @@
 package com.lawlett.taskmanageruikit.tasksPage.addTask;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
@@ -31,6 +29,8 @@ import com.lawlett.taskmanageruikit.utils.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
+import com.lawlett.taskmanageruikit.utils.FireStoreTools;
+import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 
 import java.util.ArrayList;
@@ -48,43 +48,32 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
     ImageView doneBack, addTask, imageMic;
     private static final int REQUEST_CODE_SPEECH_INPUT = 22;
     boolean knopka = false;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    String userId;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_done);
         TaskDialogPreference.init(this);
-        if (Build.VERSION.SDK_INT >= 21)
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.statusBarC));
-
-        changeView();
-        list = new ArrayList<>();
-        adapter = new DoneAdapter(this);
-        App.getDataBase().doneDao().getAllLive().observe(this, doneModels -> {
-            if (doneModels != null) {
-                list.clear();
-                list.addAll(doneModels);
-                Collections.sort(list, new java.util.Comparator<DoneModel>() {
-                    @Override
-                    public int compare(DoneModel doneModel, DoneModel t1) {
-                        return Boolean.compare(t1.isDone, doneModel.isDone);
-                    }
-                });
-                Collections.reverse(list);
-                adapter.updateList(list);
-            }
-        });
-
-        RecyclerView recyclerView = findViewById(R.id.recycler_done);
-        recyclerView.setAdapter(adapter);
-
-        editText = findViewById(R.id.editText_done);
-        addTask = findViewById(R.id.add_task_done);
-        imageMic = findViewById(R.id.mic_task_done);
+        App.setNavBarColor(this);
+        initViews();
+        initClickers();
+        initToolbar();
+        initRoomList();
         editListener();
+        initItemTouchHelper();
+    }
 
+    private void initClickers() {
+        doneBack.setOnClickListener(v -> onBackPressed());
+        findViewById(R.id.settings_for_task).setOnClickListener(v -> {
+            DialogHelper dialogHelper = new DialogHelper();
+            dialogHelper.myDialog(DoneActivity.this, DoneActivity.this);
+        });
+    }
+
+    private void initItemTouchHelper() {
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
@@ -125,48 +114,49 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
                 super.clearView(recyclerView, viewHolder);
                 App.getDataBase().doneDao().updateWord(list);
             }
-
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(DoneActivity.this);
-                dialog.setTitle(R.string.are_you_sure).setMessage(R.string.to_delete)
-                        .setNegativeButton(R.string.no, (dialog1, which) -> {
-                            adapter.notifyDataSetChanged();
-                            dialog1.cancel();
-                        })
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                pos = viewHolder.getAdapterPosition();
-                                doneModel = list.get(pos);
-                                if (!doneModel.isDone) {
-                                    App.getDataBase().doneDao().delete(list.get(pos));
-                                } else {
-                                    decrementDone();
-                                    App.getDataBase().doneDao().update(list.get(pos));
-                                    App.getDataBase().doneDao().delete(list.get(pos));
-                                    adapter.notifyDataSetChanged();
-                                    Toast.makeText(DoneActivity.this, "Удалено", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }).show();
-            }
-        }).attachToRecyclerView(recyclerView);
-        doneBack = findViewById(R.id.personal_back);
-        doneBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
+                PlannerDialog.deletion(DoneActivity.this, () -> {
+                    pos = viewHolder.getAdapterPosition();
+                    doneModel = list.get(pos);
+                    if (!doneModel.isDone) {
+                        App.getDataBase().doneDao().delete(list.get(pos));
+                    } else {
+                        decrementDone();
+                        App.getDataBase().doneDao().update(list.get(pos));
+                        App.getDataBase().doneDao().delete(list.get(pos));
+                        FireStoreTools.deleteDataByFireStore(doneModel.getDoneTask(), getString(R.string.personal), db);
+                        adapter.notifyDataSetChanged();
+                        Toast.makeText(DoneActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                adapter.notifyDataSetChanged();
             }
         });
 
-        findViewById(R.id.settings_for_task).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogHelper dialogHelper = new DialogHelper();
-                dialogHelper.myDialog(DoneActivity.this, DoneActivity.this);
+    }
+
+    private void initRoomList() {
+        App.getDataBase().doneDao().getAllLive().observe(this, doneModels -> {
+            if (doneModels != null) {
+                list.clear();
+                list.addAll(doneModels);
+                Collections.sort(list, (doneModel, t1) -> Boolean.compare(t1.isDone, doneModel.isDone));
+                Collections.reverse(list);
+                adapter.updateList(list);
             }
         });
+    }
+
+    private void initViews() {
+        list = new ArrayList<>();
+        adapter = new DoneAdapter(this);
+        recyclerView = findViewById(R.id.recycler_done);
+        recyclerView.setAdapter(adapter);
+        editText = findViewById(R.id.editText_done);
+        addTask = findViewById(R.id.add_task_done);
+        imageMic = findViewById(R.id.mic_task_done);
+        doneBack = findViewById(R.id.personal_back);
     }
 
     public void addDoneTask(View view) {
@@ -183,7 +173,7 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
         }
     }
 
-    public void changeView() {
+    public void initToolbar() {
         TextView toolbar = findViewById(R.id.toolbar_title);
         toolbar.setText(TaskDialogPreference.getTitle());
     }
@@ -199,6 +189,7 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
             decrementDone();
         }
         App.getDataBase().doneDao().update(list.get(id));
+
     }
 
     private void incrementDone() {
@@ -319,11 +310,8 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.important_message))
                 .setMessage(getString(R.string.you_got) + l)
-                .setPositiveButton(getString(R.string.apply), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Закрываем окно
-                        dialog.cancel();
-                    }
+                .setPositiveButton(getString(R.string.apply), (dialog, id) -> {
+                    dialog.cancel();
                 });
         builder.create();
         builder.show();

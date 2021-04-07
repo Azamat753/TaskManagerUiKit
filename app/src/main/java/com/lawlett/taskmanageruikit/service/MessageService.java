@@ -49,7 +49,7 @@ public class MessageService extends BroadcastReceiver {
             PendingIntent pendingIntent = PendingIntent.getActivity(context,2 , intent1,PendingIntent.FLAG_ONE_SHOT);
 
             Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID_HOURS)
-                    .setSmallIcon(R.mipmap.app)
+                    .setSmallIcon(R.drawable.ic_planner)
                     .setContentTitle(title).setContentText(text)
                     .setOnlyAlertOnce(true)
                     .setContentIntent(pendingIntent)
@@ -61,7 +61,7 @@ public class MessageService extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getActivity(context,2 , intent1,PendingIntent.FLAG_ONE_SHOT);
         Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.mipmap.app)
+                .setSmallIcon(R.drawable.ic_planner)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setAutoCancel(true)

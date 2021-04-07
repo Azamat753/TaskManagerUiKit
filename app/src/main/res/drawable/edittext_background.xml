@@ -3,7 +3,7 @@
 
     <item >
         <shape>
-            <stroke android:color="@color/calendarEvents" android:width="1dp"/>
+            <stroke android:color="@color/light_blue" android:width="1dp"/>
             <corners android:radius="15dp"></corners>
         </shape>
     </item>

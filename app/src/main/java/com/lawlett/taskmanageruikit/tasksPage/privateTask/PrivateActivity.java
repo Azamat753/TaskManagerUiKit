@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,7 +23,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.PrivateModel;
@@ -32,12 +37,14 @@ import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
+import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.PrivateDoneSizePreference;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class PrivateActivity extends AppCompatActivity implements PrivateAdapter.IPCheckedListener, ActionForDialog {
     RecyclerView recyclerView;
@@ -49,7 +56,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
     ImageView privateBack, imageAdd, imageMic;
     boolean knopka = false;
     private static final int REQUEST_CODE_SPEECH_INPUT = 22;
-    private FirebaseFirestore db=FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     String userId;
 
     @Override
@@ -72,6 +79,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
                 return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
             }
+
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 int fromPosition = viewHolder.getAdapterPosition();
@@ -108,27 +116,23 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(PrivateActivity.this);
-                dialog.setTitle(R.string.are_you_sure).setMessage(R.string.to_delete)
-                        .setNegativeButton(R.string.no, (dialog1, which) -> {
+                PlannerDialog.deletion(PrivateActivity.this, new PlannerDialog.PlannerDialogClick() {
+                    @Override
+                    public void clickOnYes() {
+                        pos = viewHolder.getAdapterPosition();
+                        privateModel = list.get(pos);
+                        if (!privateModel.isDone) {
+                            App.getDataBase().privateDao().delete(list.get(pos));
+                        } else {
+                            decrementDone();
+                            App.getDataBase().privateDao().update(list.get(pos));
+                            App.getDataBase().privateDao().delete(list.get(pos));
+                            FireStoreTools.deleteDataByFireStore(privateModel.getPrivateTask(), getString(R.string.personal), db);
                             adapter.notifyDataSetChanged();
-                            dialog1.cancel();
-                        })
-                        .setPositiveButton(R.string.yes, (dialog12, which) -> {
-                            pos = viewHolder.getAdapterPosition();
-                            privateModel = list.get(pos);
-                            if (!privateModel.isDone) {
-                                App.getDataBase().privateDao().delete(list.get(pos));
-                            } else {
-                                decrementDone();
-                                App.getDataBase().privateDao().update(list.get(pos));
-                                App.getDataBase().privateDao().delete(list.get(pos));
-                                FireStoreTools.deleteDataByFireStore(userId, getString(R.string.privates), db);
-                                adapter.notifyDataSetChanged();
-
-                                Toast.makeText(PrivateActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                            }
-                        }).show();
+                            Toast.makeText(PrivateActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
                 adapter.notifyDataSetChanged();
             }
 
@@ -183,10 +187,26 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
                 Collections.reverse(list);
                 adapter.updateList(list);
             } else {
-                FireStoreTools.readDataFromFireStore(db, getString(R.string.privates));
+                readDataFromFireStore(db, getString(R.string.privates));
             }
         });
+    }
 
+    private void readDataFromFireStore(FirebaseFirestore firebaseFirestore, String collectionName) {
+        firebaseFirestore.collection(collectionName)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+
+                            }
+                        } else {
+                            Log.w("ololo", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
     }
 
     private void editListener() {
@@ -230,11 +250,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
 
     public void addPrivateTask(View view) {
         recordRoom();
-        writeDataOrUpdateToFireStore();
-    }
-
-    private void writeDataOrUpdateToFireStore() {
-        db.collection(getString(R.string.privates)).add(privateModel).addOnSuccessListener(documentReference -> userId = documentReference.getId());
+        FireStoreTools.writeOrUpdateDataByFireStore(privateModel.getPrivateTask(), getString(R.string.privates), db, privateModel);
     }
 
     public void recordRoom() {
@@ -263,7 +279,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
             decrementDone();
         }
         App.getDataBase().privateDao().update(list.get(id));
-        FireStoreTools.updateDataByFireStore(userId, getString(R.string.privates), db, privateModel);
+        FireStoreTools.writeOrUpdateDataByFireStore(privateModel.getPrivateTask(), getString(R.string.privates), db, privateModel);
     }
 
     private void setLevel(int size) {

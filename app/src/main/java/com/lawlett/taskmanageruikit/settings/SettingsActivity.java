@@ -62,7 +62,6 @@ public class SettingsActivity extends AppCompatActivity {
         checkUser();
         setNavBarColor();
         setThemeImage();
-
     }
     private void initClickers() {
          theme_layout.setOnClickListener(v -> {
