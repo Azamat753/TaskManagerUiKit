@@ -21,9 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.MeetModel;
-import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
 import com.lawlett.taskmanageruikit.tasksPage.meetTask.recyclerview.MeetAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
+import com.lawlett.taskmanageruikit.utils.ActionForDialogSecond;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMCheckedListener, ActionForDialog {
+public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMCheckedListener, ActionForDialog, ActionForDialogSecond {
     RecyclerView recyclerView;
     MeetAdapter adapter;
     private List<MeetModel> list;
@@ -196,7 +196,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             @Override
             public void onClick(View v) {
                 DialogHelper dialogHelper = new DialogHelper();
-                dialogHelper.myDialog(MeetActivity.this, MeetActivity.this);
+                dialogHelper.myDialogDeleteAll(MeetActivity.this, MeetActivity.this);
             }
         });
     }
@@ -256,6 +256,10 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
 
     @Override
     public void onItemLongClick(int id) {
+        DialogHelper dialogHelper = new DialogHelper();
+
+        dialogHelper.myDialog(MeetActivity.this, MeetActivity.this, getString(R.string.attention), "Вы хотите внести изменения?");
+
         findViewById(R.id.add_task_meet).setVisibility(View.GONE);
         findViewById(R.id.change_task_meet).setVisibility(View.VISIBLE);
         meetModel = list.get(id);
@@ -275,7 +279,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             findViewById(R.id.change_task_meet).setVisibility(View.GONE);
             findViewById(R.id.add_task_meet).setVisibility(View.VISIBLE);
             editText.getText().clear();
-            keyboardHelper.hideKeyboard(MeetActivity.this, view);
+            keyboardHelper.hideKeyboard(MeetActivity.this, view, editText);
         }
     }
 
@@ -284,5 +288,10 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         meetModel.setMeetTask(editText.getText().toString());
         App.getDataBase().meetDao().update(list.get(id));
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void pressOkSecond() {
+
     }
 }

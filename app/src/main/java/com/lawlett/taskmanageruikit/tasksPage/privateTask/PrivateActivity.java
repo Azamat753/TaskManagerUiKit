@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.PrivateModel;
-import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
 import com.lawlett.taskmanageruikit.tasksPage.privateTask.recycler.PrivateAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
@@ -192,7 +191,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
             @Override
             public void onClick(View v) {
                 DialogHelper dialogHelper = new DialogHelper();
-                dialogHelper.myDialog(PrivateActivity.this, PrivateActivity.this);
+                dialogHelper.myDialogDeleteAll(PrivateActivity.this, PrivateActivity.this);
             }
         });
     }
@@ -265,7 +264,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
             findViewById(R.id.change_task_private).setVisibility(View.GONE);
             findViewById(R.id.add_task_private).setVisibility(View.VISIBLE);
             editText.getText().clear();
-            keyboardHelper.hideKeyboard(PrivateActivity.this, view);
+            keyboardHelper.hideKeyboard(PrivateActivity.this, view, editText);
         }
     }
 

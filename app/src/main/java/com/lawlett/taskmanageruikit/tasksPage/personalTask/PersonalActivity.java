@@ -7,8 +7,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.PersonalModel;
-import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
 import com.lawlett.taskmanageruikit.tasksPage.personalTask.recyclerview.PersonalAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
@@ -198,7 +197,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             @Override
             public void onClick(View v) {
                 DialogHelper dialogHelper = new DialogHelper();
-                dialogHelper.myDialog(PersonalActivity.this, PersonalActivity.this);
+                dialogHelper.myDialogDeleteAll(PersonalActivity.this, PersonalActivity.this);
             }
         });
     }
@@ -264,7 +263,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         personalModel = list.get(id);
         editText.setText(personalModel.getPersonalTask());
         this.id=id;
-        keyboardHelper.openKeyboard(PersonalActivity.this);
+        KeyboardHelper.openKeyboard(PersonalActivity.this);
         editText.requestFocus();
         editText.setSelection(editText.getText().length());
     }
@@ -278,7 +277,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             findViewById(R.id.change_task_personal).setVisibility(View.GONE);
             findViewById(R.id.add_task_personal).setVisibility(View.VISIBLE);
             editText.getText().clear();
-            keyboardHelper.hideKeyboard(PersonalActivity.this, view);
+            KeyboardHelper.hideKeyboard(PersonalActivity.this, view, editText);
+//            editText.clearFocus();
         }
     }
 

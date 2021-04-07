@@ -31,7 +31,6 @@ import com.lawlett.taskmanageruikit.utils.WorkDoneSizePreference;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWCheckedListener, ActionForDialog {
@@ -193,7 +192,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
             @Override
             public void onClick(View v) {
                 DialogHelper dialogHelper = new DialogHelper();
-                dialogHelper.myDialog(WorkActivity.this, WorkActivity.this);
+                dialogHelper.myDialogDeleteAll(WorkActivity.this, WorkActivity.this);
             }
         });
     }
@@ -273,7 +272,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
             findViewById(R.id.change_task_work).setVisibility(View.GONE);
             findViewById(R.id.add_task_work).setVisibility(View.VISIBLE);
             editText.getText().clear();
-            keyboardHelper.hideKeyboard(WorkActivity.this, view);
+            keyboardHelper.hideKeyboard(WorkActivity.this, view, editText);
         }
     }
 

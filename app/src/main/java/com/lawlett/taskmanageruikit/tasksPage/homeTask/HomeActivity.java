@@ -3,9 +3,7 @@ package com.lawlett.taskmanageruikit.tasksPage.homeTask;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.HomeModel;
-import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
 import com.lawlett.taskmanageruikit.tasksPage.homeTask.recycler.HomeAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
@@ -159,7 +156,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
         homeSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogHelper.myDialog(HomeActivity.this, HomeActivity.this);
+                dialogHelper.myDialogDeleteAll(HomeActivity.this, HomeActivity.this);
             }
         });
     }
@@ -240,7 +237,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
             findViewById(R.id.change_task_home).setVisibility(View.GONE);
             findViewById(R.id.add_task_home).setVisibility(View.VISIBLE);
             editText.getText().clear();
-            keyboardHelper.hideKeyboard(HomeActivity.this, view);
+            keyboardHelper.hideKeyboard(HomeActivity.this, view, editText);
         }
     }
 

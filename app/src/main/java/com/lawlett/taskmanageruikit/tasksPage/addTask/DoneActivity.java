@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.tasksPage.addTask.adapter.DoneAdapter;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.DoneModel;
-import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.AddDoneSizePreference;
@@ -148,7 +147,7 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
             @Override
             public void onClick(View v) {
                 DialogHelper dialogHelper = new DialogHelper();
-                dialogHelper.myDialog(DoneActivity.this, DoneActivity.this);
+                dialogHelper.myDialogDeleteAll(DoneActivity.this, DoneActivity.this);
             }
         });
     }
@@ -222,7 +221,7 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
             findViewById(R.id.change_task_done).setVisibility(View.GONE);
             findViewById(R.id.add_task_done).setVisibility(View.VISIBLE);
             editText.getText().clear();
-            keyboardHelper.hideKeyboard(DoneActivity.this, view);
+            keyboardHelper.hideKeyboard(DoneActivity.this, view, editText);
         }
     }
 
