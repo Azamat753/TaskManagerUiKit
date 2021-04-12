@@ -19,7 +19,6 @@ import com.lawlett.taskmanageruikit.help.recycler.HelpAdapter;
 import com.lawlett.taskmanageruikit.help.recycler.HelpModel;
 import com.lawlett.taskmanageruikit.main.MainActivity;
 import com.lawlett.taskmanageruikit.onboard.BoardActivity;
-import com.lawlett.taskmanageruikit.utils.App;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,6 @@ public class HelpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
-        App.setNavBarColor(this);
         dialog = new Dialog(this);
         fillingList();
         initRecycler();

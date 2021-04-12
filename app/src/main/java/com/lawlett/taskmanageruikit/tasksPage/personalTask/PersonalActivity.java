@@ -11,8 +11,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,6 +36,7 @@ import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
+import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.PersonDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
@@ -51,21 +50,21 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PersonalActivity extends AppCompatActivity implements PersonalAdapter.ICheckedListener, ActionForDialog {
-    EditText editText;
-    PersonalAdapter adapter;
-    PersonalModel personalModel;
-    List<PersonalModel> list;
-    String personal;
-    ImageView personalBack, imageAdd, imageMic;
-    RecyclerView recyclerView;
-    int pos, previousPersonalDone, currentData, updateData;
+    private EditText editText;
+    private PersonalAdapter adapter;
+    private PersonalModel personalModel;
+    private List<PersonalModel> list;
+    private ImageView addTask_image;
+    private ImageView imageMic;
+    private ImageView changeTask_image;
+    private RecyclerView recyclerView;
+    private int position;
     private static final int REQUEST_CODE_SPEECH_INPUT = 22;
-    boolean knopka = false;
-    Animation animationAlpha;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    String collectionName;
-    FirebaseAuth mAuth=FirebaseAuth.getInstance();;
-    FirebaseUser user = mAuth.getCurrentUser();
+    private boolean isButton = false;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String collectionName;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private FirebaseUser user = mAuth.getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +72,6 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         setContentView(R.layout.activity_personal);
         init();
         initClickers();
-        App.setNavBarColor(this);
         initToolbar();
         getRecordsFromRoom();
         initItemTouchHelper();
@@ -85,9 +83,9 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             DialogHelper dialogHelper = new DialogHelper();
             dialogHelper.myDialog(PersonalActivity.this, (ActionForDialog) PersonalActivity.this);
         });
-        imageAdd.setOnClickListener(view -> {
+        addTask_image.setOnClickListener(view -> {
             recordDataRoom();
-            FireStoreTools.writeOrUpdateDataByFireStore(personalModel.getPersonalTask(), collectionName+"-"+"("+user.getDisplayName()+")"+ user.getUid(), db, personalModel);
+            FireStoreTools.writeOrUpdateDataByFireStore(personalModel.getPersonalTask(), collectionName + "-" + "(" + user.getDisplayName() + ")" + user.getUid(), db, personalModel);
         });
     }
 
@@ -136,21 +134,18 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.deletion(PersonalActivity.this, new PlannerDialog.PlannerDialogClick() {
-                    @Override
-                    public void clickOnYes() {
-                        pos = viewHolder.getAdapterPosition();
-                        personalModel = list.get(pos);
-                        if (!personalModel.isDone) {
-                            App.getDataBase().personalDao().delete(list.get(pos));
-                        } else {
-                            decrementDone();
-                            App.getDataBase().personalDao().update(list.get(pos));
-                            App.getDataBase().personalDao().delete(list.get(pos));
-                            FireStoreTools.deleteDataByFireStore(personalModel.getPersonalTask(), collectionName, db);
-                            adapter.notifyDataSetChanged();
-                            Toast.makeText(PersonalActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                        }
+                PlannerDialog.showPlannerDialog(PersonalActivity.this,getString(R.string.you_sure_delete), () -> {
+                    position = viewHolder.getAdapterPosition();
+                    personalModel = list.get(position);
+                    if (!personalModel.isDone) {
+                        App.getDataBase().personalDao().delete(list.get(position));
+                    } else {
+                        decrementDone();
+                        App.getDataBase().personalDao().update(list.get(position));
+                        App.getDataBase().personalDao().delete(list.get(position));
+                        FireStoreTools.deleteDataByFireStore(personalModel.getPersonalTask(), collectionName, db);
+                        adapter.notifyDataSetChanged();
+                        Toast.makeText(PersonalActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
                     }
                 });
                 adapter.notifyDataSetChanged();
@@ -226,15 +221,15 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence != null && !knopka && !editText.getText().toString().trim().isEmpty()) {
+                if (charSequence != null && !isButton && !editText.getText().toString().trim().isEmpty()) {
                     imageMic.setVisibility(View.INVISIBLE);
-                    imageAdd.setVisibility(View.VISIBLE);
-                    knopka = true;
+                    addTask_image.setVisibility(View.VISIBLE);
+                    isButton = true;
                 }
-                if (editText.getText().toString().isEmpty() && knopka) {
-                    imageAdd.setVisibility(View.INVISIBLE);
+                if (editText.getText().toString().isEmpty() && isButton) {
+                    addTask_image.setVisibility(View.INVISIBLE);
                     imageMic.setVisibility(View.VISIBLE);
-                    knopka = false;
+                    isButton = false;
                 }
             }
 
@@ -247,22 +242,20 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     private void init() {
         list = new ArrayList<>();
         adapter = new PersonalAdapter(this);
-        animationAlpha = AnimationUtils.loadAnimation(this, R.anim.alpha);
         recyclerView = findViewById(R.id.recycler_personal);
         recyclerView.setAdapter(adapter);
         editText = findViewById(R.id.editText_personal);
-        imageAdd = findViewById(R.id.add_task_personal);
+        addTask_image = findViewById(R.id.add_task_personal);
         imageMic = findViewById(R.id.mic_task_personal);
-        personalBack = findViewById(R.id.personal_back);
         editText = findViewById(R.id.editText_personal);
-        personalBack.setOnClickListener(v -> onBackPressed());
+        changeTask_image = findViewById(R.id.change_task_personal);
     }
 
     public void recordDataRoom() {
         if (editText.getText().toString().trim().isEmpty()) {
             Toast.makeText(this, R.string.empty, Toast.LENGTH_SHORT).show();
         } else {
-            personal = editText.getText().toString().trim();
+            String personal = editText.getText().toString().trim();
             personalModel = new PersonalModel(personal, false);
             App.getDataBase().personalDao().insert(personalModel);
             editText.setText("");
@@ -293,8 +286,21 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         App.getDataBase().personalDao().update(list.get(id));
     }
 
+    @Override
+    public void onItemLongClick(int pos) {
+        changeTask_image.setVisibility(View.VISIBLE);
+        addTask_image.setVisibility(View.GONE);
+        imageMic.setVisibility(View.GONE);
+        personalModel = list.get(pos);
+        editText.setText(personalModel.getPersonalTask());
+        this.position = pos;
+        KeyboardHelper.openKeyboard(PersonalActivity.this);
+        editText.requestFocus();
+        editText.setSelection(editText.getText().length());
+    }
+
     private void incrementDone() {
-        previousPersonalDone = PersonDoneSizePreference.getInstance(this).getPersonalSize();
+        int previousPersonalDone = PersonDoneSizePreference.getInstance(this).getPersonalSize();
         PersonDoneSizePreference.getInstance(this).savePersonalSize(previousPersonalDone + 1);
         incrementAllDone();
     }
@@ -355,8 +361,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     }
 
     private void decrementDone() {
-        currentData = PersonDoneSizePreference.getInstance(this).getPersonalSize();
-        updateData = currentData - 1;
+        int currentData = PersonDoneSizePreference.getInstance(this).getPersonalSize();
+        int updateData = currentData - 1;
         PersonDoneSizePreference.getInstance(this).savePersonalSize(updateData);
         decrementAllDone();
     }

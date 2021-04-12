@@ -65,7 +65,6 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
         setContentView(R.layout.activity_private);
         init();
         initClickers();
-        App.setNavBarColor(this);
         changeView();
         initListFromRoom();
         initItemTouchHelper();
@@ -116,7 +115,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.deletion(PrivateActivity.this, new PlannerDialog.PlannerDialogClick() {
+                PlannerDialog.showPlannerDialog(PrivateActivity.this, getString(R.string.you_sure_delete),new PlannerDialog.PlannerDialogClick() {
                     @Override
                     public void clickOnYes() {
                         pos = viewHolder.getAdapterPosition();

@@ -1,7 +1,6 @@
 package com.lawlett.taskmanageruikit.settings;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -44,13 +43,13 @@ import java.util.Locale;
 import java.util.Random;
 
 public class SettingsActivity extends AppCompatActivity {
-
-    LinearLayout language_tv, clear_password_layout, clearMinutes_layout, share_layout, achievement_layout, reviews,sign_in;
-    ImageView magick;
-    ListView listView;
-    public static final int VOICE_RECOGNITION_REQUEST_CODE = 1234;
-    ImageView back, imageSettings, imageTheme;
-    ConstraintLayout theme_layout;
+    private LinearLayout language_tv, clear_password_layout, clearMinutes_layout, share_layout, achievement_layout, reviews, sign_in;
+    private ImageView magick;
+    private ListView listView;
+    private static final int VOICE_RECOGNITION_REQUEST_CODE = 1234;
+    private ImageView back;
+    private ImageView imageTheme;
+    private ConstraintLayout theme_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,19 +59,19 @@ public class SettingsActivity extends AppCompatActivity {
         initViews();
         initClickers();
         checkUser();
-        setNavBarColor();
         setThemeImage();
     }
+
     private void initClickers() {
-         theme_layout.setOnClickListener(v -> {
-             if (!ThemePreference.getInstance(SettingsActivity.this).isTheme()) {
-                 ThemePreference.getInstance(SettingsActivity.this).saveThemeTrue();
-                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-             } else {
-                 ThemePreference.getInstance(SettingsActivity.this).saveThemeFalse();
-                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-             }
-         });
+        theme_layout.setOnClickListener(v -> {
+            if (!ThemePreference.getInstance(SettingsActivity.this).isTheme()) {
+                ThemePreference.getInstance(SettingsActivity.this).saveThemeTrue();
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                ThemePreference.getInstance(SettingsActivity.this).saveThemeFalse();
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
+        });
         sign_in.setOnClickListener(view -> startActivity(new Intent(SettingsActivity.this, GoogleSignInActivity.class)));
 
         magick.setOnClickListener(v -> startVoiceRecognitionActivity());
@@ -81,11 +80,12 @@ public class SettingsActivity extends AppCompatActivity {
 
         share_layout.setOnClickListener(v -> {
             try {
+                String applicationLink = "https://play.google.com/store/apps/details?id=com.lawlett.taskmanageruikit";
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Planner");
                 String shareMessage = "\nPlanner\n";
-                shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=com.lawlett.taskmanageruikit";
+                shareMessage = shareMessage + applicationLink;
                 shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.choose_app)));
             } catch (Exception e) {
@@ -95,48 +95,38 @@ public class SettingsActivity extends AppCompatActivity {
 
         achievement_layout.setOnClickListener(v -> startActivity(new Intent(this, AchievementActivity.class)));
 
-        clear_password_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences sPref = getSharedPreferences("qst", 0);
-                String qst = sPref.getString(PassCodeActivity.SAVED_QST, null);
-                String answer = sPref.getString(PassCodeActivity.SAVED_ANSWER, null);
-                EditText answerInput = new EditText(SettingsActivity.this);
-                AlertDialog.Builder dialog = new AlertDialog.Builder(SettingsActivity.this);
-                String pass = PasswordPreference.getInstance(SettingsActivity.this).returnPassword();
-                if (pass != "" && answer == null) {
-                    dialog.setTitle(R.string.are_you_sure).setMessage(R.string.clear_password)
-                            .setNegativeButton(R.string.no, (dialog1, which) ->
-                                    dialog1.cancel())
-                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    PasswordPreference.getInstance(SettingsActivity.this).clearPassword();
-                                    PasswordDonePreference.getInstance(SettingsActivity.this).clearSettings();
-                                    Toast.makeText(SettingsActivity.this, R.string.data_of_password_delete, Toast.LENGTH_SHORT).show();
-                                }
-                            }).show();
-                } else if (answer != null && pass != null) {
-                    dialog.setView(answerInput);
-                    dialog.setTitle(R.string.enter_secret_word)
-                            .setNegativeButton(R.string.no, (dialog1, which) ->
-                                    dialog1.cancel())
-                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (answerInput.getText().toString().equals(answer)) {
-                                        sPref.edit().clear().apply();
-                                        PasswordPreference.getInstance(SettingsActivity.this).clearPassword();
-                                        PasswordDonePreference.getInstance(SettingsActivity.this).clearSettings();
-                                        Toast.makeText(SettingsActivity.this, R.string.data_of_password_delete, Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(SettingsActivity.this, R.string.invalid_entered, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }).show();
-                } else if (pass == "") {
-                    Toast.makeText(SettingsActivity.this, R.string.add_password, Toast.LENGTH_SHORT).show();
-                }
+        clear_password_layout.setOnClickListener(v -> {
+            SharedPreferences sPref = getSharedPreferences("qst", 0);
+            String answer = sPref.getString(PassCodeActivity.SAVED_ANSWER, null);
+            EditText answerInput = new EditText(SettingsActivity.this);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(SettingsActivity.this);
+            String pass = PasswordPreference.getInstance(SettingsActivity.this).returnPassword();
+            if (!pass.equals("") && answer == null) {
+                dialog.setTitle(R.string.are_you_sure).setMessage(R.string.clear_password)
+                        .setNegativeButton(R.string.no, (dialog1, which) ->
+                                dialog1.cancel())
+                        .setPositiveButton(R.string.yes, (dialog12, which) -> {
+                            PasswordPreference.getInstance(SettingsActivity.this).clearPassword();
+                            PasswordDonePreference.getInstance(SettingsActivity.this).clearSettings();
+                            Toast.makeText(SettingsActivity.this, R.string.data_of_password_delete, Toast.LENGTH_SHORT).show();
+                        }).show();
+            } else if (answer != null && pass != null) {
+                dialog.setView(answerInput);
+                dialog.setTitle(R.string.enter_secret_word)
+                        .setNegativeButton(R.string.no, (dialog1, which) ->
+                                dialog1.cancel())
+                        .setPositiveButton(R.string.yes, (dialog14, which) -> {
+                            if (answerInput.getText().toString().equals(answer)) {
+                                sPref.edit().clear().apply();
+                                PasswordPreference.getInstance(SettingsActivity.this).clearPassword();
+                                PasswordDonePreference.getInstance(SettingsActivity.this).clearSettings();
+                                Toast.makeText(SettingsActivity.this, R.string.data_of_password_delete, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(SettingsActivity.this, R.string.invalid_entered, Toast.LENGTH_SHORT).show();
+                            }
+                        }).show();
+            } else if (pass.equals("")) {
+                Toast.makeText(SettingsActivity.this, R.string.add_password, Toast.LENGTH_SHORT).show();
             }
         });
         clearMinutes_layout.setOnClickListener(v -> {
@@ -144,12 +134,9 @@ public class SettingsActivity extends AppCompatActivity {
             dialog.setTitle(R.string.are_you_sure).setMessage(R.string.clear_minute)
                     .setNegativeButton(R.string.no, (dialog1, which) ->
                             dialog1.cancel())
-                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            TimingSizePreference.getInstance(SettingsActivity.this).clearSettings();
-                            Toast.makeText(SettingsActivity.this, R.string.data_about_minutes_clear, Toast.LENGTH_SHORT).show();
-                        }
+                    .setPositiveButton(R.string.yes, (dialog13, which) -> {
+                        TimingSizePreference.getInstance(SettingsActivity.this).clearSettings();
+                        Toast.makeText(SettingsActivity.this, R.string.data_about_minutes_clear, Toast.LENGTH_SHORT).show();
                     }).show();
         });
 
@@ -170,12 +157,6 @@ public class SettingsActivity extends AppCompatActivity {
             imageTheme.setImageResource(R.drawable.ic_nights);
         }
     }
-
-    private void setNavBarColor() {
-        if (Build.VERSION.SDK_INT >= 21)
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.statusBarC));
-    }
-
     private void initViews() {
         clear_password_layout = findViewById(R.id.first_layout);
         clearMinutes_layout = findViewById(R.id.second_layout);
@@ -184,19 +165,18 @@ public class SettingsActivity extends AppCompatActivity {
         imageTheme = findViewById(R.id.image_day_night);
         language_tv = findViewById(R.id.four_layout);
         share_layout = findViewById(R.id.five_layout);
-        imageSettings = findViewById(R.id.image_settings);
         reviews = findViewById(R.id.six_layout);
-        sign_in=findViewById(R.id.seven_layout);
+        sign_in = findViewById(R.id.seven_layout);
         achievement_layout = findViewById(R.id.achievement_layout);
         magick = findViewById(R.id.btn_magick);
         listView = findViewById(R.id.listView);
     }
 
     private void checkUser() {
-        FirebaseAuth mAuth= FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-           sign_in.setVisibility(View.GONE);
+            sign_in.setVisibility(View.GONE);
         }
     }
 
@@ -204,30 +184,27 @@ public class SettingsActivity extends AppCompatActivity {
         final String[] listItems = {"English", "Русский", "Кыргызча", "Português", "한국어", "Український"};
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(SettingsActivity.this);
         mBuilder.setTitle(R.string.choose_language);
-        mBuilder.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int i) {
-                if (i == 0) {
-                    setLocale("en");
-                    startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
-                } else if (i == 1) {
-                    setLocale("ru");
-                    startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
-                } else if (i == 2) {
-                    setLocale("ky");
-                    startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
-                } else if (i == 3) {
-                    setLocale("pt");
-                    startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
-                } else if (i == 4) {
-                    setLocale("ko");
-                    startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
-                } else if (i == 5) {
-                    setLocale("uk");
-                    startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
-                }
-                dialog.dismiss();
+        mBuilder.setSingleChoiceItems(listItems, -1, (dialog, i) -> {
+            if (i == 0) {
+                setLocale("en");
+                startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
+            } else if (i == 1) {
+                setLocale("ru");
+                startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
+            } else if (i == 2) {
+                setLocale("ky");
+                startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
+            } else if (i == 3) {
+                setLocale("pt");
+                startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
+            } else if (i == 4) {
+                setLocale("ko");
+                startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
+            } else if (i == 5) {
+                setLocale("uk");
+                startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
             }
+            dialog.dismiss();
         });
         AlertDialog mDialog = mBuilder.create();
         mDialog.show();
@@ -257,21 +234,16 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         CameraManager cameraManager = (CameraManager) getSystemService(CAMERA_SERVICE);
-
         if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
-
             ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             listView.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, matches));
-
             if (matches.contains(getString(R.string.patronum))) {
                 Random random = new Random();
-                String animals[] = {getString(R.string.fox), getString(R.string.deer), getString(R.string.bull), getString(R.string.dog), getString(R.string.cat), getString(R.string.rat), getString(R.string.crane), getString(R.string.hippo), getString(R.string.giraffe), getString(R.string.lion), getString(R.string.zebra)};
+                String[] animals = {getString(R.string.fox), getString(R.string.deer), getString(R.string.bull), getString(R.string.dog), getString(R.string.cat), getString(R.string.rat), getString(R.string.crane), getString(R.string.hippo), getString(R.string.giraffe), getString(R.string.lion), getString(R.string.zebra)};
                 int a = random.nextInt(animals.length);
                 Toast.makeText(this, getString(R.string.your_patronus) + animals[a], Toast.LENGTH_SHORT).show();
             }
-
             if (matches.contains(getString(R.string.lumos))) {
                 if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                     if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {

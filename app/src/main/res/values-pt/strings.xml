@@ -125,7 +125,7 @@
     <string name="help_timing_add">Para adicionar uma nova tarefa, clique em +</string>
     <string name="changing_theme">Mudar tema</string>
     <string name="board_theme_desc">Você pode escolher um tema aqui clicando em uma das opções ou ir para Configurações</string>
-    <string name="are_you_sure_that">Tem certeza de que deseja excluir todas as entradas?</string>
+    <string name="are_you_sure_delete_all">Tem certeza de que deseja excluir todas as entradas?</string>
     <string name="fox">Uma raposa</string>
     <string name="deer">Corça</string>
     <string name="bull">Touro</string>
@@ -165,4 +165,5 @@
     <string name="timer_title">Cronômetro</string>
     <string name="stopwatch_title">Cronômetro</string>
     <string name="intro">Introdução</string>
+    <string name="you_sure_delete">Вы уверены что хотите удалить запись?</string>
 </resources>

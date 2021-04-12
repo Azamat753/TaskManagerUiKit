@@ -13,7 +13,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -73,7 +72,6 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         setContentView(R.layout.activity_work);
         init();
         initClickers();
-        App.setNavBarColor(this);
         initToolbar();
         initListFromRoom();
         initItemTouchHelper();
@@ -130,7 +128,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.deletion(WorkActivity.this, new PlannerDialog.PlannerDialogClick() {
+                PlannerDialog.showPlannerDialog(WorkActivity.this, getString(R.string.you_sure_delete),new PlannerDialog.PlannerDialogClick() {
                     @Override
                     public void clickOnYes() {
                         pos = viewHolder.getAdapterPosition();
@@ -255,12 +253,11 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         imageAdd = findViewById(R.id.add_task_work);
         imageMic = findViewById(R.id.mic_task_done);
         workBack = findViewById(R.id.personal_back);
-        animationAlpha = AnimationUtils.loadAnimation(this, R.anim.alpha);
     }
 
     public void addWorkTask(View view) {
         recordDataRoom();
-        FireStoreTools.writeOrUpdateDataByFireStore(workModel.getWorkTask(), getString(R.string.work), db, workModel);
+        FireStoreTools.writeOrUpdateDataByFireStore(workModel.getWorkTask(), collectionName+"-"+"("+user.getDisplayName()+")"+ user.getUid(), db, workModel);
     }
 
     public void recordDataRoom() {

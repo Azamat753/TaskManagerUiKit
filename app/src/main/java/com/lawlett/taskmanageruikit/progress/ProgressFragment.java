@@ -1,4 +1,4 @@
-package com.lawlett.taskmanageruikit.dashboard;
+package com.lawlett.taskmanageruikit.progress;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
@@ -43,47 +43,78 @@ import java.util.Objects;
 /**
  * A simple {@link Fragment} subclass.
  */
-//Statistics
-public class DashboardFragment extends Fragment {
-    LinearLayout firstCon, secondCon, thirdCon;
-    ImageView btnChange;
-    TextView toolbar_title;
-    TextView plans_amount, todo_amount, event_amount, allTask_amount,
-            complete_task_amount, todo_percent, personalPercent, workPercent, meetPercent, homePercent, privatePercent, timing_task_amount, timing_minute_amount,
-    addPercent, addTitle, homeTitle, personTitle, workTitle, meetTitle;
-    ProgressBar allTaskProgress, personalProgress, workProgress, meetProgress, homeProgress, privateProgress,
-    addProgress;
-    int personalDoneAmount, workDoneAmount, meetDoneAmount, homeDoneAmount, privateDoneAmount, plansAmount, doneAmount,
-            personalAmount, workAmount, meetAmount, homeAmount, privateAmount, todoAmount, eventAmount, allTaskAmount,
-    addDoneAmount, addAmount;
-
-    int todoPercent, personalPercentAmount, workPercentAmount, meetPercentAmount, homePercentAmount,
-            privatePercentAmount, timingTaskAmountInt, timingMinuteAmountInt,
-    addPercentAmount;
+public class ProgressFragment extends Fragment {
+    private ImageView btnChange;
+    private TextView toolbar_title;
+    private TextView plans_amount, todo_amount, event_amount, allTask_amount,
+            complete_task_amount, todo_percent, personalPercent, workPercent,
+            meetPercent, homePercent, privatePercent, timing_task_amount, timing_minute_amount,
+            addPercent, addTitle, homeTitle, personTitle, workTitle, meetTitle;
+    private ProgressBar allTaskProgress, personalProgress, workProgress, meetProgress,
+            homeProgress, privateProgress, addProgress;
+    private int personalDoneAmount, workDoneAmount, meetDoneAmount, homeDoneAmount, privateDoneAmount,
+            plansAmount, doneAmount, personalAmount, workAmount, meetAmount, homeAmount, privateAmount,
+            todoAmount, eventAmount, allTaskAmount, addDoneAmount, addAmount;
+    private int todoPercent, personalPercentAmount, workPercentAmount, meetPercentAmount, homePercentAmount,
+            privatePercentAmount, timingTaskAmountInt, timingMinuteAmountInt, addPercentAmount;
     private List<TimingModel> list;
-
-    public DashboardFragment() {
-        // Required empty public constructor
-    }
+    private LinearLayout firstCon, secondCon, thirdCon;
+    private BottomNavigationView bottomNavigationView;
+    Calendar c = Calendar.getInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
-        list = new ArrayList<>();
-
-        App.getDataBase().timingDao().getAllLive().observe(this, timingModels -> {
-            if (timingModels != null)
-                list.clear();
-            list.addAll(timingModels);
-        });
-        return root;
+        return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initViews(view);
+        initClickers();
+        initRoom();
+        getDataFromBD();
+        getAllTasks();
+        getTasksDoneAmount();
+        countUpPercent();
+        setShow();
+        checkNewCategory();
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void initClickers() {
+        final int year = c.get(Calendar.YEAR);
+        String[] monthName = {getString(R.string.january), getString(R.string.february),
+                getString(R.string.march), getString(R.string.april), getString(R.string.may),
+                getString(R.string.june), getString(R.string.july),
+                getString(R.string.august), getString(R.string.september), getString(R.string.october),
+                getString(R.string.november), getString(R.string.december)};
+        final String month = monthName[c.get(Calendar.MONTH)];
+
+        firstCon.setOnClickListener(v -> {
+            changeFragment(new CalendarEventsFragment());
+            btnChange.setVisibility(View.GONE);
+            toolbar_title.setText(month + " " + year);
+            bottomNavigationView.selectTab(3);
+        });
+
+        secondCon.setOnClickListener(v -> {
+            changeFragment(new TasksFragment());
+            btnChange.setVisibility(View.GONE);
+            toolbar_title.setText(R.string.tasks);
+            bottomNavigationView.selectTab(1);
+        });
+        thirdCon.setOnClickListener(v -> {
+            changeFragment(new IdeasFragment());
+            btnChange.setVisibility(View.VISIBLE);
+            toolbar_title.setText(R.string.ideas);
+            bottomNavigationView.selectTab(4);
+        });
+    }
+
+    private void initViews(View view) {
         timing_task_amount = view.findViewById(R.id.timing_task_amount);
         timing_minute_amount = view.findViewById(R.id.timing_minute_amount);
         plans_amount = view.findViewById(R.id.plans_amount);
@@ -110,60 +141,21 @@ public class DashboardFragment extends Fragment {
         personTitle = view.findViewById(R.id.personal_pr_title);
         workTitle = view.findViewById(R.id.work_pr_title);
         meetTitle = view.findViewById(R.id.meetTask_pr_title);
-
-        btnChange =Objects.requireNonNull(getActivity()).findViewById(R.id.tool_btn_grid);
-        toolbar_title = Objects.requireNonNull(getActivity()).findViewById(R.id.toolbar_title);
-
-        BottomNavigationView bottomNavigationView = Objects.requireNonNull(getActivity()).findViewById(R.id.bottomNavigation);
-
-        Calendar c = Calendar.getInstance();
-        final int year = c.get(Calendar.YEAR);
-        String[] monthName = {getString(R.string.january), getString(R.string.february), getString(R.string.march), getString(R.string.april), getString(R.string.may), getString(R.string.june), getString(R.string.july),
-                getString(R.string.august), getString(R.string.september), getString(R.string.october), getString(R.string.november), getString(R.string.december)};
-
-        final String month = monthName[c.get(Calendar.MONTH)];
-
+        btnChange = view.findViewById(R.id.tool_btn_grid);
+        toolbar_title = view.findViewById(R.id.toolbar_title);
         firstCon = view.findViewById(R.id.first_con);
         secondCon = view.findViewById(R.id.second_con);
         thirdCon = view.findViewById(R.id.third_con);
+        bottomNavigationView = view.findViewById(R.id.bottomNavigation);
+    }
 
-        firstCon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeFragment(new CalendarEventsFragment());
-                btnChange.setVisibility(View.GONE);
-                toolbar_title.setText(month + " " + year);
-                bottomNavigationView.selectTab(3);
-            }
+    private void initRoom() {
+        list = new ArrayList<>();
+        App.getDataBase().timingDao().getAllLive().observe(this, timingModels -> {
+            if (timingModels != null)
+                list.clear();
+            list.addAll(timingModels);
         });
-
-        secondCon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeFragment(new TasksFragment());
-                btnChange.setVisibility(View.GONE);
-                toolbar_title.setText(R.string.tasks);
-                bottomNavigationView.selectTab(1);
-            }
-        });
-        thirdCon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeFragment(new IdeasFragment());
-                btnChange.setVisibility(View.VISIBLE);
-                toolbar_title.setText(R.string.ideas);
-                bottomNavigationView.selectTab(4);
-            }
-        });
-
-
-        getDataFromBD();
-        getAllTasks();
-        getTasksDoneAmount();
-        countUpPercent();
-        setShow();
-        checkNewCategory();
-
     }
 
     public void countUpPercent() {
@@ -239,13 +231,11 @@ public class DashboardFragment extends Fragment {
     public void setShow() {
         timing_task_amount.setText(String.valueOf(timingTaskAmountInt));
         timing_minute_amount.setText(String.valueOf(timingMinuteAmountInt));
-
         plans_amount.setText(String.valueOf(plansAmount)); //Отображеие кол-во идей
         todo_amount.setText(String.valueOf(todoAmount));  //Отображение кол-во Задач
         event_amount.setText(String.valueOf(eventAmount)); //Отображение кол-во Событий
         complete_task_amount.setText(String.valueOf(doneAmount)); //Отображение кол-во Завершённых Задач
         allTask_amount.setText(String.valueOf(allTaskAmount)); //Отображение кол-во Всех Задач
-
         todo_percent.setText(todoPercent + "%");
         personalPercent.setText(personalPercentAmount + "%");
         workPercent.setText(workPercentAmount + "%");
@@ -253,7 +243,6 @@ public class DashboardFragment extends Fragment {
         homePercent.setText(homePercentAmount + "%");
         addPercent.setText(addPercentAmount + "%");
         privatePercent.setText(privatePercentAmount + "%");
-
         boolean booleanValue = ThemePreference.getInstance(getContext()).isTheme();
         allTaskProgress.setProgress(doneAmount);
         if (!booleanValue) {
@@ -283,7 +272,7 @@ public class DashboardFragment extends Fragment {
             privateProgress.setProgress(privateDoneAmount);
             privateProgress.setMax(privateAmount);
             privateProgress.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
-        }else {
+        } else {
             personalProgress.setProgress(personalDoneAmount);
             workProgress.setProgress(workDoneAmount);
             meetProgress.setProgress(meetDoneAmount);
@@ -309,6 +298,7 @@ public class DashboardFragment extends Fragment {
 
         }
     }
+
     public void changeFragment(Fragment fragment) {
         FragmentManager manager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
@@ -316,28 +306,28 @@ public class DashboardFragment extends Fragment {
         transaction.commit();
     }
 
-    public void checkNewCategory(){
+    public void checkNewCategory() {
         TaskDialogPreference.init(getContext());
-        if(!TaskDialogPreference.getTitle().isEmpty()){
+        if (!TaskDialogPreference.getTitle().isEmpty()) {
             addTitle.setVisibility(View.VISIBLE);
             addProgress.setVisibility(View.VISIBLE);
             addPercent.setVisibility(View.VISIBLE);
             addTitle.setText(TaskDialogPreference.getTitle());
-        }else {
+        } else {
             addTitle.setVisibility(View.GONE);
             addProgress.setVisibility(View.GONE);
             addPercent.setVisibility(View.GONE);
         }
-        if(!TaskDialogPreference.getHomeTitle().isEmpty()){
+        if (!TaskDialogPreference.getHomeTitle().isEmpty()) {
             homeTitle.setText(TaskDialogPreference.getHomeTitle());
         }
-        if(!TaskDialogPreference.getPersonTitle().isEmpty()){
+        if (!TaskDialogPreference.getPersonTitle().isEmpty()) {
             personTitle.setText(TaskDialogPreference.getPersonTitle());
         }
-        if(!TaskDialogPreference.getWorkTitle().isEmpty()){
+        if (!TaskDialogPreference.getWorkTitle().isEmpty()) {
             workTitle.setText(TaskDialogPreference.getWorkTitle());
         }
-        if(!TaskDialogPreference.getMeetTitle().isEmpty()){
+        if (!TaskDialogPreference.getMeetTitle().isEmpty()) {
             meetTitle.setText(TaskDialogPreference.getMeetTitle());
         }
     }

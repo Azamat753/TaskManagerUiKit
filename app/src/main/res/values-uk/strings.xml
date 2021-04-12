@@ -126,7 +126,7 @@
     <string name="help_timing_add">Для додавання нового завдання натисніть на +</string>
     <string name="changing_theme">Зміна теми</string>
     <string name="board_theme_desc">Ви можете вибрати тему тут, натисканням на один з варіантів, або перейти в Налаштування</string>
-    <string name="are_you_sure_that">Ви дійсно хочете видалити всі записи?</string>
+    <string name="are_you_sure_delete_all">Ви дійсно хочете видалити всі записи?</string>
     <string name="fox">лисиця</string>
     <string name="deer">Лань</string>
     <string name="bull">Бик</string>
@@ -165,4 +165,5 @@
     <string name="timer_title">Таймер</string>
     <string name="stopwatch_title">Секундомір</string>
     <string name="intro">Iнтро</string>
+    <string name="you_sure_delete">Вы уверены что хотите удалить запись?</string>
 </resources>

@@ -49,51 +49,23 @@ public class StopwatchActivity extends AppCompatActivity {
     String stopwatchTime;
 
     private NotificationManagerCompat notificationManager;
+
     @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stopwatch);
-
-        if (Build.VERSION.SDK_INT >= 21)
-            getWindow().setNavigationBarColor(R.color.timing_color);
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.setStatusBarColor(ContextCompat.getColor(this,R.color.timing_color));
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.timing_color));
+        initViews();
+        initAnimations();
+        initTypeses();
+        initClickers();
+    }
 
-        notificationManager = NotificationManagerCompat.from(this);
-
-        phoneImage = findViewById(R.id.image_phone);
-        btnstart = findViewById(R.id.btnstart);
-        applyClick = findViewById(R.id.stopwatch_task_apply);
-        btnstop = findViewById(R.id.btnstop);
-        icanchor = findViewById(R.id.icanchor);
-        taskEdit = findViewById(R.id.stopwatch_task_edit);
-        timerHere = findViewById(R.id.timerHere);
-        imageConstrain = findViewById(R.id.imageconst);
-        stopwatchConstraint = findViewById(R.id.stopWatchConst);
-        atg = AnimationUtils.loadAnimation(this, R.anim.atg);
-        btgone = AnimationUtils.loadAnimation(this, R.anim.btgone);
-        btgtwo = AnimationUtils.loadAnimation(this, R.anim.btgtwo);
-        phoneImage.startAnimation(atg);
-        btnstart.startAnimation(btgone);
-        applyClick.startAnimation(btgtwo);
-        taskEdit.startAnimation(btgone);
-        btnstop.setAlpha(0);
-
-
-        roundingalone = AnimationUtils.loadAnimation(this, R.anim.roundingalone);
-
-        Typeface MMedium = Typeface.createFromAsset(getAssets(), "MMedium.ttf");
-        Typeface MLight = Typeface.createFromAsset(getAssets(), "MLight.ttf");
-        Typeface MRegular = Typeface.createFromAsset(getAssets(), "MRegular.ttf");
-
-        btnstart.setTypeface(MMedium);
-        applyClick.setTypeface(MLight);
-        taskEdit.setTypeface(MRegular);
-
-
+    private void initClickers() {
         applyClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,9 +79,10 @@ public class StopwatchActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-
                 showCustomNotification();
-
+                playAnimation();
+            }
+            private void playAnimation() {
                 icanchor.startAnimation(roundingalone);
                 btnstop.animate().alpha(1).translationY(-80).setDuration(300).start();
                 btnstart.animate().alpha(0).setDuration(300).start();
@@ -117,17 +90,47 @@ public class StopwatchActivity extends AppCompatActivity {
                 btnstart.setVisibility(View.GONE);
                 timerHere.setBase(SystemClock.elapsedRealtime());
                 timerHere.start();
+            }
+        });
 
-            }
+        btnstop.setOnClickListener(v -> {
+            showElapsedTime();
+            dataRoom();
+            notificationManager.cancel(1);
         });
-        btnstop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showElapsedTime();
-                dataRoom();
-                notificationManager.cancel(1);
-            }
-        });
+    }
+
+    private void initTypeses() {
+        Typeface MMedium = Typeface.createFromAsset(getAssets(), "MMedium.ttf");
+        Typeface MLight = Typeface.createFromAsset(getAssets(), "MLight.ttf");
+        Typeface MRegular = Typeface.createFromAsset(getAssets(), "MRegular.ttf");
+        btnstart.setTypeface(MMedium);
+        applyClick.setTypeface(MLight);
+        taskEdit.setTypeface(MRegular);
+    }
+    private void initAnimations() {
+        atg = AnimationUtils.loadAnimation(this, R.anim.atg);
+        btgone = AnimationUtils.loadAnimation(this, R.anim.btgone);
+        btgtwo = AnimationUtils.loadAnimation(this, R.anim.btgtwo);
+        phoneImage.startAnimation(atg);
+        btnstart.startAnimation(btgone);
+        applyClick.startAnimation(btgtwo);
+        taskEdit.startAnimation(btgone);
+        btnstop.setAlpha(0);
+        roundingalone = AnimationUtils.loadAnimation(this, R.anim.roundingalone);
+    }
+
+    private void initViews() {
+        notificationManager = NotificationManagerCompat.from(this);
+        phoneImage = findViewById(R.id.image_phone);
+        btnstart = findViewById(R.id.btnstart);
+        applyClick = findViewById(R.id.stopwatch_task_apply);
+        btnstop = findViewById(R.id.btnstop);
+        icanchor = findViewById(R.id.icanchor);
+        taskEdit = findViewById(R.id.stopwatch_task_edit);
+        timerHere = findViewById(R.id.timerHere);
+        imageConstrain = findViewById(R.id.imageconst);
+        stopwatchConstraint = findViewById(R.id.stopWatchConst);
     }
 
     private void showElapsedTime() {
@@ -152,14 +155,9 @@ public class StopwatchActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void showCustomNotification() {
-
         RemoteViews expandedView = new RemoteViews(getPackageName(),
                 R.layout.notification_expanded_stopwatch);
-
-
         expandedView.setChronometer(R.id.timerHere_expanded, SystemClock.elapsedRealtime(), null, true);
-
-
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.app_foreground)
                 .setCustomBigContentView(expandedView)
@@ -167,8 +165,6 @@ public class StopwatchActivity extends AppCompatActivity {
                 .setContentText(getString(R.string.go_count))
                 .setColor(getColor(R.color.myWhite))
                 .build();
-
-//        notification.flags=Notification.FLAG_ONGOING_EVENT;
         notificationManager.notify(1, notification);
     }
 
@@ -177,6 +173,5 @@ public class StopwatchActivity extends AppCompatActivity {
         super.onDestroy();
         showElapsedTime();
         notificationManager.cancel(1);
-
     }
 }

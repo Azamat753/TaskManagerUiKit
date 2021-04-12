@@ -1,6 +1,5 @@
 package com.lawlett.taskmanageruikit.utils;
 
-import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,7 +9,6 @@ import android.os.Build;
 import androidx.multidex.MultiDex;
 import androidx.room.Room;
 
-import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.room.AppDataBase;
 
 import java.util.ArrayList;
@@ -40,7 +38,6 @@ public class App extends Application {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
-
     public void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
@@ -56,13 +53,6 @@ public class App extends Application {
             notificationChannels.add(channel);
             notificationChannels.add(channel2);
             manager.createNotificationChannels(notificationChannels);
-
         }
     }
-    public static void setNavBarColor(Activity activity){
-        if (Build.VERSION.SDK_INT >= 21)
-            activity.getWindow().setNavigationBarColor(activity.getResources().getColor(R.color.statusBarC));
-    }
-
-
 }

@@ -1,9 +1,9 @@
 package com.lawlett.taskmanageruikit.main;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -13,21 +13,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.calendarEvents.CalendarEventsFragment;
-import com.lawlett.taskmanageruikit.dashboard.DashboardFragment;
 import com.lawlett.taskmanageruikit.help.HelpActivity;
 import com.lawlett.taskmanageruikit.idea.IdeasFragment;
 import com.lawlett.taskmanageruikit.idea.data.model.QuickModel;
 import com.lawlett.taskmanageruikit.idea.recycler.QuickAdapter;
+import com.lawlett.taskmanageruikit.progress.ProgressFragment;
 import com.lawlett.taskmanageruikit.service.MessageService;
 import com.lawlett.taskmanageruikit.settings.SettingsActivity;
 import com.lawlett.taskmanageruikit.tasks.TasksFragment;
@@ -35,10 +33,10 @@ import com.lawlett.taskmanageruikit.timing.fragment.TimingFragment;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.LanguagePreference;
 import com.lawlett.taskmanageruikit.utils.PasswordPassDonePreference;
+import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 import com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationItem;
 import com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationView;
-import com.luseen.luseenbottomnavigation.BottomNavigation.OnBottomNavigationItemClickListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,13 +44,11 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
-    TextView toolbar_title;
-    ImageView settings_view;
-    ImageView btnGrid, btnHelp;
+    private TextView toolbar_title;
+    private ImageView settings_view;
+    private ImageView btnGrid, btnHelp;
     private List<QuickModel> list;
-    QuickAdapter adapter;
-    AlarmManager mAlarm;
-    long time;
+    private QuickAdapter adapter;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -60,33 +56,30 @@ public class MainActivity extends AppCompatActivity {
         loadLocale();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        App.setNavBarColor(this);
         initBottomNavigation();
         checkInstance();
         initViews();
+        initClickers();
         initListFromRoom();
+    }
 
-
+    private void initClickers() {
         settings_view.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
         btnHelp.setOnClickListener(v -> {
             TaskDialogPreference.saveShown();
             startActivity(new Intent(MainActivity.this, HelpActivity.class));
             finish();
         });
-
     }
 
     private void initListFromRoom() {
         list = new ArrayList<>();
         adapter = new QuickAdapter(list, null, this);
         list = App.getDataBase().taskDao().getAll();
-        App.getDataBase().taskDao().getAllLive().observe(this, new Observer<List<QuickModel>>() {
-            @Override
-            public void onChanged(List<QuickModel> tasks) {
-                list.clear();
-                list.addAll(tasks);
-                adapter.notifyDataSetChanged();
-            }
+        App.getDataBase().taskDao().getAllLive().observe(this, tasks -> {
+            list.clear();
+            list.addAll(tasks);
+            adapter.notifyDataSetChanged();
         });
     }
 
@@ -99,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkInstance() {
         if (getIntent().getStringExtra("setting") == null) {
-            changeFragment(new DashboardFragment());
+            changeFragment(new ProgressFragment());
         }
         if (getIntent().getStringExtra("help") != null) {
             changeFragment(new TasksFragment());
@@ -118,13 +111,11 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra(MessageService.TITLE, "Planner");
         i.putExtra(MessageService.TEXT, getString(R.string.new_aim));
         PendingIntent pi = PendingIntent.getBroadcast(this.getApplicationContext(), 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-        mAlarm = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-
+        AlarmManager mAlarm = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.add(Calendar.HOUR, 24);
-        time = calendar.getTimeInMillis();
-
+        long time = calendar.getTimeInMillis();
         mAlarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pi);
     }
 
@@ -135,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    @SuppressLint("SetTextI18n")
     public void initBottomNavigation() {
         Calendar c = Calendar.getInstance();
         final int year = c.get(Calendar.YEAR);
@@ -162,41 +154,38 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.addTab(bottomNavigationItem2);
         bottomNavigationView.addTab(bottomNavigationItem3);
 
-        bottomNavigationView.setOnBottomNavigationItemClickListener(new OnBottomNavigationItemClickListener() {
-            @Override
-            public void onNavigationItemClick(int index) {
-                switch (index) {
-                    case 0:
-                        changeFragment(new DashboardFragment());
-                        toolbar_title.setText(R.string.progress);
-                        btnGrid.setVisibility(View.GONE);
-                        btnHelp.setVisibility(View.GONE);
-                        break;
-                    case 1:
-                        changeFragment(new TasksFragment());
-                        toolbar_title.setText(R.string.tasks);
-                        btnGrid.setVisibility(View.GONE);
-                        btnHelp.setVisibility(View.VISIBLE);
-                        break;
-                    case 2:
-                        changeFragment(new TimingFragment());
-                        toolbar_title.setText(R.string.timing);
-                        btnGrid.setVisibility(View.GONE);
-                        btnHelp.setVisibility(View.GONE);
-                        break;
-                    case 3:
-                        changeFragment(new CalendarEventsFragment());
-                        toolbar_title.setText(month + " " + year);
-                        btnGrid.setVisibility(View.GONE);
-                        btnHelp.setVisibility(View.GONE);
-                        break;
-                    case 4:
-                        changeFragment(new IdeasFragment());
-                        toolbar_title.setText(R.string.ideas);
-                        btnGrid.setVisibility(View.VISIBLE);
-                        btnHelp.setVisibility(View.GONE);
-                        break;
-                }
+        bottomNavigationView.setOnBottomNavigationItemClickListener(index -> {
+            switch (index) {
+                case 0:
+                    changeFragment(new ProgressFragment());
+                    toolbar_title.setText(R.string.progress);
+                    btnGrid.setVisibility(View.GONE);
+                    btnHelp.setVisibility(View.GONE);
+                    break;
+                case 1:
+                    changeFragment(new TasksFragment());
+                    toolbar_title.setText(R.string.tasks);
+                    btnGrid.setVisibility(View.GONE);
+                    btnHelp.setVisibility(View.VISIBLE);
+                    break;
+                case 2:
+                    changeFragment(new TimingFragment());
+                    toolbar_title.setText(R.string.timing);
+                    btnGrid.setVisibility(View.GONE);
+                    btnHelp.setVisibility(View.GONE);
+                    break;
+                case 3:
+                    changeFragment(new CalendarEventsFragment());
+                    toolbar_title.setText(month + " " + year);
+                    btnGrid.setVisibility(View.GONE);
+                    btnHelp.setVisibility(View.GONE);
+                    break;
+                case 4:
+                    changeFragment(new IdeasFragment());
+                    toolbar_title.setText(R.string.ideas);
+                    btnGrid.setVisibility(View.VISIBLE);
+                    btnHelp.setVisibility(View.GONE);
+                    break;
             }
         });
     }
@@ -210,16 +199,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-        dialog.setTitle(R.string.are_you_sure).setMessage(R.string.complete_work)
-                .setNegativeButton(R.string.no, (dialog1, which) ->
-                        dialog1.cancel())
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finishAffinity();
-                    }
-                }).show();
+        PlannerDialog.showPlannerDialog(this,getString(R.string.are_you_sure), this::finishAffinity);
     }
 
     private void setLocale(String lang) {

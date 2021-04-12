@@ -125,7 +125,7 @@
     <string name="help_timing_add">Жаңы тапшырма кошуу үчүн, + басыңыз</string>
     <string name="changing_theme">Теманы өзгөртүү</string>
     <string name="board_theme_desc">Теманы опциялардын бирине басышы менен таңдай аласыз же жөндөөгө кириңиз</string>
-    <string name="are_you_sure_that">Сиз баардык жазууларды өчүргүнүз келеби?</string>
+    <string name="are_you_sure_delete_all">Сиз баардык жазууларды өчүргүнүз келеби?</string>
     <string name="done">Бүттү</string>
     <string name="help_bubble">Кеңештерди көрүү үчүн чыкылдатыңыз</string>
     <string name="timer_text">Таймерди колдонсоңуз болот</string>
@@ -165,4 +165,5 @@
     <string name="write_reviews">Пикир жазуу</string>
     <string name="important_message">Маанилүү билдирүү!</string>
     <string name="you_got">Сиз наамды алдыңыз: </string>
+    <string name="you_sure_delete">Вы уверены что хотите удалить запись?</string>
 </resources>

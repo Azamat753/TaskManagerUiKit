@@ -1,8 +1,6 @@
 package com.lawlett.taskmanageruikit.timing.adapter;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +16,9 @@ import java.util.List;
 
 public class TimingAdapter extends RecyclerView.Adapter<TimingAdapter.TimingViewHolder> {
     List<TimingModel> list;
-    Context context;
 
-    public TimingAdapter(List<TimingModel> list, Context context) {
+    public TimingAdapter(List<TimingModel> list) {
         this.list = list;
-        this.context = context;
     }
 
     @NonNull
@@ -34,7 +30,7 @@ public class TimingAdapter extends RecyclerView.Adapter<TimingAdapter.TimingView
 
     @Override
     public void onBindViewHolder(@NonNull TimingViewHolder holder, int position) {
-        holder.onBind(list.get(position), context);
+        holder.onBind(list.get(position));
 
     }
 
@@ -54,21 +50,16 @@ public class TimingAdapter extends RecyclerView.Adapter<TimingAdapter.TimingView
         }
 
         @SuppressLint("SetTextI18n")
-        public void onBind(TimingModel timingModel, Context context) {
-            Typeface mLight = Typeface.createFromAsset(context.getAssets(), "MLight.ttf");
-
+        public void onBind(TimingModel timingModel) {
             if (timingModel.getTimerTitle() == null) {
                 taskTitle.setText(timingModel.getStopwatchTitle());
-                taskMinute.setText(timingModel.getStopwatchMinutes() + " " + context.getString(R.string.minut));
+                taskMinute.setText(timingModel.getStopwatchMinutes() + " " + taskMinute.getContext().getString(R.string.minut));
                 taskDate.setText(timingModel.getStopwatchDay());
             } else {
                 taskTitle.setText(timingModel.getTimerTitle());
-                taskMinute.setText(timingModel.getTimerMinutes() + " " +  context.getString(R.string.minut));
+                taskMinute.setText(timingModel.getTimerMinutes() + " " + taskMinute.getContext().getString(R.string.minut));
                 taskDate.setText(timingModel.getTimerDay());
             }
-            taskTitle.setTypeface(mLight);
-            taskMinute.setTypeface(mLight);
-            taskDate.setTypeface(mLight);
         }
     }
 }

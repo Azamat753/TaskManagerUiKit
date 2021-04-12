@@ -71,7 +71,6 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        App.setNavBarColor(this);
         initViews();
         initClickers();
         changeView();
@@ -140,7 +139,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.deletion(HomeActivity.this, new PlannerDialog.PlannerDialogClick() {
+                PlannerDialog.showPlannerDialog(HomeActivity.this,getString(R.string.you_sure_delete), new PlannerDialog.PlannerDialogClick() {
                     @Override
                     public void clickOnYes() {
                         pos = viewHolder.getAdapterPosition();

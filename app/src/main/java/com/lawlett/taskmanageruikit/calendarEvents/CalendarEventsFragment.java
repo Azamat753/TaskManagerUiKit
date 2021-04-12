@@ -42,17 +42,18 @@ import devs.mulham.horizontalcalendar.HorizontalCalendarView;
 import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
 
 public class CalendarEventsFragment extends Fragment implements ICalendarEventOnClickListener {
-    RecyclerView recyclerViewToday;
-    FloatingActionButton addEventBtn;
-    List<CalendarTaskModel> list;
-    CalendarEventAdapter adapter;
-    TextView calendarText;
-    int position, pos;
+    private RecyclerView recyclerViewToday;
+    private FloatingActionButton addEventBtn;
+    private List<CalendarTaskModel> list;
+    private CalendarEventAdapter adapter;
+    private TextView calendarText;
+    private int pos;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -82,6 +83,7 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
         addEventBtn = view.findViewById(R.id.add_task_btn);
         recyclerViewToday = view.findViewById(R.id.today_recycler);
     }
+
     @SuppressLint("ResourceAsColor")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -101,6 +103,7 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
                 return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
             }
+
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 int fromPosition = viewHolder.getAdapterPosition();
@@ -147,6 +150,7 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
                         }).show();
                 adapter.notifyDataSetChanged();
             }
+
             @SuppressLint("ResourceAsColor")
             @Override
             public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
@@ -171,7 +175,6 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
                             background2.draw(c);
                             break;
                     }
-
                 }
             }
         }).attachToRecyclerView(recyclerViewToday);
@@ -189,7 +192,6 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
         startDate.add(Calendar.MONTH, -1);
         Calendar endDate = Calendar.getInstance();
         endDate.add(Calendar.MONTH, 1);
-
         final HorizontalCalendar horizontalCalendar = new HorizontalCalendar.Builder(requireActivity(), R.id.calendarView)
                 .range(startDate, endDate)
                 .datesNumberOnScreen(5)
@@ -217,7 +219,6 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
 
     @Override
     public void onItemClick(int position) {
-        this.position = position;
         Intent intent = new Intent(getContext(), AddEventActivity.class);
         intent.putExtra("calendar", list.get(position));
         adapter.notifyDataSetChanged();

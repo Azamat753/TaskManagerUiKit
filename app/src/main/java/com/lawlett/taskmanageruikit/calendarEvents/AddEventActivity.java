@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,25 +36,22 @@ import java.util.List;
 import java.util.Locale;
 
 public class AddEventActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
-    TextView startData, startTime, endTime, startDataText, startTimeNumber, endTimeNumber;
-    EditText title_ed;
-    CalendarTaskModel calendarTaskModel;
-    ImageView backView, doneView;
-    String currentDataString;
-    String titleT, getStart, getDataTime, getEndTime;
-    View colorView;
-    int choosedColor;
-    AlarmManager mAlarm;
-    long time;
-    Calendar baseCalendar = Calendar.getInstance();
-    String startHour, endingHour;
+    private TextView startData, startTime, endTime, startDataText, startTimeNumber, endTimeNumber;
+    private EditText title_ed;
+    private CalendarTaskModel calendarTaskModel;
+    private ImageView backView, doneView;
+    private String currentDataString;
+    private String titleT;
+    private int choosedColor;
+    private long time;
+    private final Calendar baseCalendar = Calendar.getInstance();
+    private String startHour, endingHour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadLocale();
         setContentView(R.layout.activity_add_event);
-        App.setNavBarColor(this);
         initViews();
         initClickers();
         getIncomingIntent();
@@ -122,6 +118,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
 
         }
     }
+
     private void setNotification() {
         Intent i = new Intent(getBaseContext(), MessageService.class);
         i.putExtra("displayText", "sample text");
@@ -130,7 +127,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
         List<CalendarTaskModel> listA = App.getDataBase().dataDao().getAll();
         int idOfP = listA.size();
         PendingIntent pi = PendingIntent.getBroadcast(this.getApplicationContext(), idOfP, i, PendingIntent.FLAG_CANCEL_CURRENT);
-        mAlarm = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        AlarmManager mAlarm = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         mAlarm.set(AlarmManager.RTC_WAKEUP, time, pi);
     }
 
@@ -185,19 +182,19 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
             }
         }
     }
+
     public void getIncomingIntent() {
         Intent intent = getIntent();
         calendarTaskModel = (CalendarTaskModel) intent.getSerializableExtra("calendar");
         if (calendarTaskModel != null) {
             titleT = calendarTaskModel.getTitle();
             title_ed.setText(titleT);
-            getStart = calendarTaskModel.getStartTime();
+            String getStart = calendarTaskModel.getStartTime();
             startTimeNumber.setText(getStart);
-            getEndTime = calendarTaskModel.getEndTime();
+            String getEndTime = calendarTaskModel.getEndTime();
             endTimeNumber.setText(getEndTime);
             choosedColor = calendarTaskModel.getChooseColor();
-            colorView.setBackgroundColor(calendarTaskModel.getChooseColor());
-            getDataTime = calendarTaskModel.getDataTime();
+            String getDataTime = calendarTaskModel.getDataTime();
             startData.setText(getDataTime);
         }
     }

@@ -56,7 +56,6 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_done);
         TaskDialogPreference.init(this);
-        App.setNavBarColor(this);
         initViews();
         initClickers();
         initToolbar();
@@ -116,7 +115,7 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
             }
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.deletion(DoneActivity.this, () -> {
+                PlannerDialog.showPlannerDialog(DoneActivity.this, getString(R.string.you_sure_delete),() -> {
                     pos = viewHolder.getAdapterPosition();
                     doneModel = list.get(pos);
                     if (!doneModel.isDone) {

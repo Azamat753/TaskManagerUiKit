@@ -124,7 +124,7 @@
     <string name="help_timing_add">Для добавления новой задачи нажмите на +</string>
     <string name="changing_theme">Смена темы</string>
     <string name="board_theme_desc">Вы можете выбрать тему здесь, нажатием на один из вариантов, или перейти в Настройки</string>
-    <string name="are_you_sure_that">Вы действительно хотите удалить все записи?</string>
+    <string name="are_you_sure_delete_all">Вы действительно хотите удалить все записи?</string>
     <string name="helper_dialog_text">Вы можете поменять название и картинку категории на долгое нажатие</string>
     <string name="fox">Лиса</string>
     <string name="deer">Лань</string>
@@ -165,4 +165,5 @@
     <string name="important_message">Важное сообщение!</string>
     <string name="you_got">Вы получили звание</string>
     <string name="speak_something">Hi speak something</string>
+    <string name="you_sure_delete">Вы уверены что хотите удалить запись?</string>
 </resources>

@@ -25,6 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -60,6 +62,9 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
     private boolean isAddBtn = false;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String userId;
+    String collectionName;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser user = mAuth.getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +72,6 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         setContentView(R.layout.activity_meet);
         init();
         initClickers();
-        App.setNavBarColor(this);
         changeView();
         initListFromRoom();
         initItemTouchHelper();
@@ -77,7 +81,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
     private void initClickers() {
         imageAdd.setOnClickListener(view -> {
             recordRoom();
-            writeDataOrUpdateToFireStore();
+            FireStoreTools.writeOrUpdateDataByFireStore(meetModel.getMeetTask(), collectionName + "-" + "(" + user.getDisplayName() + ")" + user.getUid(), db, meetModel.meetTask);
         });
         meetBack.setOnClickListener(v -> onBackPressed());
         findViewById(R.id.settings_for_task).setOnClickListener((View.OnClickListener) v -> {
@@ -86,9 +90,6 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         });
     }
 
-    private void writeDataOrUpdateToFireStore() {
-        FireStoreTools.writeOrUpdateDataByFireStore(meetModel.getMeetTask(),getString(R.string.meets),db,meetModel);
-    }
 
     private void initItemTouchHelper() {
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -135,7 +136,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.deletion(MeetActivity.this, new PlannerDialog.PlannerDialogClick() {
+                PlannerDialog.showPlannerDialog(MeetActivity.this,getString(R.string.you_sure_delete), new PlannerDialog.PlannerDialogClick() {
                     @Override
                     public void clickOnYes() {
                         position = viewHolder.getAdapterPosition();
@@ -201,6 +202,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             }
         });
     }
+
     private void readDataFromFireStore(FirebaseFirestore firebaseFirestore, String collectionName) {
         firebaseFirestore.collection(collectionName)
                 .get()

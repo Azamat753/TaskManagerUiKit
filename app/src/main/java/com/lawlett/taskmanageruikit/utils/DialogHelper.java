@@ -10,7 +10,7 @@ public class DialogHelper  {
     public void myDialog(Context context, ActionForDialog actionForDialog){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.attention)
-                .setMessage(R.string.are_you_sure_that)
+                .setMessage(R.string.are_you_sure_delete_all)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

@@ -3,7 +3,6 @@ package com.lawlett.taskmanageruikit.auth;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,12 +39,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
 
         createRequest();
         mAuth = FirebaseAuth.getInstance();
-        findViewById(R.id.google_signIn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn();
-            }
-        });
+        findViewById(R.id.google_signIn).setOnClickListener(view -> signIn());
     }
 
     private void createRequest() {
@@ -83,29 +77,13 @@ public class GoogleSignInActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     FirebaseUser user = mAuth.getCurrentUser();
+                    if (user != null) {
+                        startActivity(new Intent(getApplicationContext(),SettingsActivity.class));
+                    }
                 } else {
                     Toast.makeText(GoogleSignInActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user!=null) {
-            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-            startActivity(intent);
-        }
-    }
-    //    @Override
-//    protected void onStart() { //Проверка зарегистрировался ли пользователь
-//        super.onStart();
-//        FirebaseUser user = mAuth.getCurrentUser();
-//        if (user!=null) {
-//            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-//            startActivity(intent);
-//        }
-//    }
 }

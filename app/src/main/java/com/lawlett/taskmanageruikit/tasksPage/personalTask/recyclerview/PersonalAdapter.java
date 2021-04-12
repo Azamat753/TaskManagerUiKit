@@ -71,15 +71,20 @@ public class PersonalAdapter extends RecyclerView.Adapter<PersonalAdapter.Person
                 @Override
                 public void onClick(View v) {
                     listener.onItemCheckClick(getAdapterPosition());
-
+                }
+            });
+            personalTask.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    listener.onItemLongClick(getAdapterPosition());
+                    return false;
                 }
             });
         }
-
     }
-
-
     public interface ICheckedListener {
         void onItemCheckClick(int id);
+
+        void onItemLongClick(int pos);
     }
 }

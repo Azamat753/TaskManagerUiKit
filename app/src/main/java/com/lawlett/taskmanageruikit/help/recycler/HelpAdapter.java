@@ -12,14 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lawlett.taskmanageruikit.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HelpAdapter extends RecyclerView.Adapter<HelpAdapter.HelpViewHolder> {
     Context context;
-    List<HelpModel> helpModels = new ArrayList<>();
+    List<HelpModel> helpModels;
     MyOnItemClickListener onItemClickListener;
-
 
     public HelpAdapter(Context context, List<HelpModel> helpModels) {
         this.context = context;
@@ -58,12 +56,7 @@ public class HelpAdapter extends RecyclerView.Adapter<HelpAdapter.HelpViewHolder
             super(itemView);
             helpTitle = itemView.findViewById(R.id.item_help_title);
             itemHelp = itemView.findViewById(R.id.item_help_recycler);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.onItemClick(getAdapterPosition());
-                }
-            });
+            itemView.setOnClickListener(view -> listener.onItemClick(getAdapterPosition()));
         }
     }
 

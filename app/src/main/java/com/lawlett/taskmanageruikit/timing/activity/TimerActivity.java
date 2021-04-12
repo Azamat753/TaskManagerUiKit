@@ -43,17 +43,16 @@ import static com.lawlett.taskmanageruikit.utils.App.CHANNEL_ID;
 public class TimerActivity extends AppCompatActivity {
     private TextView countdownText;
     private Button countdownButton, exitButton, timerTaskApply, applyDone;
-    MediaPlayer mp;
-    ImageView icanchor, xButton, phoneImage;
-    EditText timerTaskEdit;
-    String timeLeftText;
-    Animation roundingalone, atg, btgone, btgtwo;
-    TimingModel timingModel;
-    String myTask;
-    EditText editText;
-    ConstraintLayout imageConst, timerConst;
+    private MediaPlayer mp;
+    private ImageView icanchor, xButton, phoneImage;
+    private EditText timerTaskEdit;
+    private String timeLeftText;
+    private Animation roundingalone;
+    private String myTask;
+    private EditText editText;
+    private ConstraintLayout imageConst, timerConst;
     private Integer timeLeftInMilliseconds = 0;//600.000  10min ||1000//1 second
-    CountDownTimer countDownTimer;
+    private CountDownTimer countDownTimer;
     private NotificationManagerCompat notificationManager;
 
     @SuppressLint({"ResourceAsColor", "Range"})
@@ -62,107 +61,88 @@ public class TimerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
-
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        mp = MediaPlayer.create(getApplicationContext(), notification);
-
-        notificationManager = NotificationManagerCompat.from(this);
-
-        if (Build.VERSION.SDK_INT >= 21)
-            getWindow().setNavigationBarColor(R.color.timing_color);
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.timing_color));
+        initSound();
         initViews();
+        initAnimations();
+        initTypefaces();
+        initClickers();
+    }
 
-
-
-        xButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mp.reset();
-                notificationManager.cancel(1);
-                if (countDownTimer!=null)
+    private void initClickers() {
+        xButton.setOnClickListener(v -> {
+            mp.reset();
+            notificationManager.cancel(1);
+            if (countDownTimer != null)
                 countDownTimer.cancel();
-                finish();
-                //Крестик
-            }
+            finish();
         });
-        timerTaskApply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (timerTaskEdit.getText().toString().isEmpty()) {
-                    Toast.makeText(TimerActivity.this, R.string.empty, Toast.LENGTH_SHORT).show();
-
-                } else {
-                    myTask = timerTaskEdit.getText().toString();
-                    imageConst.setVisibility(View.GONE);
-                    timerConst.setVisibility(View.VISIBLE);
-                }
+        timerTaskApply.setOnClickListener(v -> {
+            if (timerTaskEdit.getText().toString().isEmpty()) {
+                Toast.makeText(TimerActivity.this, R.string.empty, Toast.LENGTH_SHORT).show();
+            } else {
+                myTask = timerTaskEdit.getText().toString();
+                imageConst.setVisibility(View.GONE);
+                timerConst.setVisibility(View.VISIBLE);
             }
         });
 
-        applyDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (editText.getText().toString().equals("") || Integer.parseInt(editText.getText().toString()) < 1) {
-                    Toast.makeText(TimerActivity.this, R.string.zero_minutes_pass, Toast.LENGTH_SHORT).show();
-                } else {
-                    timeLeftInMilliseconds = Integer.parseInt(editText.getText().toString()) * 60000;
-                        timeLeftText = timeLeftInMilliseconds.toString();
-                    applyDone.setVisibility(View.GONE);
-                    editText.setVisibility(View.GONE);
-                    countdownText.setText(R.string.ready);
-                    countdownButton.setVisibility(View.VISIBLE);
-                    countdownText.setVisibility(View.VISIBLE);
-                }
+        applyDone.setOnClickListener(v -> {
+            if (editText.getText().toString().equals("") || Integer.parseInt(editText.getText().toString()) < 1) {
+                Toast.makeText(TimerActivity.this, R.string.zero_minutes_pass, Toast.LENGTH_SHORT).show();
+            } else {
+                timeLeftInMilliseconds = Integer.parseInt(editText.getText().toString()) * 60000;
+                timeLeftText = timeLeftInMilliseconds.toString();
+                applyDone.setVisibility(View.GONE);
+                editText.setVisibility(View.GONE);
+                countdownText.setText(R.string.ready);
+                countdownButton.setVisibility(View.VISIBLE);
+                countdownText.setVisibility(View.VISIBLE);
             }
         });
-        countdownButton.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onClick(View v) {
-                startTimer();
+        countdownButton.setOnClickListener(v -> {
+            startTimer();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 showNotification();
             }
         });
 
-        exitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String myTime = countdownText.getText().toString();
-                if (myTime.equals("0:00") || myTime.equals("0:01") || myTime.equals("0:02")) {
-                    dataRoom();
-                    if (mp != null)
-                        mp.stop();
-                    countDownTimer.cancel();
-                    finish();
-                } else {
-                    Toast.makeText(TimerActivity.this, R.string.timer_dont_end, Toast.LENGTH_SHORT).show();
-                }
-                notificationManager.cancel(1);
+        exitButton.setOnClickListener(v -> {
+            String myTime = countdownText.getText().toString();
+            if (myTime.equals("0:00") || myTime.equals("0:01") || myTime.equals("0:02")) {
+                dataRoom();
+                if (mp != null)
+                    mp.stop();
+                countDownTimer.cancel();
+                finish();
+            } else {
+                Toast.makeText(TimerActivity.this, R.string.timer_dont_end, Toast.LENGTH_SHORT).show();
             }
+            notificationManager.cancel(1);
         });
     }
 
+    private void initSound() {
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        mp = MediaPlayer.create(getApplicationContext(), notification);
+    }
 
 
     private void startTimer() {
         icanchor.startAnimation(roundingalone);
         countdownButton.animate().alpha(0).setDuration(300).start();
-
         countDownTimer = new CountDownTimer(timeLeftInMilliseconds, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
                 int minutes = (int) millisUntilFinished / 60000;
                 int seconds = (int) millisUntilFinished % 60000 / 1000;
-
                 timeLeftText = "" + minutes;
                 timeLeftText += ":";
                 if (seconds < 10) timeLeftText += "0";
                 timeLeftText += seconds;
-
                 countdownText.setText(timeLeftText);
                 countdownButton.setVisibility(View.GONE);
                 exitButton.setVisibility(View.VISIBLE);
@@ -183,44 +163,39 @@ public class TimerActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed(){}
+    public void onBackPressed() {
+    }
 
     public void dataRoom() {
         Calendar c = Calendar.getInstance();
         final int year = c.get(Calendar.YEAR);
         String[] monthName = {getString(R.string.january), getString(R.string.february), getString(R.string.march), getString(R.string.april), getString(R.string.may), getString(R.string.june), getString(R.string.july),
                 getString(R.string.august), getString(R.string.september), getString(R.string.october), getString(R.string.november), getString(R.string.december)};
-
         final String month = monthName[c.get(Calendar.MONTH)];
         String currentDate = new SimpleDateFormat("dd ", Locale.getDefault()).format(new Date());
         int previousTime = TimingSizePreference.getInstance(this).getTimingSize();
         int timerTime = Integer.parseInt(editText.getText().toString());
         TimingSizePreference.getInstance(this).saveTimingSize(timerTime + previousTime);
-        timingModel = new TimingModel(myTask, timerTime, currentDate + " " + month + " " + year, null, null, null);
+        TimingModel timingModel = new TimingModel(myTask, timerTime, currentDate + " " + month + " " + year, null, null, null);
         App.getDataBase().timingDao().insert(timingModel);
         finish();
     }
 
-   @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void showNotification() {
-
         RemoteViews expandedView = new RemoteViews(getPackageName(),
                 R.layout.notification_expanded_timer);
-
         countDownTimer = new CountDownTimer(timeLeftInMilliseconds, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
                 int minutes = (int) millisUntilFinished / 60000;
                 int seconds = (int) millisUntilFinished % 60000 / 1000;
-
                 timeLeftText = "" + minutes;
                 timeLeftText += ":";
                 if (seconds < 10) timeLeftText += "0";
                 timeLeftText += seconds;
-
                 expandedView.setTextViewText(R.id.timer_expanded, timeLeftText);
-
                 Notification notification = new NotificationCompat.Builder(TimerActivity.this, CHANNEL_ID)
                         .setSmallIcon(R.mipmap.app_foreground)
                         .setCustomBigContentView(expandedView)
@@ -239,13 +214,9 @@ public class TimerActivity extends AppCompatActivity {
             }
         }.start();
     }
-    private void initViews() {
 
+    private void initViews() {
         phoneImage = findViewById(R.id.image_timerPhone);
-        atg = AnimationUtils.loadAnimation(this, R.anim.atg);
-        btgone = AnimationUtils.loadAnimation(this, R.anim.btgone);
-        btgtwo = AnimationUtils.loadAnimation(this, R.anim.btgtwo);
-        roundingalone = AnimationUtils.loadAnimation(this, R.anim.roundingalone);
         xButton = findViewById(R.id.close_button);
         timerTaskEdit = findViewById(R.id.timer_task_edit);
         editText = findViewById(R.id.editText);
@@ -257,21 +228,26 @@ public class TimerActivity extends AppCompatActivity {
         exitButton = findViewById(R.id.exit_button);
         imageConst = findViewById(R.id.image_const);
         timerConst = findViewById(R.id.timerConst);
+        notificationManager = NotificationManagerCompat.from(this);
+    }
 
+    private void initAnimations() {
+        Animation atg = AnimationUtils.loadAnimation(this, R.anim.atg);
+        Animation btgone = AnimationUtils.loadAnimation(this, R.anim.btgone);
+        Animation btgtwo = AnimationUtils.loadAnimation(this, R.anim.btgtwo);
+        roundingalone = AnimationUtils.loadAnimation(this, R.anim.roundingalone);
         phoneImage.startAnimation(atg);
         countdownButton.startAnimation(btgone);
         timerTaskApply.startAnimation(btgtwo);
         timerTaskEdit.startAnimation(btgone);
+    }
 
+    private void initTypefaces() {
         Typeface medium = Typeface.createFromAsset(getAssets(), "MMedium.ttf");
         Typeface mLight = Typeface.createFromAsset(getAssets(), "MLight.ttf");
         Typeface mRegular = Typeface.createFromAsset(getAssets(), "MRegular.ttf");
-
         countdownButton.setTypeface(medium);
         timerTaskApply.setTypeface(mLight);
         timerTaskEdit.setTypeface(mRegular);
-
     }
-
-
 }

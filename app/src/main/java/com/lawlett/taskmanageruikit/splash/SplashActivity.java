@@ -2,7 +2,6 @@ package com.lawlett.taskmanageruikit.splash;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -26,25 +25,16 @@ public class SplashActivity extends AppCompatActivity {
         checkedTheme();
         loadLocale();
         setContentView(R.layout.activity_splash);
-
-        if (Build.VERSION.SDK_INT >= 21)
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.statusBarC));
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    boolean isShown = Preference.getInstance(getApplication()).isShown();
-                    if (isShown) {
-                        startActivity(new Intent(getApplication(), MainActivity.class));
-                    } else {
-                        startActivity(new Intent(getApplication(), BoardActivity.class));
-                    }
-                    finish();
-
+            new Handler().postDelayed(() -> {
+                boolean isShown = Preference.getInstance(getApplication()).isShown();
+                if (isShown) {
+                    startActivity(new Intent(getApplication(), MainActivity.class));
+                } else {
+                    startActivity(new Intent(getApplication(), BoardActivity.class));
                 }
+                finish();
+
             }, 1000);
-
-
     }
 
     private void checkedTheme() {

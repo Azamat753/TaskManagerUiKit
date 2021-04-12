@@ -50,20 +50,7 @@ public class BoardFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        title_tv = view.findViewById(R.id.title_tv);
-        desc_tv = view.findViewById(R.id.desc_tv);
-        start_tv = view.findViewById(R.id.start_tv);
-        change_lang = view.findViewById(R.id.change_lang);
-
-        calendar_anim = view.findViewById(R.id.calendar_animation);
-        todo_anim = view.findViewById(R.id.todo_animation);
-        notes_anim = view.findViewById(R.id.notes_animation);
-        time_anim = view.findViewById(R.id.time_animation);
-        container = view.findViewById(R.id.container_theme);
-        imageDay = view.findViewById(R.id.image_day);
-        imageNight = view.findViewById(R.id.image_night);
-        imageDaySelect = view.findViewById(R.id.image_day_select);
-        imageNightSelect = view.findViewById(R.id.image_night_select);
+        initViews(view);
         loadLocale();
 
         if (ThemePreference.getInstance(getContext()).isTheme()) {
@@ -127,20 +114,14 @@ public class BoardFragment extends Fragment {
                 break;
         }
 
-        imageDay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ThemePreference.getInstance(getContext()).saveThemeTrue();
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            }
+        imageDay.setOnClickListener(v -> {
+            ThemePreference.getInstance(getContext()).saveThemeTrue();
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         });
 
-        imageNight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ThemePreference.getInstance(getContext()).saveThemeFalse();
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            }
+        imageNight.setOnClickListener(v -> {
+            ThemePreference.getInstance(getContext()).saveThemeFalse();
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         });
 
         start_tv.setOnClickListener(v -> {
@@ -156,6 +137,23 @@ public class BoardFragment extends Fragment {
         });
     }
 
+    private void initViews(@NonNull View view) {
+        title_tv = view.findViewById(R.id.title_tv);
+        desc_tv = view.findViewById(R.id.desc_tv);
+        start_tv = view.findViewById(R.id.start_tv);
+        change_lang = view.findViewById(R.id.change_lang);
+
+        calendar_anim = view.findViewById(R.id.calendar_animation);
+        todo_anim = view.findViewById(R.id.todo_animation);
+        notes_anim = view.findViewById(R.id.notes_animation);
+        time_anim = view.findViewById(R.id.time_animation);
+        container = view.findViewById(R.id.container_theme);
+        imageDay = view.findViewById(R.id.image_day);
+        imageNight = view.findViewById(R.id.image_night);
+        imageDaySelect = view.findViewById(R.id.image_day_select);
+        imageNightSelect = view.findViewById(R.id.image_night_select);
+    }
+
     private void showChangeLanguageDialog() {
         final String[] listItems = {"English", "Русский", "Кыргызча", "Português", "한국어", "Український"};
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
@@ -165,22 +163,22 @@ public class BoardFragment extends Fragment {
             public void onClick(DialogInterface dialog, int i) {
                 if (i == 0) {
                     setLocale("en");
-                    Objects.requireNonNull(getActivity()).recreate();
+                   requireActivity().recreate();
                 } else if (i == 1) {
                     setLocale("ru");
-                    Objects.requireNonNull(getActivity()).recreate();
+                    requireActivity().recreate();
                 } else if (i == 2) {
                     setLocale("ky");
-                    Objects.requireNonNull(getActivity()).recreate();
+                    requireActivity().recreate();
                 } else if (i == 3) {
                     setLocale("pt");
-                    Objects.requireNonNull(getActivity()).recreate();
+                    requireActivity().recreate();
                 } else if (i == 4) {
                     setLocale("ko");
-                    Objects.requireNonNull(getActivity()).recreate();
+                    requireActivity().recreate();
                 } else if (i == 5) {
                     setLocale("uk");
-                    Objects.requireNonNull(getActivity()).recreate();
+                    requireActivity().recreate();
                 }
                 dialog.dismiss();
             }
@@ -196,7 +194,6 @@ public class BoardFragment extends Fragment {
         Configuration config = new Configuration();
         config.locale = locale;
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-
         LanguagePreference.getInstance(getContext()).saveLanguage(lang);
     }
 

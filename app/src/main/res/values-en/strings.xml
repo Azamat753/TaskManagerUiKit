@@ -125,7 +125,7 @@
     <string name="help_timing_add">For adding a new task, click on +</string>
     <string name="changing_theme">Change theme</string>
     <string name="board_theme_desc"> You can pick your theme here by clicking on one of the options or go to Settings</string>
-    <string name="are_you_sure_that">Are you sure you want to delete all the notes?</string>
+    <string name="are_you_sure_delete_all">Are you sure you want to delete all the notes?</string>
     <string name="done">Done</string>
     <string name="help_bubble">Click to see tips</string>
     <string name="timer_text">You can use a timer</string>
@@ -165,4 +165,5 @@
     <string name="crane">Crane</string>
     <string name="important_message">Important message!</string>
     <string name="you_got">You got the rank \"</string>
+    <string name="you_sure_delete">Вы уверены что хотите удалить запись?</string>
 </resources>

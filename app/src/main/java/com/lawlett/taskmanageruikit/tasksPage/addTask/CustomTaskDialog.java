@@ -1,5 +1,6 @@
 package com.lawlett.taskmanageruikit.tasksPage.addTask;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -9,7 +10,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -24,27 +24,26 @@ import com.lawlett.taskmanageruikit.tasksPage.addTask.adapter.ImageAdapter;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 
 public class CustomTaskDialog extends Dialog implements View.OnClickListener {
-    final Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
-    Button btnOk, btnCancel;
-    EditText dialogEt;
-    GridView dialogGridView;
-    ImageAdapter imageAdapter;
-    Integer dialogImg;
-    CustomDialogListener customDialogListener;
-    TextView title, amount;
-    ImageView imageView;
+    private final Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
+    private EditText dialogEt;
+    private GridView dialogGridView;
+    private final ImageAdapter imageAdapter;
+    private Integer dialogImg;
+    private CustomDialogListener customDialogListener;
+    private TextView title;
+    private ImageView imageView;
 
     public CustomTaskDialog(@NonNull Context context) {
         super(context);
         TaskDialogPreference.init(context);
         imageAdapter = new ImageAdapter(context, new Integer[]{
-                R.drawable.ic_01,R.drawable.ic_work, R.drawable.ic_08, R.drawable.ic_11,
-                R.drawable.ic_17, R.drawable.ic_home,R.drawable.ic_05, R.drawable.ic_meet,
-                R.drawable.ic_19, R.drawable.ic_15,R.drawable.ic_12,R.drawable.ic_10,
-                R.drawable.ic_09,R.drawable.ic_18,  R.drawable.ic_23,R.drawable.ic_06,
-                R.drawable.ic_03, R.drawable.ic_07,R.drawable.ic_13, R.drawable.ic_22,
+                R.drawable.ic_01, R.drawable.ic_work, R.drawable.ic_08, R.drawable.ic_11,
+                R.drawable.ic_17, R.drawable.ic_home, R.drawable.ic_05, R.drawable.ic_meet,
+                R.drawable.ic_19, R.drawable.ic_15, R.drawable.ic_12, R.drawable.ic_10,
+                R.drawable.ic_09, R.drawable.ic_18, R.drawable.ic_23, R.drawable.ic_06,
+                R.drawable.ic_03, R.drawable.ic_07, R.drawable.ic_13, R.drawable.ic_22,
                 R.drawable.ic_21, R.drawable.ic_person, R.drawable.ic_04, R.drawable.ic_16,
-                });
+        });
     }
 
     @Override
@@ -57,34 +56,30 @@ public class CustomTaskDialog extends Dialog implements View.OnClickListener {
 
     private void gridViewInit() {
         dialogGridView.setAdapter(imageAdapter);
-        dialogGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                dialogImg = (Integer) adapterView.getItemAtPosition(i);
-                view.startAnimation(animation);
-                imageView.setImageResource(dialogImg);
-                hideKeyboard();
+        dialogGridView.setOnItemClickListener((adapterView, view, i, l) -> {
+            dialogImg = (Integer) adapterView.getItemAtPosition(i);
+            view.startAnimation(animation);
+            imageView.setImageResource(dialogImg);
+            hideKeyboard();
 
-            }
         });
     }
 
     private void hideKeyboard() {
         View view = getCurrentFocus();
-        if(view != null){
-        InputMethodManager inputMethodManager =
-                (InputMethodManager)getContext().getSystemService(getContext().INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        if (view != null) {
+            InputMethodManager inputMethodManager =
+                    (InputMethodManager) getContext().getSystemService(getContext().INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 
     private void initView() {
-        btnOk = findViewById(R.id.dialog_btn_ok);
-        btnCancel = findViewById(R.id.dialog_btn_cancel);
+        Button btnOk = findViewById(R.id.dialog_btn_ok);
+        Button btnCancel = findViewById(R.id.dialog_btn_cancel);
         dialogEt = findViewById(R.id.dialog_et);
         dialogGridView = findViewById(R.id.dialog_gridView);
         title = findViewById(R.id.dialog_h_tv_title);
-        amount = findViewById(R.id.dialog_h_tv_amount);
         imageView = findViewById(R.id.dialog_h_img);
 
         dialogEt.addTextChangedListener(new TextWatcher() {
@@ -92,6 +87,7 @@ public class CustomTaskDialog extends Dialog implements View.OnClickListener {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
@@ -109,23 +105,22 @@ public class CustomTaskDialog extends Dialog implements View.OnClickListener {
     }
 
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.dialog_btn_ok:
                 String title = dialogEt.getText().toString();
-                if(title.isEmpty()){
-                    Toast.makeText(getContext(),R.string.add_title, Toast.LENGTH_LONG).show();
-                }
-                else if(dialogImg == null){
-                    Toast.makeText(getContext(),R.string.add_icon, Toast.LENGTH_LONG).show();
-                }
-                else {
+                if (title.isEmpty()) {
+                    Toast.makeText(getContext(), R.string.add_title, Toast.LENGTH_LONG).show();
+                } else if (dialogImg == null) {
+                    Toast.makeText(getContext(), R.string.add_icon, Toast.LENGTH_LONG).show();
+                } else {
                     customDialogListener.addInformation(title, dialogImg, View.VISIBLE, View.GONE);
                     TaskDialogPreference.saveImage(dialogImg);
                     TaskDialogPreference.saveTitle(title);
 
-                dismiss();
+                    dismiss();
                 }
                 break;
             case R.id.dialog_btn_cancel:
@@ -134,11 +129,11 @@ public class CustomTaskDialog extends Dialog implements View.OnClickListener {
         }
     }
 
-    public void setDialogResult(CustomDialogListener listener){
+    public void setDialogResult(CustomDialogListener listener) {
         customDialogListener = listener;
     }
 
-    public interface CustomDialogListener{
+    public interface CustomDialogListener {
         void addInformation(String title, Integer image, int visible, int gone);
     }
 
