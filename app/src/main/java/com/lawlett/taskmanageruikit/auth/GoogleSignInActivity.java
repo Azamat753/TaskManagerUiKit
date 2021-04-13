@@ -34,9 +34,6 @@ public class GoogleSignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_google_sign_in);
-        if (Build.VERSION.SDK_INT >= 21)
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.statusBarC));
-
         createRequest();
         mAuth = FirebaseAuth.getInstance();
         findViewById(R.id.google_signIn).setOnClickListener(view -> signIn());

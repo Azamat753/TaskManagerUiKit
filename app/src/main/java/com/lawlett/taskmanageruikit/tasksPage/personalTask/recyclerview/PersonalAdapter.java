@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,37 +44,27 @@ public class PersonalAdapter extends RecyclerView.Adapter<PersonalAdapter.Person
         notifyDataSetChanged();
     }
 
-    public void myListClear(List<PersonalModel> list) {
-        this.list = list;
-        list.clear();
-        notifyDataSetChanged();
-    }
-
-    public void myListAddAll(List<PersonalModel> list) {
-        this.list = list;
-        list.addAll(list);
-        notifyDataSetChanged();
-    }
-
     public class PersonalViewHolder extends RecyclerView.ViewHolder {
-        CheckBox personalTask;
+        CheckBox personalTaskCheck;
+        TextView personalTaskTv;
 
         public PersonalViewHolder(@NonNull View itemView) {
             super(itemView);
-            personalTask = itemView.findViewById(R.id.personal_task);
+            personalTaskCheck = itemView.findViewById(R.id.personal_task_check);
+            personalTaskTv = itemView.findViewById(R.id.personal_task_tv);
 
         }
 
         public void onBind(PersonalModel personalModel) {
-            personalTask.setText(personalModel.getPersonalTask());
-            personalTask.setChecked(personalModel.isDone);
-            personalTask.setOnClickListener(new View.OnClickListener() {
+            personalTaskTv.setText(personalModel.getPersonalTask());
+            personalTaskCheck.setChecked(personalModel.isDone);
+            personalTaskCheck.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onItemCheckClick(getAdapterPosition());
                 }
             });
-            personalTask.setOnLongClickListener(new View.OnLongClickListener() {
+            personalTaskTv.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     listener.onItemLongClick(getAdapterPosition());
@@ -81,10 +72,10 @@ public class PersonalAdapter extends RecyclerView.Adapter<PersonalAdapter.Person
                 }
             });
         }
+
     }
     public interface ICheckedListener {
         void onItemCheckClick(int id);
-
         void onItemLongClick(int pos);
     }
 }

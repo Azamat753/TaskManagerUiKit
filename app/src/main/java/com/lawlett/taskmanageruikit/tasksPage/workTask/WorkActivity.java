@@ -64,8 +64,9 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String userId;
     String collectionName;
-    FirebaseAuth mAuth= FirebaseAuth.getInstance();
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser user = mAuth.getCurrentUser();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,7 +129,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(WorkActivity.this, getString(R.string.you_sure_delete),new PlannerDialog.PlannerDialogClick() {
+                PlannerDialog.showPlannerDialog(WorkActivity.this, getString(R.string.you_sure_delete), new PlannerDialog.PlannerDialogClick() {
                     @Override
                     public void clickOnYes() {
                         pos = viewHolder.getAdapterPosition();
@@ -185,10 +186,11 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                 Collections.reverse(list);
                 adapter.updateList(list);
             } else {
-              readDataFromFireStore();
+                readDataFromFireStore();
             }
         });
     }
+
     private void readDataFromFireStore() {
         db.collection(collectionName)
                 .get()
@@ -257,7 +259,9 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
 
     public void addWorkTask(View view) {
         recordDataRoom();
-        FireStoreTools.writeOrUpdateDataByFireStore(workModel.getWorkTask(), collectionName+"-"+"("+user.getDisplayName()+")"+ user.getUid(), db, workModel);
+        if (user != null) {
+            FireStoreTools.writeOrUpdateDataByFireStore(workModel.getWorkTask(), collectionName + "-" + "(" + user.getDisplayName() + ")" + user.getUid(), db, workModel);
+        }
     }
 
     public void recordDataRoom() {
@@ -277,7 +281,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         } else {
             toolbar.setText(TaskDialogPreference.getWorkTitle());
         }
-        collectionName=toolbar.getText().toString();
+        collectionName = toolbar.getText().toString();
     }
 
     @Override

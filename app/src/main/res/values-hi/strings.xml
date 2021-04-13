@@ -156,4 +156,6 @@
     <string name="important_message">महत्वपूर्ण संदेश!</string>
     <string name="you_got">आपको शीर्षक मिला: </string>
     <string name="you_sure_delete">Вы уверены что хотите удалить запись?</string>
+    <string name="sync_planner_with_google">Синхронизируйте Planner с вашим Google аккаунтом для безопасности ваших записей</string>
+    <string name="good_luck">Желаем дальнейших успехов !</string>
 </resources>

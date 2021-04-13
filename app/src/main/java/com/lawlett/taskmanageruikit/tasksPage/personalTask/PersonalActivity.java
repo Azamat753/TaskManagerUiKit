@@ -85,7 +85,9 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         });
         addTask_image.setOnClickListener(view -> {
             recordDataRoom();
-            FireStoreTools.writeOrUpdateDataByFireStore(personalModel.getPersonalTask(), collectionName + "-" + "(" + user.getDisplayName() + ")" + user.getUid(), db, personalModel);
+            if (user!=null){
+                FireStoreTools.writeOrUpdateDataByFireStore(personalModel.getPersonalTask(), collectionName + "-" + "(" + user.getDisplayName() + ")" + user.getUid(), db, personalModel);
+            }
         });
     }
 
@@ -288,12 +290,12 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
     @Override
     public void onItemLongClick(int pos) {
-        changeTask_image.setVisibility(View.VISIBLE);
         addTask_image.setVisibility(View.GONE);
+        changeTask_image.setVisibility(View.VISIBLE);
         imageMic.setVisibility(View.GONE);
         personalModel = list.get(pos);
         editText.setText(personalModel.getPersonalTask());
-        this.position = pos;
+        position = pos;
         KeyboardHelper.openKeyboard(PersonalActivity.this);
         editText.requestFocus();
         editText.setSelection(editText.getText().length());

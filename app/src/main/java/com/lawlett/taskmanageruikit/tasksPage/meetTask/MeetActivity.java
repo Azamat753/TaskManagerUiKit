@@ -72,7 +72,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         setContentView(R.layout.activity_meet);
         init();
         initClickers();
-        changeView();
+        initToolbar();
         initListFromRoom();
         initItemTouchHelper();
         editListener();
@@ -81,7 +81,9 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
     private void initClickers() {
         imageAdd.setOnClickListener(view -> {
             recordRoom();
-            FireStoreTools.writeOrUpdateDataByFireStore(meetModel.getMeetTask(), collectionName + "-" + "(" + user.getDisplayName() + ")" + user.getUid(), db, meetModel.meetTask);
+            if (user!=null){
+                FireStoreTools.writeOrUpdateDataByFireStore(meetModel.getMeetTask(), collectionName + "-" + "(" + user.getDisplayName() + ")" + user.getUid(), db, meetModel.meetTask);
+            }
         });
         meetBack.setOnClickListener(v -> onBackPressed());
         findViewById(R.id.settings_for_task).setOnClickListener((View.OnClickListener) v -> {
@@ -269,13 +271,14 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         }
     }
 
-    public void changeView() {
+    public void initToolbar() {
         TextView toolbar = findViewById(R.id.toolbar_title);
         if (TaskDialogPreference.getMeetTitle().isEmpty()) {
             toolbar.setText(R.string.meets);
         } else {
             toolbar.setText(TaskDialogPreference.getMeetTitle());
         }
+        collectionName=toolbar.getText().toString();
     }
 
     @Override

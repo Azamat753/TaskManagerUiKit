@@ -28,6 +28,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -66,6 +68,9 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
     DialogHelper dialogHelper = new DialogHelper();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     String userId;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser user = mAuth.getCurrentUser();
+    private String collectionName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +78,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
         setContentView(R.layout.activity_home);
         initViews();
         initClickers();
-        changeView();
+        initToolbar();
         initListFromRoom();
         editListener();
         initItemTouchHelper();
@@ -243,7 +248,9 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
 
     public void addHomeTask(View view) {
         recordRoom();
-        FireStoreTools.writeOrUpdateDataByFireStore(homeModel.getHomeTask(), getString(R.string.home), db, homeModel);
+        if (user!=null){
+            FireStoreTools.writeOrUpdateDataByFireStore(homeModel.getHomeTask(), collectionName + "-" + "(" + user.getDisplayName() + ")" + user.getUid(), db, homeModel.getHomeTask());
+        }
     }
 
     private void recordRoom() {
@@ -256,14 +263,14 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
         }
     }
 
-    public void changeView() {
+    public void initToolbar() {
         TextView toolbar = findViewById(R.id.toolbar_title);
         if (TaskDialogPreference.getHomeTitle().isEmpty()) {
             toolbar.setText(R.string.home);
         } else {
             toolbar.setText(TaskDialogPreference.getHomeTitle());
         }
-
+        collectionName=toolbar.getText().toString();
     }
 
     @Override
