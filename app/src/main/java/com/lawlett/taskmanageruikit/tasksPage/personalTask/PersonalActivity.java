@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +49,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PersonalActivity extends AppCompatActivity implements PersonalAdapter.ICheckedListener, ActionForDialog {
     private EditText editText;
@@ -65,6 +67,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     private String collectionName;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser user = mAuth.getCurrentUser();
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +88,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         });
         addTask_image.setOnClickListener(view -> {
             recordDataRoom();
-            if (user!=null){
-                FireStoreTools.writeOrUpdateDataByFireStore(personalModel.getPersonalTask(), collectionName + "-" + "(" + user.getDisplayName() + ")" + user.getUid(), db, personalModel);
+            if (user != null) {
+                FireStoreTools.writeOrUpdateDataByFireStore(personalModel.getPersonalTask(), collectionName, db, personalModel);
             }
         });
     }
@@ -136,7 +139,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(PersonalActivity.this,getString(R.string.you_sure_delete), () -> {
+                PlannerDialog.showPlannerDialog(PersonalActivity.this, getString(R.string.you_sure_delete), () -> {
                     position = viewHolder.getAdapterPosition();
                     personalModel = list.get(position);
                     if (!personalModel.isDone) {
@@ -181,39 +184,29 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         }).attachToRecyclerView(recyclerView);
     }
 
+    private void checkOnShowProgressBar() {
+        if (readDataFromFireStore(false).get()) {
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
     private void getRecordsFromRoom() {
         App.getDataBase().personalDao().getAllLive().observe(this, personalModels -> {
             if (personalModels != null && personalModels.size() != 0) {
+                checkOnShowProgressBar();
                 list.clear();
                 list.addAll(personalModels);
                 Collections.sort(list, (personalModel, t1) -> Boolean.compare(t1.isDone, personalModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
             } else {
-                readDataFromFireStore();
+                readDataFromFireStore(true);
             }
         });
     }
 
-    private void readDataFromFireStore() {
-        db.collection(collectionName)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-
-                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                            Map<String, Object> dataFromFireBase;
-                            dataFromFireBase = document.getData();
-                            Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
-                            String personalTask = dataFromFireBase.get("personalTask").toString();
-                            personalModel = new PersonalModel(personalTask, taskBoolean);
-                            App.getDataBase().personalDao().insert(personalModel);
-                        }
-                    } else {
-                        Log.w("ololo", "Error getting documents.", task.getException());
-                    }
-                });
-    }
 
     private void editListener() {
         editText.addTextChangedListener(new TextWatcher() {
@@ -251,6 +244,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         imageMic = findViewById(R.id.mic_task_personal);
         editText = findViewById(R.id.editText_personal);
         changeTask_image = findViewById(R.id.change_task_personal);
+        progressBar = findViewById(R.id.personal_progress_bar);
     }
 
     public void recordDataRoom() {
@@ -264,6 +258,36 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         }
     }
 
+    private AtomicBoolean readDataFromFireStore(boolean isRead) {
+        AtomicBoolean isHasData = new AtomicBoolean(false);
+        if (isRead) {
+            db.collection(collectionName)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                if (task.getResult().getDocuments().size() == 0) {
+                                    isHasData.set(false);
+                                } else {
+                                    isHasData.set(true);
+                                }
+                                Map<String, Object> dataFromFireBase;
+                                dataFromFireBase = document.getData();
+                                Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
+                                String personalTask = dataFromFireBase.get("personalTask").toString();
+                                personalModel = new PersonalModel(personalTask, taskBoolean);
+                                App.getDataBase().personalDao().insert(personalModel);
+                            }
+                            progressBar.setVisibility(View.GONE);
+                        } else {
+                            progressBar.setVisibility(View.VISIBLE);
+                        }
+                    });
+        }
+        return isHasData;
+
+    }
+
     public void initToolbar() {
         TextView toolbar = findViewById(R.id.toolbar_title);
         if (TaskDialogPreference.getPersonTitle().isEmpty()) {
@@ -271,7 +295,9 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         } else {
             toolbar.setText(TaskDialogPreference.getPersonTitle());
         }
-        collectionName = toolbar.getText().toString();
+        if (user != null) {
+            collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        }
     }
 
     @Override

@@ -33,10 +33,10 @@
 
             <ImageView
                 android:id="@+id/googleIcon"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
                 android:contentDescription="Firebase logo and name"
                 android:src="@mipmap/app_foreground" />
 
@@ -78,9 +78,9 @@
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_margin="70dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/google_icon"/>
+                android:layout_margin="20dp"
+                android:src="@drawable/google_icon" />
 
         </LinearLayout>
 
@@ -97,7 +97,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

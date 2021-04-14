@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="345dp"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center">
 
     <ImageView
+        android:id="@+id/planner_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -25,21 +26,24 @@
             android:id="@+id/alert_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Вы уверены что хотите удалить запись?"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.185"
+            tools:text="Вы уверены что хотите удалить запись?" />
 
         <TextView
             android:id="@+id/yesBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:background="@android:color/transparent"
             android:text="Да"
+            android:padding="12dp"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -47,9 +51,11 @@
             app:layout_constraintTop_toBottomOf="@+id/alert_title" />
 
         <TextView
+            android:padding="12dp"
             android:id="@+id/noBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:text="Нет"
             android:textColor="@color/white"
             android:textSize="18sp"

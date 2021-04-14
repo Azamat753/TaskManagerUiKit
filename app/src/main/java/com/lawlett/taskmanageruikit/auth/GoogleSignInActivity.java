@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.settings.SettingsActivity;
+import com.lawlett.taskmanageruikit.splash.SplashActivity;
 
 public class GoogleSignInActivity extends AppCompatActivity {
 
@@ -61,6 +62,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
+                Toast.makeText(GoogleSignInActivity.this, R.string.wait, Toast.LENGTH_SHORT).show();
             } catch (ApiException e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -75,10 +77,11 @@ public class GoogleSignInActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     FirebaseUser user = mAuth.getCurrentUser();
                     if (user != null) {
-                        startActivity(new Intent(getApplicationContext(),SettingsActivity.class));
+                        startActivity(new Intent(getApplicationContext(), SplashActivity.class));
+                        finish();
                     }
                 } else {
-                    Toast.makeText(GoogleSignInActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GoogleSignInActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
                 }
             }
         });
