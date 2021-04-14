@@ -187,7 +187,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     public void pressOk() {
         App.getDataBase().personalDao().deleteAll(list);
         PersonDoneSizePreference.getInstance(PersonalActivity.this).clearSettings();
-//        deleteAllDocumentsFromFireStore();
+        deleteAllDocumentsFromFireStore();
     }
 
     private void deleteAllDocumentsFromFireStore() {
@@ -214,7 +214,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
     private void getRecordsFromRoom() {
         App.getDataBase().personalDao().getAllLive().observe(this, personalModels -> {
-            if (personalModels != null && personalModels.size() != 0) {
+            if (personalModels != null ) {
                 checkOnShowProgressBar();
                 list.clear();
                 list.addAll(personalModels);
@@ -226,7 +226,6 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             }
         });
     }
-
 
     private void editListener() {
         editText.addTextChangedListener(new TextWatcher() {
@@ -280,6 +279,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
     private AtomicBoolean readDataFromFireStore(boolean isRead) {
         AtomicBoolean isHasData = new AtomicBoolean(false);
+        String booleanKey="isDone";
+        String personalTaskKey="personalTask";
         if (isRead) {
             db.collection(collectionName)
                     .get()
@@ -293,8 +294,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                                 }
                                 Map<String, Object> dataFromFireBase;
                                 dataFromFireBase = document.getData();
-                                Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
-                                String personalTask = dataFromFireBase.get("personalTask").toString();
+                                Boolean taskBoolean = (Boolean) dataFromFireBase.get(booleanKey);
+                                String personalTask = dataFromFireBase.get(personalTaskKey).toString();
                                 personalModel = new PersonalModel(personalTask, taskBoolean);
                                 App.getDataBase().personalDao().insert(personalModel);
                             }
