@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".tasksPage.privateTask.PrivateActivity">
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <include
         android:id="@+id/private_toolbar"
         layout="@layout/personal_tool_bar"

@@ -181,12 +181,10 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                         decrementDone();
                         App.getDataBase().workDao().update(list.get(pos));
                         App.getDataBase().workDao().delete(list.get(pos));
-                        if (user!=null){
-                            FireStoreTools.deleteDataByFireStore(workModel.getWorkTask(), collectionName, db);
-                        }
                         adapter.notifyDataSetChanged();
-                        Toast.makeText(WorkActivity.this, "Удалено", Toast.LENGTH_SHORT).show();
                     }
+                    Toast.makeText(WorkActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
+                    FireStoreTools.deleteDataByFireStore(workModel.getWorkTask(), collectionName, db);
                 });
                 adapter.notifyDataSetChanged();
             }
@@ -441,7 +439,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Hi speak something");
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speak_something));
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e) {
@@ -459,11 +457,24 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
             editText.setText(editText.getText() + " " + result.get(0));
         }
     }
-
+    private void deleteAllDocumentsFromFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            if (list.size()!=0){
+                for (int i = 0; i < list.size(); i++) {
+                    String personalTask = list.get(i).getWorkTask();
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                }
+            }else {
+                progressBar.setVisibility(View.GONE);
+            }
+        }
+    }
     @Override
     public void pressOk() {
         App.getDataBase().workDao().deleteAll(list);
         WorkDoneSizePreference.getInstance(WorkActivity.this).clearSettings();
+        deleteAllDocumentsFromFireStore();
     }
 }
 

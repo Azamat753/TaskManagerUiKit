@@ -29,6 +29,7 @@ import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.addTask.adapter.DoneAdapter;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.DoneModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.HomeModel;
+import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.App;
@@ -133,8 +134,11 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
                     doneModel = list.get(pos); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
                     String newDocumentName = editText.getText().toString();//todo Временное решение
                     doneModel.doneTask = editText.getText().toString();
-                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
-                    FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, doneModel);
+                    if (user != null) {
+                        FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                        FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, doneModel);
+                    }
+
                 }
                 editText.getText().clear();
             }
@@ -198,7 +202,7 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
                         decrementDone();
                         App.getDataBase().doneDao().update(list.get(pos));
                         App.getDataBase().doneDao().delete(list.get(pos));
-                        FireStoreTools.deleteDataByFireStore(doneModel.getDoneTask(),collectionName, db);
+                        FireStoreTools.deleteDataByFireStore(doneModel.getDoneTask(), collectionName, db);
                         adapter.notifyDataSetChanged();
                         Toast.makeText(DoneActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
                     }
@@ -258,7 +262,9 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
     public void initToolbar() {
         TextView toolbar = findViewById(R.id.toolbar_title);
         toolbar.setText(TaskDialogPreference.getTitle());
-        collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        if (user != null) {
+            collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        }
     }
 
     @Override
@@ -272,21 +278,25 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
             decrementDone();
         }
         App.getDataBase().doneDao().update(list.get(id));
-        FireStoreTools.writeOrUpdateDataByFireStore(doneModel.getDoneTask(), collectionName, db, doneModel);
+        if (user != null) {
+            FireStoreTools.writeOrUpdateDataByFireStore(doneModel.getDoneTask(), collectionName, db, doneModel);
+        }
     }
 
     @Override
     public void onItemLongClick(int pos) {
-        doneModel = list.get(pos);
-        if (!doneModel.isDone) {
-            doneModel.isDone = true;
-            incrementDone();
-        } else {
-            doneModel.isDone = false;
-            decrementDone();
+        if (addTask.getVisibility() == View.VISIBLE) {
+            addTask.setVisibility(View.GONE);
         }
-        App.getDataBase().doneDao().update(list.get(pos));
-        FireStoreTools.writeOrUpdateDataByFireStore(doneModel.getDoneTask(), collectionName, db, doneModel);
+        imageMic.setVisibility(View.GONE);
+        changeTask_image.setVisibility(View.VISIBLE);
+        doneModel = list.get(pos);
+        oldDocumentName = doneModel.getDoneTask();
+        editText.setText(doneModel.getDoneTask());
+        this.pos = pos;
+        KeyboardHelper.openKeyboard(DoneActivity.this);
+        editText.requestFocus();
+        editText.setSelection(editText.getText().length());
     }
 
     private void incrementDone() {
@@ -320,6 +330,21 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
     public void pressOk() {
         App.getDataBase().doneDao().deleteAll(list);
         AddDoneSizePreference.getInstance(DoneActivity.this).clearSettings();
+        deleteAllDocumentsFromFireStore();
+    }
+
+    private void deleteAllDocumentsFromFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            if (list.size() != 0) {
+                for (int i = 0; i < list.size(); i++) {
+                    String personalTask = list.get(i).getDoneTask();
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                }
+            } else {
+                progressBar.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void editListener() {

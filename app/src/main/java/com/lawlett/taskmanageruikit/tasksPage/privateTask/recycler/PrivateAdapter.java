@@ -57,13 +57,12 @@ public class PrivateAdapter extends RecyclerView.Adapter<PrivateAdapter.PrivateV
         public void onBind(PrivateModel privateModel) {
             privateTaskTv.setText(privateModel.getPrivateTask());
             privateTaskCheck.setChecked(privateModel.isDone);
-            privateTaskTv.setOnClickListener(v -> listener.onItemCheckClick(getAdapterPosition()));
-            privateTaskCheck.setOnLongClickListener(view -> {
+            privateTaskCheck.setOnClickListener(v -> listener.onItemCheckClick(getAdapterPosition()));
+            privateTaskTv.setOnLongClickListener(view -> {
                 listener.onItemLongClick(getAdapterPosition());
                 return false;
             });
         }
-
     }
 
     public interface IPCheckedListener {

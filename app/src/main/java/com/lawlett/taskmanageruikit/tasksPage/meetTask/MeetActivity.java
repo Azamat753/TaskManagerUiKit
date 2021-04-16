@@ -31,6 +31,7 @@ import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.MeetModel;
 import com.lawlett.taskmanageruikit.tasksPage.meetTask.recyclerview.MeetAdapter;
+import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
@@ -83,7 +84,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         imageAdd.setOnClickListener(view -> {
             recordRoom();
             if (user != null) {
-                FireStoreTools.writeOrUpdateDataByFireStore(meetModel.getMeetTask(), collectionName , db, meetModel);
+                FireStoreTools.writeOrUpdateDataByFireStore(meetModel.getMeetTask(), collectionName, db, meetModel);
             }
         });
         meetBack.setOnClickListener(v -> onBackPressed());
@@ -128,6 +129,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                 return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
             }
+
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 int fromPosition = viewHolder.getAdapterPosition();
@@ -172,12 +174,10 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                         decrementDone();
                         App.getDataBase().meetDao().update(list.get(position));
                         App.getDataBase().meetDao().delete(list.get(position));
-                        if (user!=null){
-                            FireStoreTools.deleteDataByFireStore(meetModel.getMeetTask(), collectionName, db);
-                        }
                         adapter.notifyDataSetChanged();
                     }
-                    Toast.makeText(MeetActivity.this, "Удалено", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MeetActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
+                    FireStoreTools.deleteDataByFireStore(meetModel.getMeetTask(), collectionName, db);
                 });
                 adapter.notifyDataSetChanged();
             }
@@ -215,9 +215,9 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
     private void checkOnShowProgressBar() {
         if (readDataFromFireStore(false).get()) {
             progressBar.setVisibility(View.VISIBLE);
-    } else {
-        progressBar.setVisibility(View.GONE);
-    }
+        } else {
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     private void getRecordsFromRoom() {
@@ -308,8 +308,8 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         meetBack.setOnClickListener(v -> onBackPressed());
         imageAdd = findViewById(R.id.add_task_meet);
         imageMic = findViewById(R.id.mic_task_meet);
-        changeTask_image=findViewById(R.id.change_task_meet);
-        progressBar=findViewById(R.id.progress_bar);
+        changeTask_image = findViewById(R.id.change_task_meet);
+        progressBar = findViewById(R.id.progress_bar);
     }
 
     public void recordRoom() {
@@ -329,7 +329,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         } else {
             toolbar.setText(TaskDialogPreference.getMeetTitle());
         }
-        collectionName=toolbar.getText().toString()+ "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
     }
 
     @Override
@@ -343,7 +343,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             decrementDone();
         }
         App.getDataBase().meetDao().update(list.get(id));
-        if (user!=null){
+        if (user != null) {
             FireStoreTools.writeOrUpdateDataByFireStore(meetModel.getMeetTask(), collectionName, db, meetModel);
         }
     }
@@ -437,6 +437,21 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
     public void pressOk() {
         App.getDataBase().meetDao().deleteAll(list);
         MeetDoneSizePreference.getInstance(MeetActivity.this).clearSettings();
+        deleteAllDocumentsFromFireStore();
+    }
+
+    private void deleteAllDocumentsFromFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            if (list.size() != 0) {
+                for (int i = 0; i < list.size(); i++) {
+                    String personalTask = list.get(i).getMeetTask();
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                }
+            } else {
+                progressBar.setVisibility(View.GONE);
+            }
+        }
     }
 
     public void micMeetTask(View view) {

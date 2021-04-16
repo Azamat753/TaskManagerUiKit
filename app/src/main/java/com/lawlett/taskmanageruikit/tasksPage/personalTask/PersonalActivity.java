@@ -94,25 +94,26 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         });
 
         changeTask_image.setOnClickListener(v -> {
-                    if (editText.getText().toString().trim().isEmpty()) {
-                        Toast.makeText(PersonalActivity.this, R.string.empty, Toast.LENGTH_SHORT).show();
-                    } else {
-                        updatePersonalTask(position);
-                        changeTask_image.setVisibility(View.GONE);
-                        imageMic.setVisibility(View.GONE);
-                        addTask_image.setVisibility(View.VISIBLE);
-                        KeyboardHelper.hideKeyboard(PersonalActivity.this, changeTask_image, editText);
-                        if (user != null) {
-                            personalModel = list.get(position); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
-                            String newDocumentName = editText.getText().toString();//todo Временное решение
-                            personalModel.personalTask = editText.getText().toString();
-                            FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
-                            FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, personalModel);
-                        }
-                        editText.getText().clear();
+            if (editText.getText().toString().trim().isEmpty()) {
+                Toast.makeText(PersonalActivity.this, R.string.empty, Toast.LENGTH_SHORT).show();
+            } else {
+                updatePersonalTask(position);
+                changeTask_image.setVisibility(View.GONE);
+                imageMic.setVisibility(View.GONE);
+                addTask_image.setVisibility(View.VISIBLE);
+                KeyboardHelper.hideKeyboard(PersonalActivity.this, changeTask_image, editText);
+                if (user != null) {
+                    personalModel = list.get(position); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
+                    String newDocumentName = editText.getText().toString();//todo Временное решение
+                    personalModel.personalTask = editText.getText().toString();
+                    if (user != null) {
+                        FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                        FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, personalModel);
                     }
                 }
-        );
+                editText.getText().clear();
+            }
+        });
     }
 
     private void initItemTouchHelper() {
@@ -216,12 +217,12 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     private void deleteAllDocumentsFromFireStore() {
         if (user != null) {
             progressBar.setVisibility(View.VISIBLE);
-            if (list.size()!=0){
+            if (list.size() != 0) {
                 for (int i = 0; i < list.size(); i++) {
                     String personalTask = list.get(i).personalTask;
                     FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
                 }
-            }else {
+            } else {
                 progressBar.setVisibility(View.GONE);
             }
         }
@@ -315,8 +316,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
     private AtomicBoolean readDataFromFireStore(boolean isRead) {
         AtomicBoolean isHasData = new AtomicBoolean(false);
-        String booleanKey="isDone";
-        String personalTaskKey="personalTask";
+        String booleanKey = "isDone";
+        String personalTaskKey = "personalTask";
         if (isRead) {
             db.collection(collectionName)
                     .get()
@@ -367,7 +368,9 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             personalModel.isDone = false;
             decrementDone();
         }
-        FireStoreTools.writeOrUpdateDataByFireStore(personalModel.getPersonalTask(), collectionName, db, personalModel);
+        if (user != null) {
+            FireStoreTools.writeOrUpdateDataByFireStore(personalModel.getPersonalTask(), collectionName, db, personalModel);
+        }
         App.getDataBase().personalDao().update(list.get(id));
     }
 

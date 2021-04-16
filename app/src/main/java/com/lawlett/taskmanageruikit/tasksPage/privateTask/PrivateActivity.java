@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,18 +23,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
-import com.lawlett.taskmanageruikit.tasksPage.data.model.DoneModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.PrivateModel;
-import com.lawlett.taskmanageruikit.tasksPage.homeTask.HomeActivity;
+import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.tasksPage.privateTask.recycler.PrivateAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
@@ -45,6 +40,7 @@ import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.PrivateDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,14 +57,13 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
     EditText editText;
     PrivateModel privateModel;
     int pos, previousData, currentData, updateData;
-    ImageView privateBack, imageAdd, imageMic,changeTask_image;
+    ImageView privateBack, imageAdd, imageMic, changeTask_image;
     boolean isButton = false;
     private static final int REQUEST_CODE_SPEECH_INPUT = 22;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String collectionName;
     private ProgressBar progressBar;
     String oldDocumentName;
-    DialogHelper dialogHelper = new DialogHelper();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser user = mAuth.getCurrentUser();
 
@@ -78,7 +73,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
         setContentView(R.layout.activity_private);
         init();
         initClickers();
-        changeView();
+        initToolbar();
         initListFromRoom();
         initItemTouchHelper();
         editListener();
@@ -91,15 +86,14 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
                 return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
             }
+
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 int fromPosition = viewHolder.getAdapterPosition();
                 int toPosition = target.getAdapterPosition();
-
                 if (fromPosition < toPosition) {
                     for (int i = fromPosition; i < toPosition; i++) {
                         Collections.swap(list, i, i + 1);
-
                         int order1 = (int) list.get(i).getId();
                         int order2 = (int) list.get(i + 1).getId();
                         list.get(i).setId(order2);
@@ -108,7 +102,6 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
                 } else {
                     for (int i = fromPosition; i > toPosition; i--) {
                         Collections.swap(list, i, i - 1);
-
                         int order1 = (int) list.get(i).getId();
                         int order2 = (int) list.get(i - 1).getId();
                         list.get(i).setId(order2);
@@ -127,29 +120,27 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(PrivateActivity.this, getString(R.string.you_sure_delete),new PlannerDialog.PlannerDialogClick() {
-                    @Override
-                    public void clickOnYes() {
-                        pos = viewHolder.getAdapterPosition();
-                        privateModel = list.get(pos);
-                        if (!privateModel.isDone) {
-                            App.getDataBase().privateDao().delete(list.get(pos));
-                        } else {
-                            decrementDone();
-                            App.getDataBase().privateDao().update(list.get(pos));
-                            App.getDataBase().privateDao().delete(list.get(pos));
-                            FireStoreTools.deleteDataByFireStore(privateModel.getPrivateTask(),collectionName, db);
-                            adapter.notifyDataSetChanged();
-                            Toast.makeText(PrivateActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                        }
+                PlannerDialog.showPlannerDialog(PrivateActivity.this, getString(R.string.you_sure_delete), () -> {
+                    pos = viewHolder.getAdapterPosition();
+                    privateModel = list.get(pos);
+                    if (!privateModel.isDone) {
+                        App.getDataBase().privateDao().delete(list.get(pos));
+                    } else {
+                        decrementDone();
+                        App.getDataBase().privateDao().update(list.get(pos));
+                        App.getDataBase().privateDao().delete(list.get(pos));
+                        adapter.notifyDataSetChanged();
                     }
+                    Toast.makeText(PrivateActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
+                    FireStoreTools.deleteDataByFireStore(privateModel.getPrivateTask(), collectionName, db);
                 });
-                adapter.notifyDataSetChanged();
             }
 
             @SuppressLint("ResourceAsColor")
             @Override
-            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView
+                    recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY,
+                                    int actionState, boolean isCurrentlyActive) {
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
                 final int DIRECTION_RIGHT = 1;
                 final int DIRECTION_LEFT = 0;
@@ -182,12 +173,37 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
         });
         imageAdd.setOnClickListener(v -> {
             recordRoom();
-            if (user!=null){
-                FireStoreTools.writeOrUpdateDataByFireStore(privateModel.getPrivateTask(), getString(R.string.privates), db, privateModel);
+            if (user != null) {
+                FireStoreTools.writeOrUpdateDataByFireStore(privateModel.getPrivateTask(), collectionName, db, privateModel);
+            }
+        });
+        changeTask_image.setOnClickListener(v -> {
+            if (editText.getText().toString().trim().isEmpty()) {
+                Toast.makeText(PrivateActivity.this, R.string.empty, Toast.LENGTH_SHORT).show();
+            } else {
+                updatePersonalTask(pos);
+                changeTask_image.setVisibility(View.GONE);
+                imageMic.setVisibility(View.GONE);
+                imageAdd.setVisibility(View.VISIBLE);
+                KeyboardHelper.hideKeyboard(PrivateActivity.this, changeTask_image, editText);
+                if (user != null) {
+                    privateModel = list.get(pos); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
+                    String newDocumentName = editText.getText().toString();//todo Временное решение
+                    privateModel.privateTask = editText.getText().toString();
+                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                    FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, privateModel);
+                }
+                editText.getText().clear();
             }
         });
     }
 
+    private void updatePersonalTask(int id) {
+        privateModel = list.get(id);
+        privateModel.setPrivateTask(editText.getText().toString());
+        App.getDataBase().privateDao().update(list.get(id));
+        adapter.notifyDataSetChanged();
+    }
     private void initListFromRoom() {
         App.getDataBase().privateDao().getAllLive().observe(this, privateModels -> {
             if (privateModels != null) {
@@ -202,6 +218,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
             }
         });
     }
+
     private void checkOnShowProgressBar() {
         if (readDataFromFireStore(false).get()) {
             progressBar.setVisibility(View.VISIBLE);
@@ -244,6 +261,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence != null && !isButton && !editText.getText().toString().trim().isEmpty()) {
@@ -280,6 +298,8 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
         editText = findViewById(R.id.editText_private);
         imageAdd = findViewById(R.id.add_task_private);
         imageMic = findViewById(R.id.mic_task_private);
+        progressBar = findViewById(R.id.progress_bar);
+        changeTask_image=findViewById(R.id.change_task_private);
     }
 
     public void recordRoom() {
@@ -292,10 +312,10 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
         }
     }
 
-    public void changeView() {
+    public void initToolbar() {
         TextView toolbar = findViewById(R.id.toolbar_title);
-        toolbar.setText(R.string.privates);
-        collectionName = toolbar.getText().toString()+ "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        toolbar.setText(R.string.privates);// TODO: 16.04.2021  
+        collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
     }
 
     @Override
@@ -308,8 +328,10 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
             privateModel.isDone = false;
             decrementDone();
         }
+        if (user!=null){
+            FireStoreTools.writeOrUpdateDataByFireStore(privateModel.getPrivateTask(), collectionName, db, privateModel);
+        }
         App.getDataBase().privateDao().update(list.get(id));
-        FireStoreTools.writeOrUpdateDataByFireStore(privateModel.getPrivateTask(), getString(R.string.privates), db, privateModel);
     }
 
     @Override
@@ -400,6 +422,21 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
     public void pressOk() {
         App.getDataBase().privateDao().deleteAll(list);
         PrivateDoneSizePreference.getInstance(PrivateActivity.this).clearSettings();
+        deleteAllDocumentsFromFireStore();
+    }
+
+    private void deleteAllDocumentsFromFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            if (list.size() != 0) {
+                for (int i = 0; i < list.size(); i++) {
+                    String personalTask = list.get(i).getPrivateTask();
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                }
+            } else {
+                progressBar.setVisibility(View.GONE);
+            }
+        }
     }
 
     public void micPrivateTask(View view) {

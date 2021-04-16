@@ -35,6 +35,7 @@ import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.HomeModel;
 import com.lawlett.taskmanageruikit.tasksPage.homeTask.recycler.HomeAdapter;
 import com.lawlett.taskmanageruikit.tasksPage.meetTask.MeetActivity;
+import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
@@ -172,12 +173,10 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
                         decrementDone();
                         App.getDataBase().homeDao().update(list.get(pos));
                         App.getDataBase().homeDao().delete(list.get(pos));
-                        if (user!=null){
-                            FireStoreTools.deleteDataByFireStore(homeModel.getHomeTask(), collectionName, db);
-                        }
                         adapter.notifyDataSetChanged();
-                        Toast.makeText(HomeActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
                     }
+                    Toast.makeText(HomeActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
+                    FireStoreTools.deleteDataByFireStore(homeModel.getHomeTask(), collectionName, db);
                 });
                 adapter.notifyDataSetChanged();
             }
@@ -408,8 +407,21 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
     public void pressOk() {
         App.getDataBase().homeDao().deleteAll(list);
         HomeDoneSizePreference.getInstance(HomeActivity.this).clearSettings();
+        deleteAllDocumentsFromFireStore();
     }
-
+    private void deleteAllDocumentsFromFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            if (list.size()!=0){
+                for (int i = 0; i < list.size(); i++) {
+                    String personalTask = list.get(i).homeTask;
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                }
+            }else {
+                progressBar.setVisibility(View.GONE);
+            }
+        }
+    }
     private void editListener() {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
