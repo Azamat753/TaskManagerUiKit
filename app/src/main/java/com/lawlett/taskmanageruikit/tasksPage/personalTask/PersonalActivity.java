@@ -68,6 +68,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser user = mAuth.getCurrentUser();
     private ProgressBar progressBar;
+    String oldDocumentName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,27 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                 FireStoreTools.writeOrUpdateDataByFireStore(personalModel.getPersonalTask(), collectionName, db, personalModel);
             }
         });
+
+        changeTask_image.setOnClickListener(v -> {
+                    if (editText.getText().toString().trim().isEmpty()) {
+                        Toast.makeText(PersonalActivity.this, R.string.empty, Toast.LENGTH_SHORT).show();
+                    } else {
+                        updatePersonalTask(position);
+                        changeTask_image.setVisibility(View.GONE);
+                        imageMic.setVisibility(View.GONE);
+                        addTask_image.setVisibility(View.VISIBLE);
+                        KeyboardHelper.hideKeyboard(PersonalActivity.this, changeTask_image, editText);
+                        if (user != null) {
+                            personalModel = list.get(position); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
+                            String newDocumentName = editText.getText().toString();//todo Временное решение
+                            personalModel.personalTask = editText.getText().toString();
+                            FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                            FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, personalModel);
+                        }
+                        editText.getText().clear();
+                    }
+                }
+        );
     }
 
     private void initItemTouchHelper() {
@@ -148,10 +170,12 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                         decrementDone();
                         App.getDataBase().personalDao().update(list.get(position));
                         App.getDataBase().personalDao().delete(list.get(position));
-                        FireStoreTools.deleteDataByFireStore(personalModel.getPersonalTask(), collectionName, db);
+                        if (user!=null){
+                            FireStoreTools.deleteDataByFireStore(personalModel.getPersonalTask(), collectionName, db);
+                        }
                         adapter.notifyDataSetChanged();
-                        Toast.makeText(PersonalActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
                     }
+                    Toast.makeText(PersonalActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
                 });
                 adapter.notifyDataSetChanged();
             }
@@ -194,7 +218,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
     private void getRecordsFromRoom() {
         App.getDataBase().personalDao().getAllLive().observe(this, personalModels -> {
-            if (personalModels != null && personalModels.size() != 0) {
+            if (personalModels != null) {
                 checkOnShowProgressBar();
                 list.clear();
                 list.addAll(personalModels);
@@ -207,22 +231,25 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         });
     }
 
-
     private void editListener() {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
-
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence != null && !isButton && !editText.getText().toString().trim().isEmpty()) {
-                    imageMic.setVisibility(View.INVISIBLE);
-                    addTask_image.setVisibility(View.VISIBLE);
+                    imageMic.setVisibility(View.GONE);
+                    if (changeTask_image.getVisibility() == View.VISIBLE) {
+                        addTask_image.setVisibility(View.GONE);
+                    } else {
+                        addTask_image.setVisibility(View.VISIBLE);
+                    }
                     isButton = true;
                 }
                 if (editText.getText().toString().isEmpty() && isButton) {
-                    addTask_image.setVisibility(View.INVISIBLE);
+                    changeTask_image.setVisibility(View.GONE);
+                    addTask_image.setVisibility(View.GONE);
                     imageMic.setVisibility(View.VISIBLE);
                     isButton = false;
                 }
@@ -232,6 +259,13 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             public void afterTextChanged(Editable editable) {
             }
         });
+    }
+
+    private void updatePersonalTask(int id) {
+        personalModel = list.get(id);
+        personalModel.setPersonalTask(editText.getText().toString());
+        App.getDataBase().personalDao().update(list.get(id));
+        adapter.notifyDataSetChanged();
     }
 
     private void init() {
@@ -316,10 +350,13 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
     @Override
     public void onItemLongClick(int pos) {
-        addTask_image.setVisibility(View.GONE);
-        changeTask_image.setVisibility(View.VISIBLE);
+        if (addTask_image.getVisibility() == View.VISIBLE) {
+            addTask_image.setVisibility(View.GONE);
+        }
         imageMic.setVisibility(View.GONE);
+        changeTask_image.setVisibility(View.VISIBLE);
         personalModel = list.get(pos);
+        oldDocumentName = personalModel.getPersonalTask();
         editText.setText(personalModel.getPersonalTask());
         position = pos;
         KeyboardHelper.openKeyboard(PersonalActivity.this);

@@ -2,14 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/linearHome">
+    android:id="@+id/linearHome"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <CheckBox
-        android:id="@+id/home_task"
+        android:id="@+id/home_task_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/home_task_tv"
         style="@style/todoTextColor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:fontFamily="@font/m_light"
-        android:textSize="20sp" />
+        android:layout_marginTop="16dp"
+        android:textSize="20sp"
+        tools:text="Text" />
+
 
 </LinearLayout>

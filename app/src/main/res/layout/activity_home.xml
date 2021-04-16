@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".tasksPage.homeTask.HomeActivity">
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <include
         android:id="@+id/home_toolbar"
         layout="@layout/personal_tool_bar"
@@ -38,7 +47,7 @@
         app:boxStrokeColor="#00BCD4"
         app:hintTextColor="#00BCD4"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/add_task_home"
+        app:layout_constraintEnd_toStartOf="@+id/add_task_wrapper"
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -51,30 +60,37 @@
             android:textStyle="bold" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <ImageView
-        android:id="@+id/add_task_home"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="20dp"
-        android:onClick="addHomeTask"
-        android:visibility="invisible"
+    <LinearLayout
+        android:id="@+id/add_task_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/awesomeTextInputLayout2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/awesomeTextInputLayout2"
-        app:srcCompat="@drawable/ic_send" />
+        app:layout_constraintTop_toTopOf="@+id/awesomeTextInputLayout2">
+
+        <ImageView
+            android:id="@+id/add_task_home"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_send" />
 
         <ImageView
             android:id="@+id/mic_task_home"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginEnd="20dp"
-            android:textColor="#FFF"
-            android:textColorHint="#FFF"
             android:onClick="micHomeTask"
-            app:layout_constraintBottom_toBottomOf="@+id/awesomeTextInputLayout2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/awesomeTextInputLayout2"
             app:srcCompat="@drawable/ic_mic" />
 
-
+        <ImageView
+            android:id="@+id/change_task_home"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_done" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

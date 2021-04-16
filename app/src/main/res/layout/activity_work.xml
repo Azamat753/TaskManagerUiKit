@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".tasksPage.workTask.WorkActivity">
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <include
         android:id="@+id/work_toolbar"
         layout="@layout/personal_tool_bar"
@@ -36,7 +46,7 @@
         app:boxStrokeColor="#00BCD4"
         app:hintTextColor="#00BCD4"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/add_task_work"
+        app:layout_constraintEnd_toStartOf="@+id/add_task_wrapper"
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -49,28 +59,40 @@
             android:textStyle="bold" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <ImageView
-        android:id="@+id/add_task_work"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="20dp"
-        android:onClick="addWorkTask"
-        android:visibility="invisible"
+    <LinearLayout
+        android:id="@+id/add_task_wrapper"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/awesomeTextInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/awesomeTextInputLayout"
-        app:srcCompat="@drawable/ic_send" />
+        android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/mic_task_done"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="20dp"
-        android:onClick="micWorkTask"
-        app:layout_constraintBottom_toBottomOf="@+id/awesomeTextInputLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/awesomeTextInputLayout"
-        app:srcCompat="@drawable/ic_mic" />
+        <ImageView
+            android:id="@+id/add_task_work"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_send" />
+
+        <ImageView
+            android:id="@+id/mic_task_work"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            android:onClick="micWorkTask"
+            app:srcCompat="@drawable/ic_mic" />
+
+        <ImageView
+            android:id="@+id/change_task_work"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_done" />
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

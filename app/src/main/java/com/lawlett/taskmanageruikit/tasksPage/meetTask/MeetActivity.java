@@ -9,10 +9,10 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,13 +23,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.MeetModel;
@@ -39,6 +36,7 @@ import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
+import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.MeetDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
@@ -48,7 +46,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMCheckedListener, ActionForDialog {
     private RecyclerView recyclerView;
@@ -57,14 +57,15 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
     private EditText editText;
     private MeetModel meetModel;
     private int position;
-    private ImageView meetBack, imageMic, imageAdd;
+    private ImageView meetBack, imageMic, imageAdd, changeTask_image;
     private static final int REQUEST_CODE_SPEECH_INPUT = 22;
-    private boolean isAddBtn = false;
+    private boolean isButton = false;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private String userId;
     String collectionName;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser user = mAuth.getCurrentUser();
+    String oldDocumentName;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         init();
         initClickers();
         initToolbar();
-        initListFromRoom();
+        getRecordsFromRoom();
         initItemTouchHelper();
         editListener();
     }
@@ -81,8 +82,8 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
     private void initClickers() {
         imageAdd.setOnClickListener(view -> {
             recordRoom();
-            if (user!=null){
-                FireStoreTools.writeOrUpdateDataByFireStore(meetModel.getMeetTask(), collectionName + "-" + "(" + user.getDisplayName() + ")" + user.getUid(), db, meetModel.meetTask);
+            if (user != null) {
+                FireStoreTools.writeOrUpdateDataByFireStore(meetModel.getMeetTask(), collectionName , db, meetModel);
             }
         });
         meetBack.setOnClickListener(v -> onBackPressed());
@@ -90,6 +91,32 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             DialogHelper dialogHelper = new DialogHelper();
             dialogHelper.myDialog(MeetActivity.this, (ActionForDialog) MeetActivity.this);
         });
+        changeTask_image.setOnClickListener(v -> {
+            if (editText.getText().toString().trim().isEmpty()) {
+                Toast.makeText(MeetActivity.this, R.string.empty, Toast.LENGTH_SHORT).show();
+            } else {
+                updateMeetTask(position);
+                changeTask_image.setVisibility(View.GONE);
+                imageMic.setVisibility(View.GONE);
+                imageAdd.setVisibility(View.VISIBLE);
+                KeyboardHelper.hideKeyboard(MeetActivity.this, changeTask_image, editText);
+                if (user != null) {
+                    meetModel = list.get(position); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
+                    String newDocumentName = editText.getText().toString();//todo Временное решение
+                    meetModel.meetTask = editText.getText().toString();
+                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                    FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, meetModel);
+                }
+                editText.getText().clear();
+            }
+        });
+    }
+
+    private void updateMeetTask(int id) {
+        meetModel = list.get(id);
+        meetModel.setMeetTask(editText.getText().toString());
+        App.getDataBase().meetDao().update(list.get(id));
+        adapter.notifyDataSetChanged();
     }
 
 
@@ -101,8 +128,6 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                 return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
                         ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
             }
-
-
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 int fromPosition = viewHolder.getAdapterPosition();
@@ -138,22 +163,21 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(MeetActivity.this,getString(R.string.you_sure_delete), new PlannerDialog.PlannerDialogClick() {
-                    @Override
-                    public void clickOnYes() {
-                        position = viewHolder.getAdapterPosition();
-                        meetModel = list.get(position);
-                        if (!meetModel.isDone) {
-                            App.getDataBase().meetDao().delete(list.get(position));
-                        } else {
-                            decrementDone();
-                            App.getDataBase().meetDao().update(list.get(position));
-                            App.getDataBase().meetDao().delete(list.get(position));
-                            FireStoreTools.deleteDataByFireStore(userId, getString(R.string.work), db);
-                            adapter.notifyDataSetChanged();
-                            Toast.makeText(MeetActivity.this, "Удалено", Toast.LENGTH_SHORT).show();
+                PlannerDialog.showPlannerDialog(MeetActivity.this, getString(R.string.you_sure_delete), () -> {
+                    position = viewHolder.getAdapterPosition();
+                    meetModel = list.get(position);
+                    if (!meetModel.isDone) {
+                        App.getDataBase().meetDao().delete(list.get(position));
+                    } else {
+                        decrementDone();
+                        App.getDataBase().meetDao().update(list.get(position));
+                        App.getDataBase().meetDao().delete(list.get(position));
+                        if (user!=null){
+                            FireStoreTools.deleteDataByFireStore(meetModel.getMeetTask(), collectionName, db);
                         }
+                        adapter.notifyDataSetChanged();
                     }
+                    Toast.makeText(MeetActivity.this, "Удалено", Toast.LENGTH_SHORT).show();
                 });
                 adapter.notifyDataSetChanged();
             }
@@ -185,42 +209,62 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
 
                 }
             }
-        }).
-
-                attachToRecyclerView(recyclerView);
+        }).attachToRecyclerView(recyclerView);
     }
 
-    private void initListFromRoom() {
+    private void checkOnShowProgressBar() {
+        if (readDataFromFireStore(false).get()) {
+            progressBar.setVisibility(View.VISIBLE);
+    } else {
+        progressBar.setVisibility(View.GONE);
+    }
+    }
+
+    private void getRecordsFromRoom() {
         list = new ArrayList<>();
         App.getDataBase().meetDao().getAllLive().observe(this, meetModels -> {
             if (meetModels != null) {
+                checkOnShowProgressBar();
                 list.clear();
                 list.addAll(meetModels);
                 Collections.sort(list, (meetModel, t1) -> Boolean.compare(t1.isDone, meetModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
             } else {
-                readDataFromFireStore(db, getString(R.string.meets));
+                readDataFromFireStore(true);
             }
         });
     }
 
-    private void readDataFromFireStore(FirebaseFirestore firebaseFirestore, String collectionName) {
-        firebaseFirestore.collection(collectionName)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+    private AtomicBoolean readDataFromFireStore(boolean isRead) {
+        AtomicBoolean isHasData = new AtomicBoolean(false);
+        if (isRead) {
+            db.collection(collectionName)
+                    .get()
+                    .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-
+                                if (task.getResult().getDocuments().size() == 0) {
+                                    isHasData.set(false);
+                                } else {
+                                    isHasData.set(true);
+                                }
+                                Map<String, Object> dataFromFireBase;
+                                dataFromFireBase = document.getData();
+                                Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
+                                String meetTask = dataFromFireBase.get("meetTask").toString();
+                                meetModel = new MeetModel(meetTask, taskBoolean);
+                                App.getDataBase().meetDao().insert(meetModel);
                             }
+                            progressBar.setVisibility(View.GONE);
                         } else {
-                            Log.w("ololo", "Error getting documents.", task.getException());
+                            progressBar.setVisibility(View.VISIBLE);
                         }
-                    }
-                });
+                    });
+        }
+        return isHasData;
     }
+
 
     private void editListener() {
         editText.addTextChangedListener(new TextWatcher() {
@@ -230,23 +274,28 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence != null && !isAddBtn && !editText.getText().toString().trim().isEmpty()) {
-                    imageMic.setVisibility(View.INVISIBLE);
-                    imageAdd.setVisibility(View.VISIBLE);
-                    isAddBtn = true;
+                if (charSequence != null && !isButton && !editText.getText().toString().trim().isEmpty()) {
+                    imageMic.setVisibility(View.GONE);
+                    if (changeTask_image.getVisibility() == View.VISIBLE) {
+                        imageAdd.setVisibility(View.GONE);
+                    } else {
+                        imageAdd.setVisibility(View.VISIBLE);
+                    }
+                    isButton = true;
                 }
-                if (editText.getText().toString().isEmpty() && isAddBtn) {
-                    imageAdd.setVisibility(View.INVISIBLE);
+                if (editText.getText().toString().isEmpty() && isButton) {
+                    changeTask_image.setVisibility(View.GONE);
+                    imageAdd.setVisibility(View.GONE);
                     imageMic.setVisibility(View.VISIBLE);
-                    isAddBtn = false;
+                    isButton = false;
                 }
             }
+
 
             @Override
             public void afterTextChanged(Editable editable) {
             }
         });
-
     }
 
     private void init() {
@@ -259,6 +308,8 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         meetBack.setOnClickListener(v -> onBackPressed());
         imageAdd = findViewById(R.id.add_task_meet);
         imageMic = findViewById(R.id.mic_task_meet);
+        changeTask_image=findViewById(R.id.change_task_meet);
+        progressBar=findViewById(R.id.progress_bar);
     }
 
     public void recordRoom() {
@@ -278,7 +329,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         } else {
             toolbar.setText(TaskDialogPreference.getMeetTitle());
         }
-        collectionName=toolbar.getText().toString();
+        collectionName=toolbar.getText().toString()+ "-" + "(" + user.getDisplayName() + ")" + user.getUid();
     }
 
     @Override
@@ -292,7 +343,25 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             decrementDone();
         }
         App.getDataBase().meetDao().update(list.get(id));
-        FireStoreTools.writeOrUpdateDataByFireStore(meetModel.getMeetTask(), getString(R.string.meets), db, meetModel);
+        if (user!=null){
+            FireStoreTools.writeOrUpdateDataByFireStore(meetModel.getMeetTask(), collectionName, db, meetModel);
+        }
+    }
+
+    @Override
+    public void onItemLongClick(int pos) {
+        if (imageAdd.getVisibility() == View.VISIBLE) {
+            imageAdd.setVisibility(View.GONE);
+        }
+        imageMic.setVisibility(View.GONE);
+        changeTask_image.setVisibility(View.VISIBLE);
+        meetModel = list.get(pos);
+        oldDocumentName = meetModel.getMeetTask();
+        editText.setText(meetModel.getMeetTask());
+        position = pos;
+        KeyboardHelper.openKeyboard(MeetActivity.this);
+        editText.requestFocus();
+        editText.setSelection(editText.getText().length());
     }
 
     private void setLevel(int size) {

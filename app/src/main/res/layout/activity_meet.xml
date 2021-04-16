@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".tasksPage.meetTask.MeetActivity">
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <include
         android:id="@+id/personal_toolbar"
         layout="@layout/personal_tool_bar"
@@ -27,49 +37,60 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/awesomeTextInputLayout3"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:padding="16dp"
         android:hint="@string/task"
-        app:hintTextColor="#00BCD4"
+        android:padding="16dp"
         android:textColorHint="@color/hint_color"
         app:boxStrokeColor="#00BCD4"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:hintTextColor="#00BCD4"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/add_task_meet"
+        app:layout_constraintEnd_toStartOf="@+id/add_task_wrapper"
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editText_meet"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:textColor="@color/myWhite"
             android:inputType="textCapSentences"
-            />
+            android:textColor="@color/myWhite"
+            android:textStyle="bold" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <ImageView
-        android:id="@+id/add_task_meet"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:visibility="invisible"
-        app:srcCompat="@drawable/ic_send"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintTop_toTopOf="@+id/awesomeTextInputLayout3"
+    <LinearLayout
+        android:id="@+id/add_task_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/awesomeTextInputLayout3"
-        app:layout_constraintEnd_toEndOf="parent"/>
-    <ImageView
-        android:id="@+id/mic_task_meet"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:onClick="micMeetTask"
-        app:srcCompat="@drawable/ic_mic"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintTop_toTopOf="@+id/awesomeTextInputLayout3"
-        app:layout_constraintBottom_toBottomOf="@+id/awesomeTextInputLayout3"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/awesomeTextInputLayout3">
 
+        <ImageView
+            android:id="@+id/add_task_meet"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_send" />
+
+        <ImageView
+            android:id="@+id/mic_task_meet"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            android:onClick="micMeetTask"
+            app:srcCompat="@drawable/ic_mic" />
+
+        <ImageView
+            android:id="@+id/change_task_meet"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_done" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

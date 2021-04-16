@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,17 +20,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.addTask.adapter.DoneAdapter;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.DoneModel;
+import com.lawlett.taskmanageruikit.tasksPage.data.model.HomeModel;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
+import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 
@@ -38,6 +44,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMCheckedListener, ActionForDialog {
     DoneAdapter adapter;
@@ -45,11 +54,17 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
     DoneModel doneModel;
     EditText editText;
     int pos, previousData, currentData, updateData;
-    ImageView doneBack, addTask, imageMic;
+    ImageView doneBack, addTask, imageMic, changeTask_image;
     private static final int REQUEST_CODE_SPEECH_INPUT = 22;
-    boolean knopka = false;
+    boolean isButton = false;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     RecyclerView recyclerView;
+    private String collectionName;
+    private ProgressBar progressBar;
+    String oldDocumentName;
+    DialogHelper dialogHelper = new DialogHelper();
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser user = mAuth.getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +74,38 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
         initViews();
         initClickers();
         initToolbar();
-        initRoomList();
+        getRecordsRoomData();
         editListener();
         initItemTouchHelper();
+    }
+
+    private AtomicBoolean readDataFromFireStore(boolean isRead) {
+        AtomicBoolean isHasData = new AtomicBoolean(false);
+        if (isRead) {
+            db.collection(collectionName)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                if (task.getResult().getDocuments().size() == 0) {
+                                    isHasData.set(false);
+                                } else {
+                                    isHasData.set(true);
+                                }
+                                Map<String, Object> dataFromFireBase;
+                                dataFromFireBase = document.getData();
+                                Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
+                                String homeTask = dataFromFireBase.get("doneTask").toString();
+                                doneModel = new DoneModel(homeTask, taskBoolean);
+                                App.getDataBase().doneDao().insert(doneModel);
+                            }
+                            progressBar.setVisibility(View.GONE);
+                        } else {
+                            progressBar.setVisibility(View.VISIBLE);
+                        }
+                    });
+        }
+        return isHasData;
     }
 
     private void initClickers() {
@@ -70,6 +114,38 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
             DialogHelper dialogHelper = new DialogHelper();
             dialogHelper.myDialog(DoneActivity.this, DoneActivity.this);
         });
+        addTask.setOnClickListener(v -> {
+            recordDataRoom();
+            if (user != null) {
+                FireStoreTools.writeOrUpdateDataByFireStore(doneModel.getDoneTask(), collectionName, db, doneModel);
+            }
+        });
+        changeTask_image.setOnClickListener(v -> {
+            if (editText.getText().toString().trim().isEmpty()) {
+                Toast.makeText(DoneActivity.this, R.string.empty, Toast.LENGTH_SHORT).show();
+            } else {
+                updateTask(pos);
+                changeTask_image.setVisibility(View.GONE);
+                imageMic.setVisibility(View.GONE);
+                addTask.setVisibility(View.VISIBLE);
+                KeyboardHelper.hideKeyboard(DoneActivity.this, changeTask_image, editText);
+                if (user != null) {
+                    doneModel = list.get(pos); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
+                    String newDocumentName = editText.getText().toString();//todo Временное решение
+                    doneModel.doneTask = editText.getText().toString();
+                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                    FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, doneModel);
+                }
+                editText.getText().clear();
+            }
+        });
+    }
+
+    private void updateTask(int id) {
+        doneModel = list.get(id);
+        doneModel.setDoneTask(editText.getText().toString());
+        App.getDataBase().doneDao().update(list.get(id));
+        adapter.notifyDataSetChanged();
     }
 
     private void initItemTouchHelper() {
@@ -84,11 +160,9 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 int fromPosition = viewHolder.getAdapterPosition();
                 int toPosition = target.getAdapterPosition();
-
                 if (fromPosition < toPosition) {
                     for (int i = fromPosition; i < toPosition; i++) {
                         Collections.swap(list, i, i + 1);
-
                         int order1 = (int) list.get(i).getId();
                         int order2 = (int) list.get(i + 1).getId();
                         list.get(i).setId(order2);
@@ -97,7 +171,6 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
                 } else {
                     for (int i = fromPosition; i > toPosition; i--) {
                         Collections.swap(list, i, i - 1);
-
                         int order1 = (int) list.get(i).getId();
                         int order2 = (int) list.get(i - 1).getId();
                         list.get(i).setId(order2);
@@ -113,9 +186,10 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
                 super.clearView(recyclerView, viewHolder);
                 App.getDataBase().doneDao().updateWord(list);
             }
+
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(DoneActivity.this, getString(R.string.you_sure_delete),() -> {
+                PlannerDialog.showPlannerDialog(DoneActivity.this, getString(R.string.you_sure_delete), () -> {
                     pos = viewHolder.getAdapterPosition();
                     doneModel = list.get(pos);
                     if (!doneModel.isDone) {
@@ -124,7 +198,7 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
                         decrementDone();
                         App.getDataBase().doneDao().update(list.get(pos));
                         App.getDataBase().doneDao().delete(list.get(pos));
-                        FireStoreTools.deleteDataByFireStore(doneModel.getDoneTask(), getString(R.string.personal), db);
+                        FireStoreTools.deleteDataByFireStore(doneModel.getDoneTask(),collectionName, db);
                         adapter.notifyDataSetChanged();
                         Toast.makeText(DoneActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
                     }
@@ -135,16 +209,27 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
 
     }
 
-    private void initRoomList() {
+    private void getRecordsRoomData() {
         App.getDataBase().doneDao().getAllLive().observe(this, doneModels -> {
             if (doneModels != null) {
+                checkOnShowProgressBar();
                 list.clear();
                 list.addAll(doneModels);
                 Collections.sort(list, (doneModel, t1) -> Boolean.compare(t1.isDone, doneModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
+            } else {
+                readDataFromFireStore(true);
             }
         });
+    }
+
+    private void checkOnShowProgressBar() {
+        if (readDataFromFireStore(false).get()) {
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     private void initViews() {
@@ -156,10 +241,8 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
         addTask = findViewById(R.id.add_task_done);
         imageMic = findViewById(R.id.mic_task_done);
         doneBack = findViewById(R.id.personal_back);
-    }
-
-    public void addDoneTask(View view) {
-        recordDataRoom();
+        progressBar = findViewById(R.id.progress_bar);
+        changeTask_image = findViewById(R.id.change_task_done);
     }
 
     public void recordDataRoom() {
@@ -175,6 +258,7 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
     public void initToolbar() {
         TextView toolbar = findViewById(R.id.toolbar_title);
         toolbar.setText(TaskDialogPreference.getTitle());
+        collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
     }
 
     @Override
@@ -188,7 +272,21 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
             decrementDone();
         }
         App.getDataBase().doneDao().update(list.get(id));
+        FireStoreTools.writeOrUpdateDataByFireStore(doneModel.getDoneTask(), collectionName, db, doneModel);
+    }
 
+    @Override
+    public void onItemLongClick(int pos) {
+        doneModel = list.get(pos);
+        if (!doneModel.isDone) {
+            doneModel.isDone = true;
+            incrementDone();
+        } else {
+            doneModel.isDone = false;
+            decrementDone();
+        }
+        App.getDataBase().doneDao().update(list.get(pos));
+        FireStoreTools.writeOrUpdateDataByFireStore(doneModel.getDoneTask(), collectionName, db, doneModel);
     }
 
     private void incrementDone() {
@@ -232,15 +330,20 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence != null && !knopka && !editText.getText().toString().trim().isEmpty()) {
-                    imageMic.setVisibility(View.INVISIBLE);
-                    addTask.setVisibility(View.VISIBLE);
-                    knopka = true;
+                if (charSequence != null && !isButton && !editText.getText().toString().trim().isEmpty()) {
+                    imageMic.setVisibility(View.GONE);
+                    if (changeTask_image.getVisibility() == View.VISIBLE) {
+                        addTask.setVisibility(View.GONE);
+                    } else {
+                        addTask.setVisibility(View.VISIBLE);
+                    }
+                    isButton = true;
                 }
-                if (editText.getText().toString().isEmpty() && knopka) {
-                    addTask.setVisibility(View.INVISIBLE);
+                if (editText.getText().toString().isEmpty() && isButton) {
+                    changeTask_image.setVisibility(View.GONE);
+                    addTask.setVisibility(View.GONE);
                     imageMic.setVisibility(View.VISIBLE);
-                    knopka = false;
+                    isButton = false;
                 }
             }
 
@@ -256,11 +359,11 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Hi speak something");
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speak_something));
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e) {
-            Toast.makeText(this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

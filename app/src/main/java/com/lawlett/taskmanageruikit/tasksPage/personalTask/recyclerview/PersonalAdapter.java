@@ -52,30 +52,22 @@ public class PersonalAdapter extends RecyclerView.Adapter<PersonalAdapter.Person
             super(itemView);
             personalTaskCheck = itemView.findViewById(R.id.personal_task_check);
             personalTaskTv = itemView.findViewById(R.id.personal_task_tv);
-
         }
 
         public void onBind(PersonalModel personalModel) {
             personalTaskTv.setText(personalModel.getPersonalTask());
             personalTaskCheck.setChecked(personalModel.isDone);
-            personalTaskCheck.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemCheckClick(getAdapterPosition());
-                }
-            });
-            personalTaskTv.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    listener.onItemLongClick(getAdapterPosition());
-                    return false;
-                }
+            personalTaskCheck.setOnClickListener(v -> listener.onItemCheckClick(getAdapterPosition()));
+            personalTaskTv.setOnLongClickListener(view -> {
+                listener.onItemLongClick(getAdapterPosition());
+                return false;
             });
         }
-
     }
+
     public interface ICheckedListener {
         void onItemCheckClick(int id);
+
         void onItemLongClick(int pos);
     }
 }

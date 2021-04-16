@@ -10,11 +10,10 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,12 +31,14 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
+import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.tasksPage.workTask.recycler.WorkAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
+import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 import com.lawlett.taskmanageruikit.utils.WorkDoneSizePreference;
@@ -49,6 +50,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWCheckedListener, ActionForDialog {
     WorkAdapter adapter;
@@ -58,14 +60,14 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
     private static final int REQUEST_CODE_SPEECH_INPUT = 22;
     int pos, previousData, currentData, updateData;
     RecyclerView recyclerView;
-    ImageView workBack, imageAdd, imageMic;
-    boolean knopka = false;
-    Animation animationAlpha;
+    ImageView workBack, imageAdd, imageMic, changeTask_image;
+    boolean isButton = false;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    String userId;
     String collectionName;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser user = mAuth.getCurrentUser();
+    ProgressBar progressBar;
+    String oldDocumentName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +76,54 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         init();
         initClickers();
         initToolbar();
-        initListFromRoom();
+        getDataFromRoom();
         initItemTouchHelper();
         editListener();
     }
 
+    private void checkOnShowProgressBar() {
+        if (readDataFromFireStore(false).get()) {
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
     private void initClickers() {
         workBack.setOnClickListener(v -> onBackPressed());
+        imageAdd.setOnClickListener(v -> {
+            recordDataRoom();
+            if (user != null) {
+                FireStoreTools.writeOrUpdateDataByFireStore(workModel.getWorkTask(), collectionName, db, workModel);
+            }
+        });
+
+        changeTask_image.setOnClickListener(v -> {
+            if (editText.getText().toString().trim().isEmpty()) {
+                Toast.makeText(WorkActivity.this, R.string.empty, Toast.LENGTH_SHORT).show();
+            } else {
+                updateWorkTask(pos);
+                changeTask_image.setVisibility(View.GONE);
+                imageMic.setVisibility(View.GONE);
+                imageAdd.setVisibility(View.VISIBLE);
+                KeyboardHelper.hideKeyboard(WorkActivity.this, changeTask_image, editText);
+                if (user != null) {
+                    workModel = list.get(pos); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
+                    String newDocumentName = editText.getText().toString();//todo Временное решение
+                    workModel.workTask = editText.getText().toString();
+                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                    FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, workModel);
+                }
+                editText.getText().clear();
+            }
+        });
+    }
+
+    private void updateWorkTask(int pos) {
+        workModel = list.get(pos);
+        workModel.setWorkTask(editText.getText().toString());
+        App.getDataBase().workDao().update(list.get(pos));
+        adapter.notifyDataSetChanged();
     }
 
     private void initItemTouchHelper() {
@@ -129,21 +172,20 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(WorkActivity.this, getString(R.string.you_sure_delete), new PlannerDialog.PlannerDialogClick() {
-                    @Override
-                    public void clickOnYes() {
-                        pos = viewHolder.getAdapterPosition();
-                        workModel = list.get(pos);
-                        if (!workModel.isDone) {
-                            App.getDataBase().workDao().delete(list.get(pos));
-                        } else {
-                            decrementDone();
-                            App.getDataBase().workDao().update(list.get(pos));
-                            App.getDataBase().workDao().delete(list.get(pos));
-                            FireStoreTools.deleteDataByFireStore(userId, getString(R.string.work), db);
-                            adapter.notifyDataSetChanged();
-                            Toast.makeText(WorkActivity.this, "Удалено", Toast.LENGTH_SHORT).show();
+                PlannerDialog.showPlannerDialog(WorkActivity.this, getString(R.string.you_sure_delete), () -> {
+                    pos = viewHolder.getAdapterPosition();
+                    workModel = list.get(pos);
+                    if (!workModel.isDone) {
+                        App.getDataBase().workDao().delete(list.get(pos));
+                    } else {
+                        decrementDone();
+                        App.getDataBase().workDao().update(list.get(pos));
+                        App.getDataBase().workDao().delete(list.get(pos));
+                        if (user!=null){
+                            FireStoreTools.deleteDataByFireStore(workModel.getWorkTask(), collectionName, db);
                         }
+                        adapter.notifyDataSetChanged();
+                        Toast.makeText(WorkActivity.this, "Удалено", Toast.LENGTH_SHORT).show();
                     }
                 });
                 adapter.notifyDataSetChanged();
@@ -171,43 +213,53 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                             background2.draw(c);
                             break;
                     }
-
                 }
             }
         }).attachToRecyclerView(recyclerView);
     }
 
-    private void initListFromRoom() {
+    private void getDataFromRoom() {
         list = new ArrayList<>();
         App.getDataBase().workDao().getAllLive().observe(this, workModels -> {
             if (workModels != null) {
+                checkOnShowProgressBar();
                 list.clear();
                 list.addAll(workModels);
                 Collections.reverse(list);
                 adapter.updateList(list);
             } else {
-                readDataFromFireStore();
+                readDataFromFireStore(true);
             }
         });
     }
 
-    private void readDataFromFireStore() {
-        db.collection(collectionName)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                            Map<String, Object> dataFromFireBase;
-                            dataFromFireBase = document.getData();
-                            Boolean workBoolean = (Boolean) dataFromFireBase.get("isDone");
-                            String workTask = dataFromFireBase.get("workTask").toString();
-                            workModel = new WorkModel(workTask, workBoolean);
-                            App.getDataBase().workDao().insert(workModel);
+    private AtomicBoolean readDataFromFireStore(boolean isRead) {
+        AtomicBoolean isHasData = new AtomicBoolean(false);
+        if (isRead) {
+            db.collection(collectionName)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                if (task.getResult().getDocuments().size() == 0) {
+                                    isHasData.set(false);
+                                } else {
+                                    isHasData.set(true);
+                                }
+                                Map<String, Object> dataFromFireBase;
+                                dataFromFireBase = document.getData();
+                                Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
+                                String workTask = dataFromFireBase.get("workTask").toString();
+                                workModel = new WorkModel(workTask, taskBoolean);
+                                App.getDataBase().workDao().insert(workModel);
+                            }
+                            progressBar.setVisibility(View.GONE);
+                        } else {
+                            progressBar.setVisibility(View.VISIBLE);
                         }
-                    } else {
-                        Log.w("ololo", "Error getting documents.", task.getException());
-                    }
-                });
+                    });
+        }
+        return isHasData;
     }
 
     private void editListener() {
@@ -218,15 +270,20 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence != null && !knopka && !editText.getText().toString().trim().isEmpty()) {
-                    imageMic.setVisibility(View.INVISIBLE);
-                    imageAdd.setVisibility(View.VISIBLE);
-                    knopka = true;
+                if (charSequence != null && !isButton && !editText.getText().toString().trim().isEmpty()) {
+                    imageMic.setVisibility(View.GONE);
+                    if (changeTask_image.getVisibility() == View.VISIBLE) {
+                        imageAdd.setVisibility(View.GONE);
+                    } else {
+                        imageAdd.setVisibility(View.VISIBLE);
+                    }
+                    isButton = true;
                 }
-                if (editText.getText().toString().isEmpty() && knopka) {
-                    imageAdd.setVisibility(View.INVISIBLE);
+                if (editText.getText().toString().isEmpty() && isButton) {
+                    changeTask_image.setVisibility(View.GONE);
+                    imageAdd.setVisibility(View.GONE);
                     imageMic.setVisibility(View.VISIBLE);
-                    knopka = false;
+                    isButton = false;
                 }
             }
 
@@ -242,7 +299,6 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                 dialogHelper.myDialog(WorkActivity.this, (ActionForDialog) WorkActivity.this);
             }
         });
-
     }
 
     private void init() {
@@ -253,15 +309,10 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         editText = findViewById(R.id.editText_work);
         editText = findViewById(R.id.editText_work);
         imageAdd = findViewById(R.id.add_task_work);
-        imageMic = findViewById(R.id.mic_task_done);
+        imageMic = findViewById(R.id.mic_task_work);
         workBack = findViewById(R.id.personal_back);
-    }
-
-    public void addWorkTask(View view) {
-        recordDataRoom();
-        if (user != null) {
-            FireStoreTools.writeOrUpdateDataByFireStore(workModel.getWorkTask(), collectionName + "-" + "(" + user.getDisplayName() + ")" + user.getUid(), db, workModel);
-        }
+        changeTask_image = findViewById(R.id.change_task_work);
+        progressBar = findViewById(R.id.progress_bar);
     }
 
     public void recordDataRoom() {
@@ -281,7 +332,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         } else {
             toolbar.setText(TaskDialogPreference.getWorkTitle());
         }
-        collectionName = toolbar.getText().toString();
+        collectionName = toolbar.getText().toString()+ "-" + "(" + user.getDisplayName() + ")" + user.getUid();
     }
 
     @Override
@@ -294,8 +345,24 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
             workModel.isDone = false;
             decrementDone();
         }
+        FireStoreTools.writeOrUpdateDataByFireStore(workModel.getWorkTask(), collectionName, db, workModel);
         App.getDataBase().workDao().update(list.get(id));
-        FireStoreTools.writeOrUpdateDataByFireStore(workModel.getWorkTask(), getString(R.string.work), db, workModel);
+    }
+
+    @Override
+    public void onItemLongClick(int pos) {
+        if (imageAdd.getVisibility() == View.VISIBLE) {
+            imageAdd.setVisibility(View.GONE);
+        }
+        imageMic.setVisibility(View.GONE);
+        changeTask_image.setVisibility(View.VISIBLE);
+        workModel = list.get(pos);
+        oldDocumentName = workModel.getWorkTask();
+        editText.setText(workModel.getWorkTask());
+        this.pos = pos;
+        KeyboardHelper.openKeyboard(WorkActivity.this);
+        editText.requestFocus();
+        editText.setSelection(editText.getText().length());
     }
 
     private void setLevel(int size) {
