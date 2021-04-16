@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -83,9 +82,9 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     }
 
     private void initClickers() {
-        findViewById(R.id.settings_for_task).setOnClickListener((View.OnClickListener) v -> {
+        findViewById(R.id.settings_for_task).setOnClickListener(v -> {
             DialogHelper dialogHelper = new DialogHelper();
-            dialogHelper.myDialog(PersonalActivity.this, (ActionForDialog) PersonalActivity.this);
+            dialogHelper.myDialog(PersonalActivity.this, PersonalActivity.this);
         });
         addTask_image.setOnClickListener(view -> {
             recordDataRoom();
@@ -170,12 +169,10 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                         decrementDone();
                         App.getDataBase().personalDao().update(list.get(position));
                         App.getDataBase().personalDao().delete(list.get(position));
-                        if (user!=null){
-                            FireStoreTools.deleteDataByFireStore(personalModel.getPersonalTask(), collectionName, db);
-                        }
                         adapter.notifyDataSetChanged();
                     }
                     Toast.makeText(PersonalActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
+                    FireStoreTools.deleteDataByFireStore(personalModel.getPersonalTask(), collectionName, db);
                 });
                 adapter.notifyDataSetChanged();
             }
@@ -208,6 +205,28 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         }).attachToRecyclerView(recyclerView);
     }
 
+
+    @Override
+    public void pressOk() {
+        App.getDataBase().personalDao().deleteAll(list);
+        PersonDoneSizePreference.getInstance(PersonalActivity.this).clearSettings();
+        deleteAllDocumentsFromFireStore();
+    }
+
+    private void deleteAllDocumentsFromFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            if (list.size()!=0){
+                for (int i = 0; i < list.size(); i++) {
+                    String personalTask = list.get(i).personalTask;
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                }
+            }else {
+                progressBar.setVisibility(View.GONE);
+            }
+        }
+    }
+
     private void checkOnShowProgressBar() {
         if (readDataFromFireStore(false).get()) {
             progressBar.setVisibility(View.VISIBLE);
@@ -231,11 +250,13 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         });
     }
 
+
     private void editListener() {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence != null && !isButton && !editText.getText().toString().trim().isEmpty()) {
@@ -294,6 +315,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
     private AtomicBoolean readDataFromFireStore(boolean isRead) {
         AtomicBoolean isHasData = new AtomicBoolean(false);
+        String booleanKey="isDone";
+        String personalTaskKey="personalTask";
         if (isRead) {
             db.collection(collectionName)
                     .get()
@@ -307,8 +330,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                                 }
                                 Map<String, Object> dataFromFireBase;
                                 dataFromFireBase = document.getData();
-                                Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
-                                String personalTask = dataFromFireBase.get("personalTask").toString();
+                                Boolean taskBoolean = (Boolean) dataFromFireBase.get(booleanKey);
+                                String personalTask = dataFromFireBase.get(personalTaskKey).toString();
                                 personalModel = new PersonalModel(personalTask, taskBoolean);
                                 App.getDataBase().personalDao().insert(personalModel);
                             }
@@ -430,12 +453,6 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         int updateData = currentData - 1;
         PersonDoneSizePreference.getInstance(this).savePersonalSize(updateData);
         decrementAllDone();
-    }
-
-    @Override
-    public void pressOk() {
-        App.getDataBase().personalDao().deleteAll(list);
-        PersonDoneSizePreference.getInstance(PersonalActivity.this).clearSettings();
     }
 
     public void micPersonalTask(View view) {
