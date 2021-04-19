@@ -81,14 +81,6 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         editListener();
     }
 
-    private void checkOnShowProgressBar() {
-        if (readDataFromFireStore(false).get()) {
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.GONE);
-        }
-    }
-
     private void initClickers() {
         workBack.setOnClickListener(v -> onBackPressed());
         imageAdd.setOnClickListener(v -> {
@@ -111,7 +103,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                     workModel = list.get(pos); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
                     String newDocumentName = editText.getText().toString();//todo Временное решение
                     workModel.workTask = editText.getText().toString();
-                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db, progressBar);
                     FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, workModel);
                 }
                 editText.getText().clear();
@@ -184,7 +176,10 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                         adapter.notifyDataSetChanged();
                     }
                     Toast.makeText(WorkActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                    FireStoreTools.deleteDataByFireStore(workModel.getWorkTask(), collectionName, db);
+                    if (user != null) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        FireStoreTools.deleteDataByFireStore(workModel.getWorkTask(), collectionName, db, progressBar);
+                    }
                 });
                 adapter.notifyDataSetChanged();
             }
@@ -220,44 +215,41 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         list = new ArrayList<>();
         App.getDataBase().workDao().getAllLive().observe(this, workModels -> {
             if (workModels != null) {
-                checkOnShowProgressBar();
+                progressBar.setVisibility(View.GONE);
                 list.clear();
                 list.addAll(workModels);
                 Collections.reverse(list);
                 adapter.updateList(list);
             } else {
-                readDataFromFireStore(true);
+                readDataFromFireStore();
             }
         });
     }
 
-    private AtomicBoolean readDataFromFireStore(boolean isRead) {
-        AtomicBoolean isHasData = new AtomicBoolean(false);
-        if (isRead) {
+    private void readDataFromFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
             db.collection(collectionName)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 if (task.getResult().getDocuments().size() == 0) {
-                                    isHasData.set(false);
+                                    progressBar.setVisibility(View.GONE);
                                 } else {
-                                    isHasData.set(true);
+                                    Map<String, Object> dataFromFireBase;
+                                    dataFromFireBase = document.getData();
+                                    Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
+                                    String workTask = dataFromFireBase.get("workTask").toString();
+                                    workModel = new WorkModel(workTask, taskBoolean);
+                                    App.getDataBase().workDao().insert(workModel);
                                 }
-                                Map<String, Object> dataFromFireBase;
-                                dataFromFireBase = document.getData();
-                                Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
-                                String workTask = dataFromFireBase.get("workTask").toString();
-                                workModel = new WorkModel(workTask, taskBoolean);
-                                App.getDataBase().workDao().insert(workModel);
                             }
-                            progressBar.setVisibility(View.GONE);
-                        } else {
+                        }else {
                             progressBar.setVisibility(View.VISIBLE);
                         }
                     });
         }
-        return isHasData;
     }
 
     private void editListener() {
@@ -330,7 +322,9 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         } else {
             toolbar.setText(TaskDialogPreference.getWorkTitle());
         }
-        collectionName = toolbar.getText().toString()+ "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        if (user!=null){
+            collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        }
     }
 
     @Override
@@ -457,19 +451,19 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
             editText.setText(editText.getText() + " " + result.get(0));
         }
     }
+
     private void deleteAllDocumentsFromFireStore() {
         if (user != null) {
             progressBar.setVisibility(View.VISIBLE);
-            if (list.size()!=0){
+            if (list.size() != 0) {
                 for (int i = 0; i < list.size(); i++) {
                     String personalTask = list.get(i).getWorkTask();
-                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db, progressBar);
                 }
-            }else {
-                progressBar.setVisibility(View.GONE);
             }
         }
     }
+
     @Override
     public void pressOk() {
         App.getDataBase().workDao().deleteAll(list);

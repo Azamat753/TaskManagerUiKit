@@ -103,13 +103,12 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                 addTask_image.setVisibility(View.VISIBLE);
                 KeyboardHelper.hideKeyboard(PersonalActivity.this, changeTask_image, editText);
                 if (user != null) {
+                    progressBar.setVisibility(View.VISIBLE);
                     personalModel = list.get(position); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
                     String newDocumentName = editText.getText().toString();//todo Временное решение
                     personalModel.personalTask = editText.getText().toString();
-                    if (user != null) {
-                        FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
-                        FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, personalModel);
-                    }
+                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db, progressBar);
+                    FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, personalModel);
                 }
                 editText.getText().clear();
             }
@@ -173,7 +172,10 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                         adapter.notifyDataSetChanged();
                     }
                     Toast.makeText(PersonalActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                    FireStoreTools.deleteDataByFireStore(personalModel.getPersonalTask(), collectionName, db);
+                    if (user != null) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        FireStoreTools.deleteDataByFireStore(personalModel.getPersonalTask(), collectionName, db, progressBar);
+                    }
                 });
                 adapter.notifyDataSetChanged();
             }
@@ -220,10 +222,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             if (list.size() != 0) {
                 for (int i = 0; i < list.size(); i++) {
                     String personalTask = list.get(i).personalTask;
-                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db, progressBar);
                 }
-            } else {
-                progressBar.setVisibility(View.GONE);
             }
         }
     }
@@ -308,10 +308,9 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     }
 
     private void readDataFromFireStore() {
-        AtomicBoolean isHasData = new AtomicBoolean(false);
-        String booleanKey = "isDone";
-        String personalTaskKey = "personalTask";
-        if (user!=null) {
+        if (user != null) {
+            String booleanKey = "isDone";
+            String personalTaskKey = "personalTask";
             progressBar.setVisibility(View.VISIBLE);
             db.collection(collectionName)
                     .get()
@@ -319,10 +318,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 if (task.getResult().getDocuments().size() == 0) {
-                                    isHasData.set(false);
                                     progressBar.setVisibility(View.GONE);
                                 } else {
-                                    isHasData.set(true);
                                     Map<String, Object> dataFromFireBase;
                                     dataFromFireBase = document.getData();
                                     Boolean taskBoolean = (Boolean) dataFromFireBase.get(booleanKey);

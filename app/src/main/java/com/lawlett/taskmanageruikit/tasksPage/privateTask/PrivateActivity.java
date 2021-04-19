@@ -132,7 +132,10 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
                         adapter.notifyDataSetChanged();
                     }
                     Toast.makeText(PrivateActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                    FireStoreTools.deleteDataByFireStore(privateModel.getPrivateTask(), collectionName, db);
+                    if (user != null) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        FireStoreTools.deleteDataByFireStore(privateModel.getPrivateTask(), collectionName, db, progressBar);
+                    }
                 });
             }
 
@@ -187,10 +190,11 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
                 imageAdd.setVisibility(View.VISIBLE);
                 KeyboardHelper.hideKeyboard(PrivateActivity.this, changeTask_image, editText);
                 if (user != null) {
+                    progressBar.setVisibility(View.VISIBLE);
                     privateModel = list.get(pos); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
                     String newDocumentName = editText.getText().toString();//todo Временное решение
                     privateModel.privateTask = editText.getText().toString();
-                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db, progressBar);
                     FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, privateModel);
                 }
                 editText.getText().clear();
@@ -204,56 +208,49 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
         App.getDataBase().privateDao().update(list.get(id));
         adapter.notifyDataSetChanged();
     }
+
     private void initListFromRoom() {
         App.getDataBase().privateDao().getAllLive().observe(this, privateModels -> {
             if (privateModels != null) {
-                checkOnShowProgressBar();
+                progressBar.setVisibility(View.GONE);
                 list.clear();
                 list.addAll(privateModels);
                 Collections.sort(list, (privateModel, t1) -> Boolean.compare(t1.isDone, privateModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
             } else {
-                readDataFromFireStore(true);
+                readDataFromFireStore();
             }
         });
     }
 
-    private void checkOnShowProgressBar() {
-        if (readDataFromFireStore(false).get()) {
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.GONE);
-        }
-    }
 
-    private AtomicBoolean readDataFromFireStore(boolean isRead) {
-        AtomicBoolean isHasData = new AtomicBoolean(false);
-        if (isRead) {
+    private void readDataFromFireStore() {
+        if (user != null) {
+            String booleanKey = "isDone";
+            String privateTaskKey = "privateTask";
+            progressBar.setVisibility(View.VISIBLE);
             db.collection(collectionName)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 if (task.getResult().getDocuments().size() == 0) {
-                                    isHasData.set(false);
+                                    progressBar.setVisibility(View.GONE);
                                 } else {
-                                    isHasData.set(true);
+                                    Map<String, Object> dataFromFireBase;
+                                    dataFromFireBase = document.getData();
+                                    Boolean taskBoolean = (Boolean) dataFromFireBase.get(booleanKey);
+                                    String privateTask = dataFromFireBase.get(privateTaskKey).toString();
+                                    privateModel = new PrivateModel(privateTask, taskBoolean);
+                                    App.getDataBase().privateDao().insert(privateModel);
                                 }
-                                Map<String, Object> dataFromFireBase;
-                                dataFromFireBase = document.getData();
-                                Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
-                                String privateTask = dataFromFireBase.get("privateTask").toString();
-                                privateModel = new PrivateModel(privateTask, taskBoolean);
-                                App.getDataBase().privateDao().insert(privateModel);
                             }
-                            progressBar.setVisibility(View.GONE);
                         } else {
                             progressBar.setVisibility(View.VISIBLE);
                         }
                     });
         }
-        return isHasData;
     }
 
     private void editListener() {
@@ -299,7 +296,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
         imageAdd = findViewById(R.id.add_task_private);
         imageMic = findViewById(R.id.mic_task_private);
         progressBar = findViewById(R.id.progress_bar);
-        changeTask_image=findViewById(R.id.change_task_private);
+        changeTask_image = findViewById(R.id.change_task_private);
     }
 
     public void recordRoom() {
@@ -314,8 +311,10 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
 
     public void initToolbar() {
         TextView toolbar = findViewById(R.id.toolbar_title);
-        toolbar.setText(R.string.privates);// TODO: 16.04.2021  
-        collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        toolbar.setText(R.string.privates);// TODO: 16.04.2021
+        if (user!=null){
+            collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        }
     }
 
     @Override
@@ -328,7 +327,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
             privateModel.isDone = false;
             decrementDone();
         }
-        if (user!=null){
+        if (user != null) {
             FireStoreTools.writeOrUpdateDataByFireStore(privateModel.getPrivateTask(), collectionName, db, privateModel);
         }
         App.getDataBase().privateDao().update(list.get(id));
@@ -431,10 +430,8 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
             if (list.size() != 0) {
                 for (int i = 0; i < list.size(); i++) {
                     String personalTask = list.get(i).getPrivateTask();
-                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db, progressBar);
                 }
-            } else {
-                progressBar.setVisibility(View.GONE);
             }
         }
     }

@@ -80,33 +80,30 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
         initItemTouchHelper();
     }
 
-    private AtomicBoolean readDataFromFireStore(boolean isRead) {
-        AtomicBoolean isHasData = new AtomicBoolean(false);
-        if (isRead) {
+    private void readDataFromFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
             db.collection(collectionName)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 if (task.getResult().getDocuments().size() == 0) {
-                                    isHasData.set(false);
+                                    progressBar.setVisibility(View.GONE);
                                 } else {
-                                    isHasData.set(true);
+                                    Map<String, Object> dataFromFireBase;
+                                    dataFromFireBase = document.getData();
+                                    Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
+                                    String homeTask = dataFromFireBase.get("doneTask").toString();
+                                    doneModel = new DoneModel(homeTask, taskBoolean);
+                                    App.getDataBase().doneDao().insert(doneModel);
                                 }
-                                Map<String, Object> dataFromFireBase;
-                                dataFromFireBase = document.getData();
-                                Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
-                                String homeTask = dataFromFireBase.get("doneTask").toString();
-                                doneModel = new DoneModel(homeTask, taskBoolean);
-                                App.getDataBase().doneDao().insert(doneModel);
                             }
-                            progressBar.setVisibility(View.GONE);
                         } else {
                             progressBar.setVisibility(View.VISIBLE);
                         }
                     });
         }
-        return isHasData;
     }
 
     private void initClickers() {
@@ -135,10 +132,9 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
                     String newDocumentName = editText.getText().toString();//todo Временное решение
                     doneModel.doneTask = editText.getText().toString();
                     if (user != null) {
-                        FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                        FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db, progressBar);
                         FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, doneModel);
                     }
-
                 }
                 editText.getText().clear();
             }
@@ -202,9 +198,12 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
                         decrementDone();
                         App.getDataBase().doneDao().update(list.get(pos));
                         App.getDataBase().doneDao().delete(list.get(pos));
-                        FireStoreTools.deleteDataByFireStore(doneModel.getDoneTask(), collectionName, db);
                         adapter.notifyDataSetChanged();
-                        Toast.makeText(DoneActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
+                    }
+                    Toast.makeText(DoneActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
+                    if (user != null) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        FireStoreTools.deleteDataByFireStore(doneModel.getDoneTask(), collectionName, db, progressBar);
                     }
                 });
                 adapter.notifyDataSetChanged();
@@ -216,24 +215,16 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
     private void getRecordsRoomData() {
         App.getDataBase().doneDao().getAllLive().observe(this, doneModels -> {
             if (doneModels != null) {
-                checkOnShowProgressBar();
+                progressBar.setVisibility(View.GONE);
                 list.clear();
                 list.addAll(doneModels);
                 Collections.sort(list, (doneModel, t1) -> Boolean.compare(t1.isDone, doneModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
             } else {
-                readDataFromFireStore(true);
+                readDataFromFireStore();
             }
         });
-    }
-
-    private void checkOnShowProgressBar() {
-        if (readDataFromFireStore(false).get()) {
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.GONE);
-        }
     }
 
     private void initViews() {
@@ -339,10 +330,8 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
             if (list.size() != 0) {
                 for (int i = 0; i < list.size(); i++) {
                     String personalTask = list.get(i).getDoneTask();
-                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db, progressBar);
                 }
-            } else {
-                progressBar.setVisibility(View.GONE);
             }
         }
     }

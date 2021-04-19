@@ -102,10 +102,11 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                 imageAdd.setVisibility(View.VISIBLE);
                 KeyboardHelper.hideKeyboard(MeetActivity.this, changeTask_image, editText);
                 if (user != null) {
+                    progressBar.setVisibility(View.VISIBLE);
                     meetModel = list.get(position); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
                     String newDocumentName = editText.getText().toString();//todo Временное решение
                     meetModel.meetTask = editText.getText().toString();
-                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db, progressBar);
                     FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, meetModel);
                 }
                 editText.getText().clear();
@@ -177,7 +178,10 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                         adapter.notifyDataSetChanged();
                     }
                     Toast.makeText(MeetActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                    FireStoreTools.deleteDataByFireStore(meetModel.getMeetTask(), collectionName, db);
+                    if (user != null) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        FireStoreTools.deleteDataByFireStore(meetModel.getMeetTask(), collectionName, db, progressBar);
+                    }
                 });
                 adapter.notifyDataSetChanged();
             }
@@ -212,57 +216,46 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         }).attachToRecyclerView(recyclerView);
     }
 
-    private void checkOnShowProgressBar() {
-        if (readDataFromFireStore(false).get()) {
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.GONE);
-        }
-    }
-
     private void getRecordsFromRoom() {
         list = new ArrayList<>();
         App.getDataBase().meetDao().getAllLive().observe(this, meetModels -> {
             if (meetModels != null) {
-                checkOnShowProgressBar();
+                progressBar.setVisibility(View.GONE);
                 list.clear();
                 list.addAll(meetModels);
                 Collections.sort(list, (meetModel, t1) -> Boolean.compare(t1.isDone, meetModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
             } else {
-                readDataFromFireStore(true);
+                readDataFromFireStore();
             }
         });
     }
 
-    private AtomicBoolean readDataFromFireStore(boolean isRead) {
-        AtomicBoolean isHasData = new AtomicBoolean(false);
-        if (isRead) {
+    private void readDataFromFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
             db.collection(collectionName)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 if (task.getResult().getDocuments().size() == 0) {
-                                    isHasData.set(false);
+                                    progressBar.setVisibility(View.GONE);
                                 } else {
-                                    isHasData.set(true);
+                                    Map<String, Object> dataFromFireBase;
+                                    dataFromFireBase = document.getData();
+                                    Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
+                                    String meetTask = dataFromFireBase.get("meetTask").toString();
+                                    meetModel = new MeetModel(meetTask, taskBoolean);
+                                    App.getDataBase().meetDao().insert(meetModel);
                                 }
-                                Map<String, Object> dataFromFireBase;
-                                dataFromFireBase = document.getData();
-                                Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
-                                String meetTask = dataFromFireBase.get("meetTask").toString();
-                                meetModel = new MeetModel(meetTask, taskBoolean);
-                                App.getDataBase().meetDao().insert(meetModel);
                             }
-                            progressBar.setVisibility(View.GONE);
                         } else {
                             progressBar.setVisibility(View.VISIBLE);
                         }
                     });
         }
-        return isHasData;
     }
 
 
@@ -329,7 +322,9 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         } else {
             toolbar.setText(TaskDialogPreference.getMeetTitle());
         }
-        collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        if (user != null) {
+            collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        }
     }
 
     @Override
@@ -446,10 +441,8 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             if (list.size() != 0) {
                 for (int i = 0; i < list.size(); i++) {
                     String personalTask = list.get(i).getMeetTask();
-                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db, progressBar);
                 }
-            } else {
-                progressBar.setVisibility(View.GONE);
             }
         }
     }
