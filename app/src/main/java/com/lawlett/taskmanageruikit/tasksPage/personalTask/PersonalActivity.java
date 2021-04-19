@@ -228,25 +228,18 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         }
     }
 
-    private void checkOnShowProgressBar() {
-        if (readDataFromFireStore(false).get()) {
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.GONE);
-        }
-    }
-
     private void getRecordsFromRoom() {
         App.getDataBase().personalDao().getAllLive().observe(this, personalModels -> {
             if (personalModels != null) {
-                checkOnShowProgressBar();
+                progressBar.setVisibility(View.GONE);
                 list.clear();
                 list.addAll(personalModels);
                 Collections.sort(list, (personalModel, t1) -> Boolean.compare(t1.isDone, personalModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
-            } else {
-                readDataFromFireStore(true);
+                if (personalModels.size() == 0) {
+                    readDataFromFireStore();
+                }
             }
         });
     }
@@ -314,11 +307,12 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         }
     }
 
-    private AtomicBoolean readDataFromFireStore(boolean isRead) {
+    private void readDataFromFireStore() {
         AtomicBoolean isHasData = new AtomicBoolean(false);
         String booleanKey = "isDone";
         String personalTaskKey = "personalTask";
-        if (isRead) {
+        if (user!=null) {
+            progressBar.setVisibility(View.VISIBLE);
             db.collection(collectionName)
                     .get()
                     .addOnCompleteListener(task -> {
@@ -326,24 +320,22 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 if (task.getResult().getDocuments().size() == 0) {
                                     isHasData.set(false);
+                                    progressBar.setVisibility(View.GONE);
                                 } else {
                                     isHasData.set(true);
+                                    Map<String, Object> dataFromFireBase;
+                                    dataFromFireBase = document.getData();
+                                    Boolean taskBoolean = (Boolean) dataFromFireBase.get(booleanKey);
+                                    String personalTask = dataFromFireBase.get(personalTaskKey).toString();
+                                    personalModel = new PersonalModel(personalTask, taskBoolean);
+                                    App.getDataBase().personalDao().insert(personalModel);
                                 }
-                                Map<String, Object> dataFromFireBase;
-                                dataFromFireBase = document.getData();
-                                Boolean taskBoolean = (Boolean) dataFromFireBase.get(booleanKey);
-                                String personalTask = dataFromFireBase.get(personalTaskKey).toString();
-                                personalModel = new PersonalModel(personalTask, taskBoolean);
-                                App.getDataBase().personalDao().insert(personalModel);
                             }
-                            progressBar.setVisibility(View.GONE);
                         } else {
                             progressBar.setVisibility(View.VISIBLE);
                         }
                     });
         }
-        return isHasData;
-
     }
 
     public void initToolbar() {
