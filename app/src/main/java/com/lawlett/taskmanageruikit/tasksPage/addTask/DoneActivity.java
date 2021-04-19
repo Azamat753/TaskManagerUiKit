@@ -209,9 +209,7 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
                 adapter.notifyDataSetChanged();
             }
         });
-
     }
-
     private void getRecordsRoomData() {
         App.getDataBase().doneDao().getAllLive().observe(this, doneModels -> {
             if (doneModels != null) {
@@ -221,8 +219,9 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
                 Collections.sort(list, (doneModel, t1) -> Boolean.compare(t1.isDone, doneModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
-            } else {
-                readDataFromFireStore();
+                if (doneModels.size() == 0) {
+                    readDataFromFireStore();
+                }
             }
         });
     }

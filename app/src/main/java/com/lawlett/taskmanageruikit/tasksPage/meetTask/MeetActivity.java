@@ -226,8 +226,9 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                 Collections.sort(list, (meetModel, t1) -> Boolean.compare(t1.isDone, meetModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
-            } else {
-                readDataFromFireStore();
+                if (meetModels.size() == 0) {
+                    readDataFromFireStore();
+                }
             }
         });
     }

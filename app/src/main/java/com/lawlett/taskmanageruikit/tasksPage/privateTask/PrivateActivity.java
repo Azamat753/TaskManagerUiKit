@@ -218,8 +218,9 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
                 Collections.sort(list, (privateModel, t1) -> Boolean.compare(t1.isDone, privateModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
-            } else {
-                readDataFromFireStore();
+                if (privateModels.size() == 0) {
+                    readDataFromFireStore();
+                }
             }
         });
     }
@@ -312,7 +313,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
     public void initToolbar() {
         TextView toolbar = findViewById(R.id.toolbar_title);
         toolbar.setText(R.string.privates);// TODO: 16.04.2021
-        if (user!=null){
+        if (user != null) {
             collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
         }
     }

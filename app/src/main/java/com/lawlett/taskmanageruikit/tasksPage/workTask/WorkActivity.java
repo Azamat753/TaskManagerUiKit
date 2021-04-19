@@ -220,8 +220,9 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                 list.addAll(workModels);
                 Collections.reverse(list);
                 adapter.updateList(list);
-            } else {
-                readDataFromFireStore();
+                if (workModels.size()==0){
+                    readDataFromFireStore();
+                }
             }
         });
     }

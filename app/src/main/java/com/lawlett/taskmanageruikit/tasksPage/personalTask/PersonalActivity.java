@@ -244,7 +244,6 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         });
     }
 
-
     private void editListener() {
         editText.addTextChangedListener(new TextWatcher() {
             @Override

@@ -243,12 +243,12 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
                 list.addAll(homeModels);
                 Collections.reverse(list);
                 adapter.updateList(list);
-            } else {
-                readDataFromFireStore();
+                if (homeModels.size() == 0) {
+                    readDataFromFireStore();
+                }
             }
         });
     }
-
 
     private void readDataFromFireStore() {
         if (user != null) {
