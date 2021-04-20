@@ -33,6 +33,7 @@ import com.lawlett.taskmanageruikit.tasksPage.data.model.PersonalModel;
 import com.lawlett.taskmanageruikit.tasksPage.personalTask.recyclerview.PersonalAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.dayPreference;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
@@ -42,13 +43,13 @@ import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PersonalActivity extends AppCompatActivity implements PersonalAdapter.ICheckedListener, ActionForDialog {
     private EditText editText;
@@ -90,6 +91,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             recordDataRoom();
             if (user != null) {
                 FireStoreTools.writeOrUpdateDataByFireStore(personalModel.getPersonalTask(), collectionName, db, personalModel);
+                writeAllTaskFromRoomToFireStore();
             }
         });
 
@@ -114,6 +116,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             }
         });
     }
+
 
     private void initItemTouchHelper() {
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -244,6 +247,25 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         });
     }
 
+    private void writeAllTaskFromRoomToFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            Calendar calendar = Calendar.getInstance();
+            String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            String dayFromPreference = dayPreference.getInstance(this).returntDay();
+            if (!currentDay.equals(dayFromPreference)) {
+                for (int i = 0; i < list.size(); i++) {
+                    FireStoreTools.deleteDataByFireStore(list.get(i).getPersonalTask(), collectionName, db, progressBar);
+                }
+                for (int i = 0; i < list.size(); i++) {
+                    FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getPersonalTask(), collectionName, db, personalModel);
+                }
+                dayPreference.getInstance(this).clearDay();
+                dayPreference.getInstance(this).saveCurrentDay(currentDay);
+            }
+        }
+    }
+
     private void editListener() {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -315,10 +337,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
+                            progressBar.setVisibility(View.GONE);
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                if (task.getResult().getDocuments().size() == 0) {
-                                    progressBar.setVisibility(View.GONE);
-                                } else {
                                     Map<String, Object> dataFromFireBase;
                                     dataFromFireBase = document.getData();
                                     Boolean taskBoolean = (Boolean) dataFromFireBase.get(booleanKey);
@@ -327,9 +347,6 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                                     App.getDataBase().personalDao().insert(personalModel);
                                 }
                             }
-                        } else {
-                            progressBar.setVisibility(View.VISIBLE);
-                        }
                     });
         }
     }
