@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#00BCD4</color>
-    <color name="royalEnd">#243B55</color>
-    <color name="royalStart">#122039</color>
+    <color name="royalEnd">#FFFFFF</color>
     <color name="colorPrimaryDark">#3700B3</color>
+    <color name="royalStart">#0365C4</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="bluePersonal">#03BADA</color>
-    <color name="myWhite">#FFFFFF</color>
+    <color name="myWhite">#0365C4</color>
     <color name="diagramaEvents">#4CAF50</color>
     <color name="calendarEvents">#00E1FF</color>
     <color name="taskEvents">#EC1C1C</color>
@@ -14,18 +14,19 @@
     <color name="meetColor">#FF9800</color>
     <color name="allTaskColor">#4CAF50</color>
     <color name="transparent">#00AF4C4C</color>
-    <color name="statusBarC">#122039</color>
-    <color name="icon_color">#FFF</color>
-    <color name="calendar_background">#122039</color>
+    <color name="statusBarC">#0365C4</color>
+    <color name="icon_color">#0365C4</color>
+    <color name="calendar_background">#0365C4</color>
     <color name="calendar_text">#FFF</color>
-    <color name="plus_background">#122039</color>
-    <color name="navigation_background">#122039 </color>
+    <color name="plus_background">#0365C4</color>
+    <color name="navigation_background">#0365C4</color>
     <color name="settings_text_color">#FFF</color>
-    <color name="timing_color">#211D44</color>
     <color name="hint_color">#aaa</color>
-    <color name="ideaBackground">#0E182B</color>
+    <color name="ideaBackground">#074887</color>
+    <color name="light_blue">#0365C4</color>
     <color name="titleColor">#6986A3</color>
     <color name="helpButton">#243B55</color>
     <color name="helpText">#0E182B</color>
-    <color name="light_blue">#0365C4</color>
+    <color name="timing_color">#211D44</color>
+
 </resources>

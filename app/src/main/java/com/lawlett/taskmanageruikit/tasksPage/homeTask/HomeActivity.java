@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -34,26 +35,25 @@ import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.HomeModel;
 import com.lawlett.taskmanageruikit.tasksPage.homeTask.recycler.HomeAdapter;
-import com.lawlett.taskmanageruikit.tasksPage.meetTask.MeetActivity;
-import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
-import com.lawlett.taskmanageruikit.utils.HomeDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.HomeDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
-import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHCheckedListener, ActionForDialog {
     RecyclerView recyclerView;
@@ -94,6 +94,24 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
         adapter.notifyDataSetChanged();
     }
 
+    private void writeAllTaskFromRoomToFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            SharedPreferences sharedPreferences = getSharedPreferences("homePreferences", Context.MODE_PRIVATE);
+            Calendar calendar = Calendar.getInstance();
+            String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
+            if (!currentDay.equals(dayFromPreference)) {
+                deleteAllDocumentsFromFireStore();
+                for (int i = 0; i < list.size(); i++) {
+                    FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getHomeTask(), collectionName, db, homeModel);
+                }
+                sharedPreferences.edit().clear().apply();
+                sharedPreferences.edit().putString("currentDay", currentDay).apply();
+            }
+        }
+    }
+
     private void initClickers() {
         homeBack.setOnClickListener(v -> onBackPressed());
         homeSettings.setOnClickListener((View.OnClickListener) v -> dialogHelper.myDialog(HomeActivity.this, (ActionForDialog) HomeActivity.this));
@@ -101,6 +119,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
             recordRoom();
             if (user != null) {
                 FireStoreTools.writeOrUpdateDataByFireStore(homeModel.getHomeTask(), collectionName, db, homeModel);
+                writeAllTaskFromRoomToFireStore();
             }
         });
 
@@ -258,19 +277,14 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                if (task.getResult().getDocuments().size() == 0) {
-                                    progressBar.setVisibility(View.GONE);
-                                } else {
-                                    Map<String, Object> dataFromFireBase;
-                                    dataFromFireBase = document.getData();
-                                    Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
-                                    String homeTask = dataFromFireBase.get("homeTask").toString();
-                                    homeModel = new HomeModel(homeTask, taskBoolean);
-                                    App.getDataBase().homeDao().insert(homeModel);
-                                }
+                                progressBar.setVisibility(View.GONE);
+                                Map<String, Object> dataFromFireBase;
+                                dataFromFireBase = document.getData();
+                                Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
+                                String homeTask = dataFromFireBase.get("homeTask").toString();
+                                homeModel = new HomeModel(homeTask, taskBoolean);
+                                App.getDataBase().homeDao().insert(homeModel);
                             }
-                        }else {
-                            progressBar.setVisibility(View.VISIBLE);
                         }
                     });
         }

@@ -20,9 +20,9 @@ import androidx.fragment.app.Fragment;
 import com.airbnb.lottie.LottieAnimationView;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.main.MainActivity;
-import com.lawlett.taskmanageruikit.utils.LanguagePreference;
-import com.lawlett.taskmanageruikit.utils.Preference;
-import com.lawlett.taskmanageruikit.utils.ThemePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.IntroPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.ThemePreference;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -53,7 +53,7 @@ public class BoardFragment extends Fragment {
         initViews(view);
         loadLocale();
 
-        if (ThemePreference.getInstance(getContext()).isTheme()) {
+        if (ThemePreference.getInstance(getContext()).getTheme()) {
             imageDaySelect.setVisibility(View.VISIBLE);
             imageNightSelect.setVisibility(View.GONE);
         } else {
@@ -115,17 +115,17 @@ public class BoardFragment extends Fragment {
         }
 
         imageDay.setOnClickListener(v -> {
-            ThemePreference.getInstance(getContext()).saveThemeTrue();
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        });
-
-        imageNight.setOnClickListener(v -> {
-            ThemePreference.getInstance(getContext()).saveThemeFalse();
+            ThemePreference.getInstance(getContext()).saveNightTheme();
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         });
 
+        imageNight.setOnClickListener(v -> {
+            ThemePreference.getInstance(getContext()).saveLightTheme();
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        });
+
         start_tv.setOnClickListener(v -> {
-            Preference.getInstance(getContext()).saveShown();
+            IntroPreference.getInstance(getContext()).saveShown();
             startActivity(new Intent(getContext(), MainActivity.class));
             Objects.requireNonNull(getActivity()).finish();
         });

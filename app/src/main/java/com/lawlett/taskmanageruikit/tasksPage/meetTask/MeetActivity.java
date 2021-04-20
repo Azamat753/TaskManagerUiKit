@@ -1,7 +1,9 @@
 package com.lawlett.taskmanageruikit.tasksPage.meetTask;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -31,25 +33,25 @@ import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.MeetModel;
 import com.lawlett.taskmanageruikit.tasksPage.meetTask.recyclerview.MeetAdapter;
-import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
-import com.lawlett.taskmanageruikit.utils.MeetDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.MeetDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
-import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMCheckedListener, ActionForDialog {
     private RecyclerView recyclerView;
@@ -80,11 +82,30 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         editListener();
     }
 
+    private void writeAllTaskFromRoomToFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            SharedPreferences sharedPreferences = getSharedPreferences("meetPreferences", Context.MODE_PRIVATE);
+            Calendar calendar = Calendar.getInstance();
+            String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
+            if (!currentDay.equals(dayFromPreference)) {
+                deleteAllDocumentsFromFireStore();
+                for (int i = 0; i < list.size(); i++) {
+                    FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getMeetTask(), collectionName, db, meetModel);
+                }
+                sharedPreferences.edit().clear().apply();
+                sharedPreferences.edit().putString("currentDay", currentDay).apply();
+            }
+        }
+    }
+
     private void initClickers() {
         imageAdd.setOnClickListener(view -> {
             recordRoom();
             if (user != null) {
                 FireStoreTools.writeOrUpdateDataByFireStore(meetModel.getMeetTask(), collectionName, db, meetModel);
+                writeAllTaskFromRoomToFireStore();
             }
         });
         meetBack.setOnClickListener(v -> onBackPressed());
@@ -241,19 +262,14 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                if (task.getResult().getDocuments().size() == 0) {
-                                    progressBar.setVisibility(View.GONE);
-                                } else {
-                                    Map<String, Object> dataFromFireBase;
-                                    dataFromFireBase = document.getData();
-                                    Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
-                                    String meetTask = dataFromFireBase.get("meetTask").toString();
-                                    meetModel = new MeetModel(meetTask, taskBoolean);
-                                    App.getDataBase().meetDao().insert(meetModel);
-                                }
+                                progressBar.setVisibility(View.GONE);
+                                Map<String, Object> dataFromFireBase;
+                                dataFromFireBase = document.getData();
+                                Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
+                                String meetTask = dataFromFireBase.get("meetTask").toString();
+                                meetModel = new MeetModel(meetTask, taskBoolean);
+                                App.getDataBase().meetDao().insert(meetModel);
                             }
-                        } else {
-                            progressBar.setVisibility(View.VISIBLE);
                         }
                     });
         }
@@ -364,21 +380,21 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         if (size < 26) {
             if (size % 5 == 0) {
                 int lvl = size / 5;
-                String level = getString(R.string.attaboy) + lvl;
+                String level = getString(R.string.attaboy) +" "+ lvl;
                 addToLocalDate(lvl, level);
                 showDialogLevel(level);
             }
         } else if (size > 26 && size < 51) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Persistent) + lev;
+                String level = getString(R.string.Persistent)+" " + lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
         } else if (size > 51 && size < 76) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Overwhelming) + lev;
+                String level = getString(R.string.Overwhelming)+" " + lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }

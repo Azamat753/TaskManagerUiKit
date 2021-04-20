@@ -28,7 +28,7 @@ import com.lawlett.taskmanageruikit.calendarEvents.data.model.CalendarTaskModel;
 import com.lawlett.taskmanageruikit.calendarEvents.recycler.CalendarEventAdapter;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.ICalendarEventOnClickListener;
-import com.lawlett.taskmanageruikit.utils.LanguagePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 
 import java.util.ArrayList;
 import java.util.Calendar;

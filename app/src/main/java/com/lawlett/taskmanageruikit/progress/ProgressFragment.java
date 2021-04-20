@@ -23,16 +23,16 @@ import com.lawlett.taskmanageruikit.calendarEvents.CalendarEventsFragment;
 import com.lawlett.taskmanageruikit.idea.IdeasFragment;
 import com.lawlett.taskmanageruikit.tasks.TasksFragment;
 import com.lawlett.taskmanageruikit.timing.model.TimingModel;
-import com.lawlett.taskmanageruikit.utils.AddDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.App;
-import com.lawlett.taskmanageruikit.utils.HomeDoneSizePreference;
-import com.lawlett.taskmanageruikit.utils.MeetDoneSizePreference;
-import com.lawlett.taskmanageruikit.utils.PersonDoneSizePreference;
-import com.lawlett.taskmanageruikit.utils.PrivateDoneSizePreference;
-import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
-import com.lawlett.taskmanageruikit.utils.ThemePreference;
-import com.lawlett.taskmanageruikit.utils.TimingSizePreference;
-import com.lawlett.taskmanageruikit.utils.WorkDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.HomeDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.MeetDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.PersonDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.PrivateDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.ThemePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.TimingSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.WorkDoneSizePreference;
 import com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -243,35 +243,22 @@ public class ProgressFragment extends Fragment {
         homePercent.setText(homePercentAmount + "%");
         addPercent.setText(addPercentAmount + "%");
         privatePercent.setText(privatePercentAmount + "%");
-        boolean booleanValue = ThemePreference.getInstance(getContext()).isTheme();
+        boolean booleanValue = ThemePreference.getInstance(getContext()).getTheme();
         allTaskProgress.setProgress(doneAmount);
         if (!booleanValue) {
             allTaskProgress.setMax(todoAmount);
-            allTaskProgress.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
-
             personalProgress.setProgress(personalDoneAmount);
             personalProgress.setMax(personalAmount);
-            personalProgress.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
-
             workProgress.setProgress(workDoneAmount);
             workProgress.setMax(workAmount);
-            workProgress.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
-
             meetProgress.setProgress(meetDoneAmount);
             meetProgress.setMax(meetAmount);
-            meetProgress.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
-
             homeProgress.setProgress(homeDoneAmount);
             homeProgress.setMax(homeAmount);
-            homeProgress.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
-
             addProgress.setProgress(addDoneAmount);
             addProgress.setMax(addAmount);
-            addProgress.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
-
             privateProgress.setProgress(privateDoneAmount);
             privateProgress.setMax(privateAmount);
-            privateProgress.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
         } else {
             personalProgress.setProgress(personalDoneAmount);
             workProgress.setProgress(workDoneAmount);
@@ -279,7 +266,6 @@ public class ProgressFragment extends Fragment {
             homeProgress.setProgress(homeDoneAmount);
             addProgress.setProgress(addDoneAmount);
             privateProgress.setProgress(privateDoneAmount);
-
             allTaskProgress.setMax(todoAmount);
             personalProgress.setMax(personalAmount);
             workProgress.setMax(workAmount);
@@ -287,7 +273,6 @@ public class ProgressFragment extends Fragment {
             homeProgress.setMax(homeAmount);
             addProgress.setMax(addAmount);
             privateProgress.setMax(privateAmount);
-
             allTaskProgress.getProgressDrawable().setColorFilter(Color.parseColor("#0365C4"), PorterDuff.Mode.SRC_IN);
             personalProgress.getProgressDrawable().setColorFilter(Color.parseColor("#0365C4"), PorterDuff.Mode.SRC_IN);
             workProgress.getProgressDrawable().setColorFilter(Color.parseColor("#0365C4"), PorterDuff.Mode.SRC_IN);
@@ -295,7 +280,6 @@ public class ProgressFragment extends Fragment {
             homeProgress.getProgressDrawable().setColorFilter(Color.parseColor("#0365C4"), PorterDuff.Mode.SRC_IN);
             addProgress.getProgressDrawable().setColorFilter(Color.parseColor("#0365C4"), PorterDuff.Mode.SRC_IN);
             privateProgress.getProgressDrawable().setColorFilter(Color.parseColor("#0365C4"), PorterDuff.Mode.SRC_IN);
-
         }
     }
 

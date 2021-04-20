@@ -1,7 +1,9 @@
 package com.lawlett.taskmanageruikit.tasksPage.personalTask;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -33,14 +35,14 @@ import com.lawlett.taskmanageruikit.tasksPage.data.model.PersonalModel;
 import com.lawlett.taskmanageruikit.tasksPage.personalTask.recyclerview.PersonalAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
-import com.lawlett.taskmanageruikit.utils.dayPreference;
+import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
-import com.lawlett.taskmanageruikit.utils.PersonDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.PersonDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
-import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,7 +60,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     private List<PersonalModel> list;
     private ImageView addTask_image;
     private ImageView imageMic;
-    private ImageView changeTask_image;
+    private ImageView changeTask_image,back_view;
     private RecyclerView recyclerView;
     private int position;
     private static final int REQUEST_CODE_SPEECH_INPUT = 22;
@@ -68,7 +70,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser user = mAuth.getCurrentUser();
     private ProgressBar progressBar;
-    String oldDocumentName;
+    private String oldDocumentName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +85,12 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     }
 
     private void initClickers() {
+        back_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         findViewById(R.id.settings_for_task).setOnClickListener(v -> {
             DialogHelper dialogHelper = new DialogHelper();
             dialogHelper.myDialog(PersonalActivity.this, PersonalActivity.this);
@@ -94,7 +102,6 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                 writeAllTaskFromRoomToFireStore();
             }
         });
-
         changeTask_image.setOnClickListener(v -> {
             if (editText.getText().toString().trim().isEmpty()) {
                 Toast.makeText(PersonalActivity.this, R.string.empty, Toast.LENGTH_SHORT).show();
@@ -116,7 +123,6 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             }
         });
     }
-
 
     private void initItemTouchHelper() {
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -250,18 +256,17 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     private void writeAllTaskFromRoomToFireStore() {
         if (user != null) {
             progressBar.setVisibility(View.VISIBLE);
+            SharedPreferences sharedPreferences = getSharedPreferences("personalPreferences", Context.MODE_PRIVATE);
             Calendar calendar = Calendar.getInstance();
             String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
-            String dayFromPreference = dayPreference.getInstance(this).returntDay();
+            String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
             if (!currentDay.equals(dayFromPreference)) {
-                for (int i = 0; i < list.size(); i++) {
-                    FireStoreTools.deleteDataByFireStore(list.get(i).getPersonalTask(), collectionName, db, progressBar);
-                }
+                deleteAllDocumentsFromFireStore();
                 for (int i = 0; i < list.size(); i++) {
                     FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getPersonalTask(), collectionName, db, personalModel);
                 }
-                dayPreference.getInstance(this).clearDay();
-                dayPreference.getInstance(this).saveCurrentDay(currentDay);
+                sharedPreferences.edit().clear().apply();
+                sharedPreferences.edit().putString("currentDay", currentDay).apply();
             }
         }
     }
@@ -315,6 +320,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         editText = findViewById(R.id.editText_personal);
         changeTask_image = findViewById(R.id.change_task_personal);
         progressBar = findViewById(R.id.personal_progress_bar);
+        back_view=findViewById(R.id.personal_back);
     }
 
     public void recordDataRoom() {
@@ -339,14 +345,14 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                         if (task.isSuccessful()) {
                             progressBar.setVisibility(View.GONE);
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                    Map<String, Object> dataFromFireBase;
-                                    dataFromFireBase = document.getData();
-                                    Boolean taskBoolean = (Boolean) dataFromFireBase.get(booleanKey);
-                                    String personalTask = dataFromFireBase.get(personalTaskKey).toString();
-                                    personalModel = new PersonalModel(personalTask, taskBoolean);
-                                    App.getDataBase().personalDao().insert(personalModel);
-                                }
+                                Map<String, Object> dataFromFireBase;
+                                dataFromFireBase = document.getData();
+                                Boolean taskBoolean = (Boolean) dataFromFireBase.get(booleanKey);
+                                String personalTask = dataFromFireBase.get(personalTaskKey).toString();
+                                personalModel = new PersonalModel(personalTask, taskBoolean);
+                                App.getDataBase().personalDao().insert(personalModel);
                             }
+                        }
                     });
         }
     }
@@ -419,21 +425,21 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         if (size < 26) {
             if (size % 5 == 0) {
                 int lvl = size / 5;
-                String level = getString(R.string.attaboy) + lvl;
+                String level = getString(R.string.attaboy) + " " + lvl;
                 addToLocalDate(lvl, level);
                 showDialogLevel(level);
             }
         } else if (size > 26 && size < 51) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Persistent) + lev;
+                String level = getString(R.string.Persistent) + " " + lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
         } else if (size > 51 && size < 76) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Overwhelming) + lev;
+                String level = getString(R.string.Overwhelming) + " " + lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
@@ -448,7 +454,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     private void showDialogLevel(String l) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.important_message))
-                .setMessage(getString(R.string.you_got) + " " + l)
+                .setMessage(getString(R.string.you_got) + l)
                 .setPositiveButton(getString(R.string.apply), (dialog, id) -> {
                     dialog.cancel();
                 });

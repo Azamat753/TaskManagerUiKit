@@ -31,12 +31,12 @@ import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.AchievementActivity;
 import com.lawlett.taskmanageruikit.auth.GoogleSignInActivity;
 import com.lawlett.taskmanageruikit.splash.SplashActivity;
-import com.lawlett.taskmanageruikit.utils.LanguagePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 import com.lawlett.taskmanageruikit.utils.PassCodeActivity;
-import com.lawlett.taskmanageruikit.utils.PasswordDonePreference;
-import com.lawlett.taskmanageruikit.utils.PasswordPreference;
-import com.lawlett.taskmanageruikit.utils.ThemePreference;
-import com.lawlett.taskmanageruikit.utils.TimingSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.PasswordDonePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.PasswordPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.ThemePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.TimingSizePreference;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -64,11 +64,11 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void initClickers() {
         theme_layout.setOnClickListener(v -> {
-            if (!ThemePreference.getInstance(SettingsActivity.this).isTheme()) {
-                ThemePreference.getInstance(SettingsActivity.this).saveThemeTrue();
+            if (!ThemePreference.getInstance(SettingsActivity.this).getTheme()) {
+                ThemePreference.getInstance(SettingsActivity.this).saveNightTheme();
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             } else {
-                ThemePreference.getInstance(SettingsActivity.this).saveThemeFalse();
+                ThemePreference.getInstance(SettingsActivity.this).saveLightTheme();
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             }
         });
@@ -151,7 +151,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void setThemeImage() {
-        if (ThemePreference.getInstance(SettingsActivity.this).isTheme()) {
+        if (ThemePreference.getInstance(SettingsActivity.this).getTheme()) {
             imageTheme.setImageResource(R.drawable.ic_day);
         } else {
             imageTheme.setImageResource(R.drawable.ic_nights);

@@ -1,7 +1,9 @@
 package com.lawlett.taskmanageruikit.tasksPage.privateTask;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -30,25 +32,24 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.PrivateModel;
-import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.tasksPage.privateTask.recycler.PrivateAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
-import com.lawlett.taskmanageruikit.utils.PrivateDoneSizePreference;
-import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.PrivateDoneSizePreference;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PrivateActivity extends AppCompatActivity implements PrivateAdapter.IPCheckedListener, ActionForDialog {
     RecyclerView recyclerView;
@@ -168,6 +169,24 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
         }).attachToRecyclerView(recyclerView);
     }
 
+    private void writeAllTaskFromRoomToFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            SharedPreferences sharedPreferences = getSharedPreferences("privatePreferences", Context.MODE_PRIVATE);
+            Calendar calendar = Calendar.getInstance();
+            String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
+            if (!currentDay.equals(dayFromPreference)) {
+                deleteAllDocumentsFromFireStore();
+                for (int i = 0; i < list.size(); i++) {
+                    FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getPrivateTask(), collectionName, db, privateModel);
+                }
+                sharedPreferences.edit().clear().apply();
+                sharedPreferences.edit().putString("currentDay", currentDay).apply();
+            }
+        }
+    }
+
     private void initClickers() {
         privateBack.setOnClickListener(v -> onBackPressed());
         findViewById(R.id.settings_for_task).setOnClickListener((View.OnClickListener) v -> {
@@ -178,6 +197,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
             recordRoom();
             if (user != null) {
                 FireStoreTools.writeOrUpdateDataByFireStore(privateModel.getPrivateTask(), collectionName, db, privateModel);
+                writeAllTaskFromRoomToFireStore();
             }
         });
         changeTask_image.setOnClickListener(v -> {
@@ -236,19 +256,14 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                if (task.getResult().getDocuments().size() == 0) {
-                                    progressBar.setVisibility(View.GONE);
-                                } else {
-                                    Map<String, Object> dataFromFireBase;
-                                    dataFromFireBase = document.getData();
-                                    Boolean taskBoolean = (Boolean) dataFromFireBase.get(booleanKey);
-                                    String privateTask = dataFromFireBase.get(privateTaskKey).toString();
-                                    privateModel = new PrivateModel(privateTask, taskBoolean);
-                                    App.getDataBase().privateDao().insert(privateModel);
-                                }
+                                progressBar.setVisibility(View.GONE);
+                                Map<String, Object> dataFromFireBase;
+                                dataFromFireBase = document.getData();
+                                Boolean taskBoolean = (Boolean) dataFromFireBase.get(booleanKey);
+                                String privateTask = dataFromFireBase.get(privateTaskKey).toString();
+                                privateModel = new PrivateModel(privateTask, taskBoolean);
+                                App.getDataBase().privateDao().insert(privateModel);
                             }
-                        } else {
-                            progressBar.setVisibility(View.VISIBLE);
                         }
                     });
         }
@@ -354,21 +369,21 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
         if (size < 26) {
             if (size % 5 == 0) {
                 int lvl = size / 5;
-                String level = getString(R.string.attaboy) + lvl;
+                String level = getString(R.string.attaboy) +" "+ lvl;
                 addToLocalDate(lvl, level);
                 showDialogLevel(level);
             }
         } else if (size > 26 && size < 51) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Persistent) + lev;
+                String level = getString(R.string.Persistent)+" " + lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
         } else if (size > 51 && size < 76) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Overwhelming) + lev;
+                String level = getString(R.string.Overwhelming) +" "+ lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }

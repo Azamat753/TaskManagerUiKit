@@ -27,7 +27,7 @@ import androidx.core.content.ContextCompat;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.timing.model.TimingModel;
 import com.lawlett.taskmanageruikit.utils.App;
-import com.lawlett.taskmanageruikit.utils.TimingSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.TimingSizePreference;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

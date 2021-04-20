@@ -3,7 +3,6 @@ package com.lawlett.taskmanageruikit.utils;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class FireStoreTools extends App {

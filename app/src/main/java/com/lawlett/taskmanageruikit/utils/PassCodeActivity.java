@@ -15,6 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.hanks.passcodeview.PasscodeView;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.tasksPage.privateTask.PrivateActivity;
+import com.lawlett.taskmanageruikit.utils.preferences.PasswordDonePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.PasswordPassDonePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.PasswordPreference;
 
 
 public class PassCodeActivity extends AppCompatActivity {

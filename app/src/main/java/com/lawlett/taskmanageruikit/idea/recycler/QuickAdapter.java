@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.idea.data.model.QuickModel;
 import com.lawlett.taskmanageruikit.utils.IQuickOnClickListener;
-import com.lawlett.taskmanageruikit.utils.IdeaViewPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.IdeaViewPreference;
 
 import java.util.List;
 

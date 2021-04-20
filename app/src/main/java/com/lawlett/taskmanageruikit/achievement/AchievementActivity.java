@@ -10,11 +10,11 @@ import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.adapter.AchievementAdapter;
 import com.lawlett.taskmanageruikit.achievement.models.AchievementModel;
 import com.lawlett.taskmanageruikit.utils.App;
-import com.lawlett.taskmanageruikit.utils.HomeDoneSizePreference;
-import com.lawlett.taskmanageruikit.utils.MeetDoneSizePreference;
-import com.lawlett.taskmanageruikit.utils.PersonDoneSizePreference;
-import com.lawlett.taskmanageruikit.utils.PrivateDoneSizePreference;
-import com.lawlett.taskmanageruikit.utils.WorkDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.HomeDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.MeetDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.PersonDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.PrivateDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.WorkDoneSizePreference;
 
 import java.util.Calendar;
 import java.util.List;
@@ -84,5 +84,4 @@ public class AchievementActivity extends AppCompatActivity {
             adapter.setData(levelModels);
         });
     }
-
 }
