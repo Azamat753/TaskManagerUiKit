@@ -22,9 +22,9 @@ import com.lawlett.taskmanageruikit.timing.model.TimingModel;
         TimingModel.class, AchievementModel.class, LevelModel.class}, version = 4, exportSchema = false)
 public abstract class AppDataBase extends RoomDatabase {
 
-    public abstract QuickDao taskDao();
+    public abstract QuickDao ideaDao();
 
-    public abstract CalendarDao dataDao();
+    public abstract CalendarDao eventsDao();
 
     public abstract PersonalDao personalDao();
 

@@ -13,8 +13,12 @@ public class FireStoreTools extends App {
     }
 
 
-    public static void deleteDataByFireStore(String documentId, String collectionName, FirebaseFirestore firebaseFirestore, ProgressBar progressBar){
-        firebaseFirestore.collection(collectionName).document(documentId).delete().addOnSuccessListener(aVoid -> progressBar.setVisibility(View.GONE));
+    public static void deleteDataByFireStore(String documentId, String collectionName, FirebaseFirestore firebaseFirestore, ProgressBar progressBar) {
+        firebaseFirestore.collection(collectionName).document(documentId).delete().addOnSuccessListener(aVoid -> {
+            if (progressBar != null) {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     public static void writeOrUpdateDataByFireStore(String documentId, String collectionName, FirebaseFirestore firebaseFirestore, Object model) {

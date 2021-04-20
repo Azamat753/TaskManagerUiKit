@@ -75,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
     private void initListFromRoom() {
         list = new ArrayList<>();
         adapter = new QuickAdapter(list, null, this);
-        list = App.getDataBase().taskDao().getAll();
-        App.getDataBase().taskDao().getAllLive().observe(this, tasks -> {
+        list = App.getDataBase().ideaDao().getAll();
+        App.getDataBase().ideaDao().getAllLive().observe(this, tasks -> {
             list.clear();
             list.addAll(tasks);
             adapter.notifyDataSetChanged();

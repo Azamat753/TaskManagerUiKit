@@ -62,7 +62,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
                 firebaseAuthWithGoogle(account);
                 Toast.makeText(GoogleSignInActivity.this, R.string.wait, Toast.LENGTH_SHORT).show();
             } catch (ApiException e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
             }
         }
     }

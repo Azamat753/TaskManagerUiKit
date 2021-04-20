@@ -211,14 +211,14 @@ public class ProgressFragment extends Fragment {
     public void getDataFromBD() {
         timingTaskAmountInt = App.getDataBase().timingDao().getAll().size();//тайминг кол-во задач
         timingMinuteAmountInt = TimingSizePreference.getInstance(getContext()).getTimingSize();
-        plansAmount = App.getDataBase().taskDao().getAll().size(); //идеи кол=во
+        plansAmount = App.getDataBase().ideaDao().getAll().size(); //идеи кол=во
         personalAmount = App.getDataBase().personalDao().getAll().size();//Персональные задачи кол-во
         workAmount = App.getDataBase().workDao().getAll().size();//Работа задачи кол-во
         meetAmount = App.getDataBase().meetDao().getAll().size();//Встречи задачи кол-во
         homeAmount = App.getDataBase().homeDao().getAll().size();//Дом задачи кол-во
         addAmount = App.getDataBase().doneDao().getAll().size();
         privateAmount = App.getDataBase().privateDao().getAll().size();//Приватные задачи кол-во
-        eventAmount = App.getDataBase().dataDao().getAll().size();//События задачи кол-во
+        eventAmount = App.getDataBase().eventsDao().getAll().size();//События задачи кол-во
     }
 
 

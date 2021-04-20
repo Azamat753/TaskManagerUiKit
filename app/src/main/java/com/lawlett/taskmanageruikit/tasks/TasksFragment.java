@@ -26,9 +26,9 @@ import com.lawlett.taskmanageruikit.tasksPage.meetTask.MeetActivity;
 import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.tasksPage.privateTask.PrivateActivity;
 import com.lawlett.taskmanageruikit.tasksPage.workTask.WorkActivity;
-import com.lawlett.taskmanageruikit.utils.preferences.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.PassCodeActivity;
+import com.lawlett.taskmanageruikit.utils.preferences.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.PasswordPassDonePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 
@@ -164,6 +164,7 @@ public class TasksFragment extends Fragment {
         work_title = view.findViewById(R.id.work_task_title);
         bubble = view.findViewById(R.id.bubble);
     }
+
     private void setLongClickListeners() {
         doneConst.setOnLongClickListener(v -> {
             final String[] listItems = {getString(R.string.change_image_title), getString(R.string.remove_category)};

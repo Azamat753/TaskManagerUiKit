@@ -1,6 +1,7 @@
 package com.lawlett.taskmanageruikit.idea.recycler;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,19 +95,23 @@ public class QuickAdapter extends RecyclerView.Adapter<QuickAdapter.QuickViewHol
             desc2.setText(quickModel.getDescription());
             data_created2.setText(quickModel.getCreateData());
 
-            title.setTextColor(quickModel.getColor());
-            title2.setTextColor(quickModel.getColor());
-            leftView.setBackgroundColor(quickModel.getColor());
-            leftView2.setBackgroundColor(quickModel.getColor());
-
-            if(quickModel.getImage() == null){
+            if (quickModel.getColor()==0){
+                title.setTextColor(Color.parseColor("#03BADA"));
+                leftView.setBackgroundColor(Color.parseColor("#03BADA"));
+                leftView2.setBackgroundColor(Color.parseColor("#03BADA"));
+            }else {
+                title2.setTextColor(quickModel.getColor());
+                leftView.setBackgroundColor(quickModel.getColor());
+                leftView2.setBackgroundColor(quickModel.getColor());
+            }
+            if (quickModel.getImage() == null) {
                 imageDesc.setVisibility(View.GONE);
                 imageDesc2.setVisibility(View.GONE);
-            }else {
+            } else {
                 imageDesc.setVisibility(View.VISIBLE);
                 imageDesc2.setVisibility(View.VISIBLE);
-            Glide.with(context).load(quickModel.getImage()).into(imageDesc);
-            Glide.with(context).load(quickModel.getImage()).into(imageDesc2);
+                Glide.with(context).load(quickModel.getImage()).into(imageDesc);
+                Glide.with(context).load(quickModel.getImage()).into(imageDesc2);
             }
         }
 
@@ -114,13 +119,14 @@ public class QuickAdapter extends RecyclerView.Adapter<QuickAdapter.QuickViewHol
         public void onClick(View v) {
             listeneer.onItemClick(getAdapterPosition());
         }
-        public void checkView(){
-            isGrid= IdeaViewPreference.getInstance(context).getView();
 
-            if (isGrid){
+        public void checkView() {
+            isGrid = IdeaViewPreference.getInstance(context).getView();
+
+            if (isGrid) {
                 secondConst.setVisibility(View.VISIBLE);
                 firstConst.setVisibility(View.GONE);
-            }else {
+            } else {
                 secondConst.setVisibility(View.GONE);
                 firstConst.setVisibility(View.VISIBLE);
             }

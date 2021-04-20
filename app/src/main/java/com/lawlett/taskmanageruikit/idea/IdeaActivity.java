@@ -123,7 +123,7 @@ public class IdeaActivity extends AppCompatActivity {
                     quickModel.setColor(myChoosedColor);
                     quickModel.setCreateData(currentDate + " " + month + " " + year);
                 }
-                App.getDataBase().taskDao().update(quickModel);
+                App.getDataBase().ideaDao().update(quickModel);
             } else {
                 if(choosedColor == 0){
                     choosedColor = getResources().getColor(R.color.titleColor);
@@ -131,7 +131,7 @@ public class IdeaActivity extends AppCompatActivity {
                 choosedColor = e_title.getCurrentTextColor();
                 }
                 quickModel = new QuickModel(textTitle, textDescription, currentDate + " " + month + " " + year, pickImage, choosedColor, null);
-                App.getDataBase().taskDao().insert(quickModel);
+                App.getDataBase().ideaDao().insert(quickModel);
             }
         }
         finish();

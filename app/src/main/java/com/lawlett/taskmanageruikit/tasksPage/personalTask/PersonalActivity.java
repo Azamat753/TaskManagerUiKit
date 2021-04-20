@@ -350,12 +350,10 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                                 Map<String, Object> dataFromFireBase;
                                 dataFromFireBase = document.getData();
                                 Boolean taskBoolean = (Boolean) dataFromFireBase.get(booleanKey);
-                                String personalTask = dataFromFireBase.get(personalTaskKey).toString();
+                                String personalTask = (String) dataFromFireBase.get(personalTaskKey);
                                 personalModel = new PersonalModel(personalTask, taskBoolean);
                                 App.getDataBase().personalDao().insert(personalModel);
                             }
-                        } else {
-                            progressBar.setVisibility(View.VISIBLE);
                         }
                     });
         }

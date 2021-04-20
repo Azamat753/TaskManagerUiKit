@@ -1,7 +1,9 @@
 package com.lawlett.taskmanageruikit.calendarEvents;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,6 +13,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,10 +26,16 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.calendarEvents.data.model.CalendarTaskModel;
 import com.lawlett.taskmanageruikit.calendarEvents.recycler.CalendarEventAdapter;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.Constants;
+import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.ICalendarEventOnClickListener;
 import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 
@@ -35,6 +44,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import devs.mulham.horizontalcalendar.HorizontalCalendar;
@@ -48,6 +58,11 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
     private CalendarEventAdapter adapter;
     private TextView calendarText;
     private int pos;
+    ProgressBar progressBar;
+    private FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
+    private String collectionName;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private FirebaseUser user = mAuth.getCurrentUser();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,12 +75,56 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
         return inflater.inflate(R.layout.fragment_calendar_events, container, false);
     }
 
+    private void writeAllTaskFromRoomToFireStore() {
+        if (user != null) {
+            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("eventsPreferences", Context.MODE_PRIVATE);
+            Calendar calendar = Calendar.getInstance();
+            String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
+            if (!currentDay.equals(dayFromPreference)) {
+                for (int i = 0; i < list.size(); i++) {
+                    FireStoreTools.deleteDataByFireStore(list.get(i).getTitle(), collectionName, db, null);
+                }
+                for (int i = 0; i < list.size(); i++) {
+                    FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getTitle(), collectionName, db, list.get(i));
+                }
+                sharedPreferences.edit().clear().apply();
+                sharedPreferences.edit().putString("currentDay", currentDay).apply();
+            }
+        }
+    }
+    private void readDataFromFireStore() {
+        if (user != null) {
+            String dateTimeKey = "dataTime";
+            String endTimeKey = "endTime";
+            String startTimeKey = "startTime";
+            String titleKey = "title";
+            progressBar.setVisibility(View.VISIBLE);
+            db.collection(collectionName)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            progressBar.setVisibility(View.GONE);
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                Map<String, Object> dataFromFireBase;
+                                dataFromFireBase = document.getData();
+                                String dateTime = (String) dataFromFireBase.get(dateTimeKey);
+                                String endTime = (String) dataFromFireBase.get(endTimeKey);
+                                String startTime = (String) dataFromFireBase.get(startTimeKey);
+                                String title = (String) dataFromFireBase.get(titleKey);
+                                CalendarTaskModel calendarTaskModel = new CalendarTaskModel(dateTime, title, startTime, endTime, 0);
+                                App.getDataBase().eventsDao().insert(calendarTaskModel);
+                            }
+                        }
+                    });
+        }
+    }
     private void initRoom() {
         list = new ArrayList<>();
-        App.getDataBase().dataDao().getAllLive().observe(this, calendarTaskModels -> {
+        App.getDataBase().eventsDao().getAllLive().observe(this, calendarTaskModels -> {
             if (calendarTaskModels != null) {
                 list.clear();
-                list.addAll(App.getDataBase().dataDao().getSortedCalendarTaskModel());
+                list.addAll(App.getDataBase().eventsDao().getSortedCalendarTaskModel());
                 adapter.notifyDataSetChanged();
                 calendarText.setVisibility(View.GONE);
             }
@@ -73,21 +132,27 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
             if (calendarTaskModels.isEmpty()) {
                 calendarText.setVisibility(View.VISIBLE);
             }
+            if (list.size()!=0){
+                writeAllTaskFromRoomToFireStore();
+            }else {
+                readDataFromFireStore();
+            }
         });
         adapter = new CalendarEventAdapter((ArrayList<CalendarTaskModel>) list, this, getContext());
         recyclerViewToday.setAdapter(adapter);
     }
-
     private void initViews(View view) {
         calendarText = view.findViewById(R.id.calendar_tv);
         addEventBtn = view.findViewById(R.id.add_task_btn);
         recyclerViewToday = view.findViewById(R.id.today_recycler);
+        progressBar=view.findViewById(R.id.progress_bar);
     }
 
     @SuppressLint("ResourceAsColor")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        collectionName = "События" + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
         initViews(view);
         initRoom();
         initCalendar();
@@ -133,7 +198,7 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
             @Override
             public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 super.clearView(recyclerView, viewHolder);
-                App.getDataBase().dataDao().updateWord(list);
+                App.getDataBase().eventsDao().updateWord(list);
             }
 
             @Override
@@ -144,7 +209,7 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
                                 dialog1.cancel())
                         .setPositiveButton(R.string.yes, (dialog12, which) -> {
                             pos = viewHolder.getAdapterPosition();
-                            App.getDataBase().dataDao().delete(list.get(pos));
+                            App.getDataBase().eventsDao().delete(list.get(pos));
                             adapter.notifyDataSetChanged();
                             Toast.makeText(getContext(), R.string.delete, Toast.LENGTH_SHORT).show();
                         }).show();

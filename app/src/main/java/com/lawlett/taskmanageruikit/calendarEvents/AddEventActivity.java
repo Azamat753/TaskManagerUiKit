@@ -124,7 +124,7 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
         i.putExtra("displayText", "sample text");
         i.putExtra(MessageService.TITLE, "Planner");
         i.putExtra(MessageService.TEXT, titleT);
-        List<CalendarTaskModel> listA = App.getDataBase().dataDao().getAll();
+        List<CalendarTaskModel> listA = App.getDataBase().eventsDao().getAll();
         int idOfP = listA.size();
         PendingIntent pi = PendingIntent.getBroadcast(this.getApplicationContext(), idOfP, i, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager mAlarm = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
@@ -168,14 +168,14 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
             calendarTaskModel.setStartTime(myStartTime);
             calendarTaskModel.setEndTime(myEndTime);
             calendarTaskModel.setChooseColor(myColor);
-            App.getDataBase().dataDao().update(calendarTaskModel);
+            App.getDataBase().eventsDao().update(calendarTaskModel);
             finish();
         } else {
             titleT = title_ed.getText().toString();
             if (currentDataString != null && startHour != null && endingHour != null) {
                 calendarTaskModel = new CalendarTaskModel(currentDataString, title_ed.getText().toString().trim(),
                         startHour, endingHour, choosedColor);
-                App.getDataBase().dataDao().insert(calendarTaskModel);
+                App.getDataBase().eventsDao().insert(calendarTaskModel);
                 finish();
             } else {
                 Toast.makeText(this, R.string.need_all_fields, Toast.LENGTH_SHORT).show();
