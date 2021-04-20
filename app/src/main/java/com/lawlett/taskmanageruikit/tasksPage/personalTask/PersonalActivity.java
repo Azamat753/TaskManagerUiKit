@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PersonalActivity extends AppCompatActivity implements PersonalAdapter.ICheckedListener, ActionForDialog {
     private EditText editText;
@@ -308,7 +307,6 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     }
 
     private void readDataFromFireStore() {
-        AtomicBoolean isHasData = new AtomicBoolean(false);
         String booleanKey = "isDone";
         String personalTaskKey = "personalTask";
         if (user!=null) {
@@ -319,10 +317,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 if (task.getResult().getDocuments().size() == 0) {
-                                    isHasData.set(false);
                                     progressBar.setVisibility(View.GONE);
                                 } else {
-                                    isHasData.set(true);
                                     Map<String, Object> dataFromFireBase;
                                     dataFromFireBase = document.getData();
                                     Boolean taskBoolean = (Boolean) dataFromFireBase.get(booleanKey);
