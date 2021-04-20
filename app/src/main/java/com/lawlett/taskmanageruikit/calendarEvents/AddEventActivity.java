@@ -27,7 +27,7 @@ import com.lawlett.taskmanageruikit.calendarEvents.data.model.CalendarTaskModel;
 import com.lawlett.taskmanageruikit.service.MessageService;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DatePickerFragment;
-import com.lawlett.taskmanageruikit.utils.LanguagePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 import com.lawlett.taskmanageruikit.utils.TimePickerFragment;
 
 import java.text.DateFormat;

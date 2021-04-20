@@ -26,11 +26,11 @@ import com.lawlett.taskmanageruikit.tasksPage.meetTask.MeetActivity;
 import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.tasksPage.privateTask.PrivateActivity;
 import com.lawlett.taskmanageruikit.tasksPage.workTask.WorkActivity;
-import com.lawlett.taskmanageruikit.utils.AddDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.PassCodeActivity;
-import com.lawlett.taskmanageruikit.utils.PasswordPassDonePreference;
-import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.PasswordPassDonePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -210,14 +210,14 @@ public class TasksFragment extends Fragment {
     }
 
     private void showAlertDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(R.string.attention)
                 .setMessage(R.string.change_image_title)
                 .setPositiveButton(R.string.yes, (dialog, which) -> showCustomHomeDialog()).setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel()).show();
     }
 
     public void showCustomTaskDialog() {
-        CustomTaskDialog customTaskDialog = new CustomTaskDialog(getContext());
+        CustomTaskDialog customTaskDialog = new CustomTaskDialog(requireContext());
         customTaskDialog.setDialogResult((title, image, visible, gone) -> {
             done_title.setText(title);
             doneImage.setImageResource(image);
@@ -228,7 +228,7 @@ public class TasksFragment extends Fragment {
     }
 
     public void showCustomHomeDialog() {
-        CustomHomeDialog customHomeDialog = new CustomHomeDialog(getContext());
+        CustomHomeDialog customHomeDialog = new CustomHomeDialog(requireContext());
         customHomeDialog.setDialogResult((title, image) -> {
             switch (buttonListen) {
                 case 1:

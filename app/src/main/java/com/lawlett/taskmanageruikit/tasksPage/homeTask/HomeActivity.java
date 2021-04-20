@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -34,26 +35,25 @@ import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.HomeModel;
 import com.lawlett.taskmanageruikit.tasksPage.homeTask.recycler.HomeAdapter;
-import com.lawlett.taskmanageruikit.tasksPage.meetTask.MeetActivity;
-import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
-import com.lawlett.taskmanageruikit.utils.HomeDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.HomeDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
-import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHCheckedListener, ActionForDialog {
     RecyclerView recyclerView;
@@ -63,7 +63,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
     EditText editText;
     int pos, previousData, currentData, updateData;
     LinearLayout linearLayoutHome;
-    ImageView homeBack, imageMic, imageAdd,changeTask_image;
+    ImageView homeBack, imageMic, imageAdd, changeTask_image;
     private static final int REQUEST_CODE_SPEECH_INPUT = 22;
     boolean isButton = false;
     ImageView homeSettings;
@@ -86,19 +86,40 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
         editListener();
         initItemTouchHelper();
     }
+
     private void updateTask(int id) {
         homeModel = list.get(id);
         homeModel.setHomeTask(editText.getText().toString());
         App.getDataBase().homeDao().update(list.get(id));
         adapter.notifyDataSetChanged();
     }
+
+    private void writeAllTaskFromRoomToFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            SharedPreferences sharedPreferences = getSharedPreferences("homePreferences", Context.MODE_PRIVATE);
+            Calendar calendar = Calendar.getInstance();
+            String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
+            if (!currentDay.equals(dayFromPreference)) {
+                deleteAllDocumentsFromFireStore();
+                for (int i = 0; i < list.size(); i++) {
+                    FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getHomeTask(), collectionName, db, homeModel);
+                }
+                sharedPreferences.edit().clear().apply();
+                sharedPreferences.edit().putString("currentDay", currentDay).apply();
+            }
+        }
+    }
+
     private void initClickers() {
         homeBack.setOnClickListener(v -> onBackPressed());
         homeSettings.setOnClickListener((View.OnClickListener) v -> dialogHelper.myDialog(HomeActivity.this, (ActionForDialog) HomeActivity.this));
         imageAdd.setOnClickListener(v -> {
             recordRoom();
-            if (user!=null){
+            if (user != null) {
                 FireStoreTools.writeOrUpdateDataByFireStore(homeModel.getHomeTask(), collectionName, db, homeModel);
+                writeAllTaskFromRoomToFireStore();
             }
         });
 
@@ -112,10 +133,11 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
                 imageAdd.setVisibility(View.VISIBLE);
                 KeyboardHelper.hideKeyboard(HomeActivity.this, changeTask_image, editText);
                 if (user != null) {
+                    progressBar.setVisibility(View.VISIBLE);
                     homeModel = list.get(pos); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
                     String newDocumentName = editText.getText().toString();//todo Временное решение
                     homeModel.homeTask = editText.getText().toString();
-                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db, progressBar);
                     FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, homeModel);
                 }
                 editText.getText().clear();
@@ -162,9 +184,10 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
                 super.clearView(recyclerView, viewHolder);
                 App.getDataBase().homeDao().updateWord(list);
             }
+
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(HomeActivity.this,getString(R.string.you_sure_delete), () -> {
+                PlannerDialog.showPlannerDialog(HomeActivity.this, getString(R.string.you_sure_delete), () -> {
                     pos = viewHolder.getAdapterPosition();
                     homeModel = list.get(pos);
                     if (!homeModel.isDone) {
@@ -176,7 +199,10 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
                         adapter.notifyDataSetChanged();
                     }
                     Toast.makeText(HomeActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                    FireStoreTools.deleteDataByFireStore(homeModel.getHomeTask(), collectionName, db);
+                    if (user != null) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        FireStoreTools.deleteDataByFireStore(homeModel.getHomeTask(), collectionName, db, progressBar);
+                    }
                 });
                 adapter.notifyDataSetChanged();
             }
@@ -223,46 +249,35 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
         editText = findViewById(R.id.editText_home);
         imageMic = findViewById(R.id.mic_task_home);
         imageAdd = findViewById(R.id.add_task_home);
-        progressBar=findViewById(R.id.progress_bar);
-        changeTask_image=findViewById(R.id.change_task_home);
+        progressBar = findViewById(R.id.progress_bar);
+        changeTask_image = findViewById(R.id.change_task_home);
     }
 
     private void getRecordsFromRoom() {
         list = new ArrayList<>();
         App.getDataBase().homeDao().getAllLive().observe(this, homeModels -> {
             if (homeModels != null) {
-                checkOnShowProgressBar();
+                progressBar.setVisibility(View.GONE);
                 list.clear();
                 list.addAll(homeModels);
                 Collections.reverse(list);
                 adapter.updateList(list);
-            } else {
-                readDataFromFireStore(true);
+                if (homeModels.size() == 0) {
+                    readDataFromFireStore();
+                }
             }
         });
     }
 
-    private void checkOnShowProgressBar() {
-        if (readDataFromFireStore(false).get()) {
+    private void readDataFromFireStore() {
+        if (user != null) {
             progressBar.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.GONE);
-        }
-    }
-
-    private AtomicBoolean readDataFromFireStore(boolean isRead) {
-        AtomicBoolean isHasData = new AtomicBoolean(false);
-        if (isRead) {
             db.collection(collectionName)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                if (task.getResult().getDocuments().size() == 0) {
-                                    isHasData.set(false);
-                                } else {
-                                    isHasData.set(true);
-                                }
+                                progressBar.setVisibility(View.GONE);
                                 Map<String, Object> dataFromFireBase;
                                 dataFromFireBase = document.getData();
                                 Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
@@ -270,13 +285,9 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
                                 homeModel = new HomeModel(homeTask, taskBoolean);
                                 App.getDataBase().homeDao().insert(homeModel);
                             }
-                            progressBar.setVisibility(View.GONE);
-                        } else {
-                            progressBar.setVisibility(View.VISIBLE);
                         }
                     });
         }
-        return isHasData;
     }
 
     private void recordRoom() {
@@ -296,8 +307,8 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
         } else {
             toolbar.setText(TaskDialogPreference.getHomeTitle());
         }
-        if (user!=null){
-            collectionName=toolbar.getText().toString()+ "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        if (user != null) {
+            collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
         }
     }
 
@@ -312,7 +323,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
             decrementDone();
         }
         App.getDataBase().homeDao().update(list.get(id));
-        if (user!=null){
+        if (user != null) {
             FireStoreTools.writeOrUpdateDataByFireStore(homeModel.getHomeTask(), collectionName, db, homeModel);
         }
     }
@@ -409,19 +420,19 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
         HomeDoneSizePreference.getInstance(HomeActivity.this).clearSettings();
         deleteAllDocumentsFromFireStore();
     }
+
     private void deleteAllDocumentsFromFireStore() {
         if (user != null) {
             progressBar.setVisibility(View.VISIBLE);
-            if (list.size()!=0){
+            if (list.size() != 0) {
                 for (int i = 0; i < list.size(); i++) {
                     String personalTask = list.get(i).homeTask;
-                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db, progressBar);
                 }
-            }else {
-                progressBar.setVisibility(View.GONE);
             }
         }
     }
+
     private void editListener() {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -462,7 +473,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e) {
-            Toast.makeText(this,e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 }

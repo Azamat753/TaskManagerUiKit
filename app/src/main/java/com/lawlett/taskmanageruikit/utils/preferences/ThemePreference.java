@@ -1,4 +1,4 @@
-package com.lawlett.taskmanageruikit.utils;
+package com.lawlett.taskmanageruikit.utils.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,19 +18,15 @@ public class ThemePreference {
         return instance;
     }
 
-    public boolean isTheme() {
-        return preferences.getBoolean("night_mode", false);
+    public boolean getTheme() {
+        return preferences.getBoolean("night_mode", true);
     }
 
-    public void saveThemeTrue() {
+    public void saveNightTheme() {
         preferences.edit().putBoolean("night_mode", true).apply();
     }
 
-    public void saveThemeFalse() {
+    public void saveLightTheme() {
         preferences.edit().putBoolean("night_mode", false).apply();
-    }
-
-    public void clearSettings() {
-        preferences.edit().clear().apply();
     }
 }

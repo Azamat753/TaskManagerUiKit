@@ -1,8 +1,10 @@
 package com.lawlett.taskmanageruikit.tasksPage.workTask;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -31,26 +33,26 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
-import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.tasksPage.workTask.recycler.WorkAdapter;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
-import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
-import com.lawlett.taskmanageruikit.utils.WorkDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.WorkDoneSizePreference;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWCheckedListener, ActionForDialog {
     WorkAdapter adapter;
@@ -81,11 +83,21 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         editListener();
     }
 
-    private void checkOnShowProgressBar() {
-        if (readDataFromFireStore(false).get()) {
+    private void writeAllTaskFromRoomToFireStore() {
+        if (user != null) {
             progressBar.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.GONE);
+            SharedPreferences sharedPreferences = getSharedPreferences("workPreferences", Context.MODE_PRIVATE);
+            Calendar calendar = Calendar.getInstance();
+            String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
+            if (!currentDay.equals(dayFromPreference)) {
+                deleteAllDocumentsFromFireStore();
+                for (int i = 0; i < list.size(); i++) {
+                    FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getWorkTask(), collectionName, db, workModel);
+                }
+                sharedPreferences.edit().clear().apply();
+                sharedPreferences.edit().putString("currentDay", currentDay).apply();
+            }
         }
     }
 
@@ -95,8 +107,10 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
             recordDataRoom();
             if (user != null) {
                 FireStoreTools.writeOrUpdateDataByFireStore(workModel.getWorkTask(), collectionName, db, workModel);
+                writeAllTaskFromRoomToFireStore();
             }
         });
+
 
         changeTask_image.setOnClickListener(v -> {
             if (editText.getText().toString().trim().isEmpty()) {
@@ -111,7 +125,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                     workModel = list.get(pos); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
                     String newDocumentName = editText.getText().toString();//todo Временное решение
                     workModel.workTask = editText.getText().toString();
-                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db, progressBar);
                     FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, workModel);
                 }
                 editText.getText().clear();
@@ -184,7 +198,10 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                         adapter.notifyDataSetChanged();
                     }
                     Toast.makeText(WorkActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                    FireStoreTools.deleteDataByFireStore(workModel.getWorkTask(), collectionName, db);
+                    if (user != null) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        FireStoreTools.deleteDataByFireStore(workModel.getWorkTask(), collectionName, db, progressBar);
+                    }
                 });
                 adapter.notifyDataSetChanged();
             }
@@ -220,30 +237,27 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         list = new ArrayList<>();
         App.getDataBase().workDao().getAllLive().observe(this, workModels -> {
             if (workModels != null) {
-                checkOnShowProgressBar();
+                progressBar.setVisibility(View.GONE);
                 list.clear();
                 list.addAll(workModels);
                 Collections.reverse(list);
                 adapter.updateList(list);
-            } else {
-                readDataFromFireStore(true);
+                if (workModels.size() == 0) {
+                    readDataFromFireStore();
+                }
             }
         });
     }
 
-    private AtomicBoolean readDataFromFireStore(boolean isRead) {
-        AtomicBoolean isHasData = new AtomicBoolean(false);
-        if (isRead) {
+    private void readDataFromFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
             db.collection(collectionName)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                if (task.getResult().getDocuments().size() == 0) {
-                                    isHasData.set(false);
-                                } else {
-                                    isHasData.set(true);
-                                }
+                                progressBar.setVisibility(View.GONE);
                                 Map<String, Object> dataFromFireBase;
                                 dataFromFireBase = document.getData();
                                 Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
@@ -251,13 +265,9 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                                 workModel = new WorkModel(workTask, taskBoolean);
                                 App.getDataBase().workDao().insert(workModel);
                             }
-                            progressBar.setVisibility(View.GONE);
-                        } else {
-                            progressBar.setVisibility(View.VISIBLE);
                         }
                     });
         }
-        return isHasData;
     }
 
     private void editListener() {
@@ -330,7 +340,9 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         } else {
             toolbar.setText(TaskDialogPreference.getWorkTitle());
         }
-        collectionName = toolbar.getText().toString()+ "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        if (user != null) {
+            collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        }
     }
 
     @Override
@@ -367,21 +379,21 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         if (size < 26) {
             if (size % 5 == 0) {
                 int lvl = size / 5;
-                String level = getString(R.string.attaboy) + lvl;
+                String level = getString(R.string.attaboy) +" "+ lvl;
                 addToLocalDate(lvl, level);
                 showDialogLevel(level);
             }
         } else if (size > 26 && size < 51) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Persistent) + lev;
+                String level = getString(R.string.Persistent)+" " + lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
         } else if (size > 51 && size < 76) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Overwhelming) + lev;
+                String level = getString(R.string.Overwhelming) +" "+ lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
@@ -457,19 +469,19 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
             editText.setText(editText.getText() + " " + result.get(0));
         }
     }
+
     private void deleteAllDocumentsFromFireStore() {
         if (user != null) {
             progressBar.setVisibility(View.VISIBLE);
-            if (list.size()!=0){
+            if (list.size() != 0) {
                 for (int i = 0; i < list.size(); i++) {
                     String personalTask = list.get(i).getWorkTask();
-                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db, progressBar);
                 }
-            }else {
-                progressBar.setVisibility(View.GONE);
             }
         }
     }
+
     @Override
     public void pressOk() {
         App.getDataBase().workDao().deleteAll(list);

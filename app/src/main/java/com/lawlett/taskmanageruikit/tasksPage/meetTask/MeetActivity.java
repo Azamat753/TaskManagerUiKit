@@ -1,7 +1,9 @@
 package com.lawlett.taskmanageruikit.tasksPage.meetTask;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -31,25 +33,25 @@ import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.MeetModel;
 import com.lawlett.taskmanageruikit.tasksPage.meetTask.recyclerview.MeetAdapter;
-import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
-import com.lawlett.taskmanageruikit.utils.MeetDoneSizePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.MeetDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
-import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMCheckedListener, ActionForDialog {
     private RecyclerView recyclerView;
@@ -80,11 +82,30 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         editListener();
     }
 
+    private void writeAllTaskFromRoomToFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
+            SharedPreferences sharedPreferences = getSharedPreferences("meetPreferences", Context.MODE_PRIVATE);
+            Calendar calendar = Calendar.getInstance();
+            String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
+            if (!currentDay.equals(dayFromPreference)) {
+                deleteAllDocumentsFromFireStore();
+                for (int i = 0; i < list.size(); i++) {
+                    FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getMeetTask(), collectionName, db, meetModel);
+                }
+                sharedPreferences.edit().clear().apply();
+                sharedPreferences.edit().putString("currentDay", currentDay).apply();
+            }
+        }
+    }
+
     private void initClickers() {
         imageAdd.setOnClickListener(view -> {
             recordRoom();
             if (user != null) {
                 FireStoreTools.writeOrUpdateDataByFireStore(meetModel.getMeetTask(), collectionName, db, meetModel);
+                writeAllTaskFromRoomToFireStore();
             }
         });
         meetBack.setOnClickListener(v -> onBackPressed());
@@ -102,10 +123,11 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                 imageAdd.setVisibility(View.VISIBLE);
                 KeyboardHelper.hideKeyboard(MeetActivity.this, changeTask_image, editText);
                 if (user != null) {
+                    progressBar.setVisibility(View.VISIBLE);
                     meetModel = list.get(position); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
                     String newDocumentName = editText.getText().toString();//todo Временное решение
                     meetModel.meetTask = editText.getText().toString();
-                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db, progressBar);
                     FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, meetModel);
                 }
                 editText.getText().clear();
@@ -177,7 +199,10 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                         adapter.notifyDataSetChanged();
                     }
                     Toast.makeText(MeetActivity.this, R.string.delete, Toast.LENGTH_SHORT).show();
-                    FireStoreTools.deleteDataByFireStore(meetModel.getMeetTask(), collectionName, db);
+                    if (user != null) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        FireStoreTools.deleteDataByFireStore(meetModel.getMeetTask(), collectionName, db, progressBar);
+                    }
                 });
                 adapter.notifyDataSetChanged();
             }
@@ -212,43 +237,32 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         }).attachToRecyclerView(recyclerView);
     }
 
-    private void checkOnShowProgressBar() {
-        if (readDataFromFireStore(false).get()) {
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.GONE);
-        }
-    }
-
     private void getRecordsFromRoom() {
         list = new ArrayList<>();
         App.getDataBase().meetDao().getAllLive().observe(this, meetModels -> {
             if (meetModels != null) {
-                checkOnShowProgressBar();
+                progressBar.setVisibility(View.GONE);
                 list.clear();
                 list.addAll(meetModels);
                 Collections.sort(list, (meetModel, t1) -> Boolean.compare(t1.isDone, meetModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
-            } else {
-                readDataFromFireStore(true);
+                if (meetModels.size() == 0) {
+                    readDataFromFireStore();
+                }
             }
         });
     }
 
-    private AtomicBoolean readDataFromFireStore(boolean isRead) {
-        AtomicBoolean isHasData = new AtomicBoolean(false);
-        if (isRead) {
+    private void readDataFromFireStore() {
+        if (user != null) {
+            progressBar.setVisibility(View.VISIBLE);
             db.collection(collectionName)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                if (task.getResult().getDocuments().size() == 0) {
-                                    isHasData.set(false);
-                                } else {
-                                    isHasData.set(true);
-                                }
+                                progressBar.setVisibility(View.GONE);
                                 Map<String, Object> dataFromFireBase;
                                 dataFromFireBase = document.getData();
                                 Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
@@ -256,13 +270,9 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                                 meetModel = new MeetModel(meetTask, taskBoolean);
                                 App.getDataBase().meetDao().insert(meetModel);
                             }
-                            progressBar.setVisibility(View.GONE);
-                        } else {
-                            progressBar.setVisibility(View.VISIBLE);
                         }
                     });
         }
-        return isHasData;
     }
 
 
@@ -329,7 +339,9 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         } else {
             toolbar.setText(TaskDialogPreference.getMeetTitle());
         }
-        collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        if (user != null) {
+            collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        }
     }
 
     @Override
@@ -368,21 +380,21 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         if (size < 26) {
             if (size % 5 == 0) {
                 int lvl = size / 5;
-                String level = getString(R.string.attaboy) + lvl;
+                String level = getString(R.string.attaboy) +" "+ lvl;
                 addToLocalDate(lvl, level);
                 showDialogLevel(level);
             }
         } else if (size > 26 && size < 51) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Persistent) + lev;
+                String level = getString(R.string.Persistent)+" " + lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
         } else if (size > 51 && size < 76) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Overwhelming) + lev;
+                String level = getString(R.string.Overwhelming)+" " + lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
@@ -446,10 +458,8 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             if (list.size() != 0) {
                 for (int i = 0; i < list.size(); i++) {
                     String personalTask = list.get(i).getMeetTask();
-                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db);
+                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db, progressBar);
                 }
-            } else {
-                progressBar.setVisibility(View.GONE);
             }
         }
     }

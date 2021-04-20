@@ -21,7 +21,7 @@ import androidx.annotation.NonNull;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.tasksPage.addTask.adapter.ImageAdapter;
-import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 
 public class CustomHomeDialog extends Dialog implements View.OnClickListener {
     final Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);

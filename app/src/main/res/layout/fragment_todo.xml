@@ -6,173 +6,183 @@
     android:layout_height="match_parent"
     tools:context=".tasks.TasksFragment">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/personconst"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/workconst"
-            app:layout_constraintBottom_toTopOf="@+id/meetconst"
-            android:background="@drawable/todo_background">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/personconst"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/todo_background"
+        app:layout_constraintBottom_toTopOf="@+id/meetconst"
+        app:layout_constraintEnd_toStartOf="@+id/workconst"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/person_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_person"/>
+                app:srcCompat="@drawable/ic_person" />
+
             <TextView
                 android:id="@+id/person_task_title"
                 style="@style/TextTitleQuick"
-                android:text="@string/personal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:text="@string/personal" />
+
             <TextView
                 android:id="@+id/personal_amount"
                 style="@style/todoAmountTextColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="14"
-                android:layout_gravity="center"/>
-            </LinearLayout>
+                android:layout_gravity="center"
+                android:text="14" />
+        </LinearLayout>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/workconst"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/personconst"
-            app:layout_constraintBottom_toTopOf="@+id/homeconst"
-            android:background="@drawable/todo_background">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <ImageView
-                    android:id="@+id/work_image"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    app:srcCompat="@drawable/ic_work"/>
-                <TextView
-                    android:id="@+id/work_task_title"
-                    style="@style/TextTitleQuick"
-                    android:text="@string/work"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"/>
-                <TextView
-                    android:id="@+id/work_amount"
-                    style="@style/todoAmountTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="14"
-                    android:layout_gravity="center"/>
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/meetconst"
+        android:id="@+id/workconst"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/personconst"
-        app:layout_constraintBottom_toTopOf="@+id/privateconst"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/homeconst"
-        android:background="@drawable/todo_background">
+        android:background="@drawable/todo_background"
+        app:layout_constraintBottom_toTopOf="@+id/homeconst"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/personconst"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/work_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_work" />
+
+            <TextView
+                android:id="@+id/work_task_title"
+                style="@style/TextTitleQuick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/work" />
+
+            <TextView
+                android:id="@+id/work_amount"
+                style="@style/todoAmountTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="14" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/meetconst"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/todo_background"
+        app:layout_constraintBottom_toTopOf="@+id/privateconst"
+        app:layout_constraintEnd_toStartOf="@+id/homeconst"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/personconst">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/meet_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_meet"/>
+                app:srcCompat="@drawable/ic_meet" />
+
             <TextView
                 android:id="@+id/meet_task_title"
                 style="@style/TextTitleQuick"
-                android:text="@string/meets"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:text="@string/meets" />
+
             <TextView
                 android:id="@+id/meet_task_amount"
                 style="@style/todoAmountTextColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="14"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:text="14" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/homeconst"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/workconst"
+        android:background="@drawable/todo_background"
         app:layout_constraintBottom_toTopOf="@+id/newconst"
-       app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/meetconst"
-        android:background="@drawable/todo_background">
+        app:layout_constraintTop_toBottomOf="@+id/workconst">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/home_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_home"/>
+                app:srcCompat="@drawable/ic_home" />
+
             <TextView
                 android:id="@+id/home_task_title"
                 style="@style/TextTitleQuick"
-                android:text="@string/home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:text="@string/home" />
+
             <TextView
                 android:id="@+id/home_task_amount"
                 style="@style/todoAmountTextColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="14"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:text="14" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -181,41 +191,43 @@
         android:id="@+id/privateconst"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@drawable/todo_background"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/newconst"
-        app:layout_constraintTop_toBottomOf="@+id/meetconst"
-        android:background="@drawable/todo_background">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/meetconst">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/private_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_lock"/>
+                app:srcCompat="@drawable/ic_lock" />
+
             <TextView
                 android:id="@+id/private_task_title"
                 style="@style/TextTitleQuick"
-                android:text="@string/privates"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:text="@string/privates" />
+
             <TextView
                 android:id="@+id/private_task_amount"
                 style="@style/todoAmountTextColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="14"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:text="14" />
         </LinearLayout>
 
 
@@ -225,26 +237,26 @@
         android:id="@+id/newconst"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@drawable/todo_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/privateconst"
-        app:layout_constraintTop_toBottomOf="@+id/homeconst"
-        android:background="@drawable/todo_background">
+        app:layout_constraintTop_toBottomOf="@+id/homeconst">
 
         <LinearLayout
             android:id="@+id/addconst"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/add_tasks_image"
                 style="@style/ImageForTodo"
-                app:srcCompat="@drawable/ic_add_task"/>
+                app:srcCompat="@drawable/ic_add_task" />
 
 
         </LinearLayout>
@@ -255,28 +267,30 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/done_tasks_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center" />
+
             <TextView
                 android:id="@+id/done_task_title"
                 style="@style/TextTitleQuick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center" />
+
             <TextView
                 android:id="@+id/done_amount"
                 style="@style/todoAmountTextColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center" />
         </LinearLayout>
 
 
@@ -287,16 +301,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/bubble"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@drawable/bubble">
+        app:layout_constraintTop_toTopOf="parent">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:padding="5dp"
             android:text="@string/help_bubble"
-            />
+            android:textColor="@color/settings_text_color" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

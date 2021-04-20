@@ -1,20 +1,20 @@
-package com.lawlett.taskmanageruikit.utils;
+package com.lawlett.taskmanageruikit.utils.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class Preference {
+public class IntroPreference {
 
-    public static volatile Preference instance;
+    public static volatile IntroPreference instance;
     private SharedPreferences preferences;
 
-    public Preference(Context context) {
+    public IntroPreference(Context context) {
         instance = this;
         preferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
     }
 
-    public static Preference getInstance(Context context) {
-        if (instance == null) new Preference(context);
+    public static IntroPreference getInstance(Context context) {
+        if (instance == null) new IntroPreference(context);
         return instance;
     }
 

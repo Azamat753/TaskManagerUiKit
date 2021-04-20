@@ -1,4 +1,4 @@
-package com.lawlett.taskmanageruikit.utils;
+package com.lawlett.taskmanageruikit.utils.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;

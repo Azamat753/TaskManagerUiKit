@@ -31,10 +31,10 @@ import com.lawlett.taskmanageruikit.settings.SettingsActivity;
 import com.lawlett.taskmanageruikit.tasks.TasksFragment;
 import com.lawlett.taskmanageruikit.timing.fragment.TimingFragment;
 import com.lawlett.taskmanageruikit.utils.App;
-import com.lawlett.taskmanageruikit.utils.LanguagePreference;
-import com.lawlett.taskmanageruikit.utils.PasswordPassDonePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.PasswordPassDonePreference;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
-import com.lawlett.taskmanageruikit.utils.TaskDialogPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 import com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationItem;
 import com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationView;
 

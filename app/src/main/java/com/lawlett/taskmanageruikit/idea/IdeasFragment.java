@@ -28,7 +28,7 @@ import com.lawlett.taskmanageruikit.idea.data.model.QuickModel;
 import com.lawlett.taskmanageruikit.idea.recycler.QuickAdapter;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.IQuickOnClickListener;
-import com.lawlett.taskmanageruikit.utils.IdeaViewPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.IdeaViewPreference;
 
 import java.util.ArrayList;
 import java.util.Collections;
