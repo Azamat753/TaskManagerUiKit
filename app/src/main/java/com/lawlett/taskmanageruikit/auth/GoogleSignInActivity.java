@@ -2,6 +2,8 @@ package com.lawlett.taskmanageruikit.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -12,6 +14,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,6 +31,8 @@ public class GoogleSignInActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private final static int RC_SIGN_IN = 123;
     private FirebaseAuth mAuth;
+    private SignInButton google_button;
+    private Button newGoogleBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +40,18 @@ public class GoogleSignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_google_sign_in);
         createRequest();
         mAuth = FirebaseAuth.getInstance();
-        findViewById(R.id.google_signIn).setOnClickListener(view -> signIn());
+        initViews();
+        newGoogleBtn.setOnClickListener(v -> {
+            if (v == newGoogleBtn) {
+                google_button.performClick();
+            }
+            signIn();
+        });
+    }
+
+    private void initViews() {
+        google_button = findViewById(R.id.google_signIn);
+        newGoogleBtn = findViewById(R.id.new_google_btn);
     }
 
     private void createRequest() {

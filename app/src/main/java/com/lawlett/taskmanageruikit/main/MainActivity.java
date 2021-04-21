@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         AlarmManager mAlarm = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.HOUR, 24);
+        calendar.add(Calendar.WEEK_OF_MONTH, 1);
         long time = calendar.getTimeInMillis();
         mAlarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pi);
     }

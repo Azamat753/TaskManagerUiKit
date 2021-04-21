@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.idea.data.model.QuickModel;
-import com.lawlett.taskmanageruikit.utils.IQuickOnClickListener;
+import com.lawlett.taskmanageruikit.utils.IIdeaOnClickListener;
 import com.lawlett.taskmanageruikit.utils.preferences.IdeaViewPreference;
 
 import java.util.List;
@@ -27,10 +27,10 @@ import java.util.List;
 public class QuickAdapter extends RecyclerView.Adapter<QuickAdapter.QuickViewHolder> {
     List<QuickModel> list;
     Context context;
-    IQuickOnClickListener listener;
+    IIdeaOnClickListener listener;
     public MutableLiveData<Boolean> isChange = new MutableLiveData<>();
 
-    public QuickAdapter(List<QuickModel> list, IQuickOnClickListener listener, Context context) {
+    public QuickAdapter(List<QuickModel> list, IIdeaOnClickListener listener, Context context) {
         this.context = context;
         this.list = list;
         this.listener = listener;
@@ -57,13 +57,13 @@ public class QuickAdapter extends RecyclerView.Adapter<QuickAdapter.QuickViewHol
         TextView title2, desc2, data_created2;
         ImageView imageDesc;
         ImageView imageDesc2;
-        IQuickOnClickListener listeneer;
+        IIdeaOnClickListener listeneer;
         FrameLayout leftView, leftView2;
         CardView secondConst;
         ConstraintLayout firstConst;
         Boolean isGrid;
 
-        public QuickViewHolder(@NonNull View itemView, IQuickOnClickListener listeneer) {
+        public QuickViewHolder(@NonNull View itemView, IIdeaOnClickListener listeneer) {
             super(itemView);
             title = itemView.findViewById(R.id.title_quick);
             desc = itemView.findViewById(R.id.desc_quick);

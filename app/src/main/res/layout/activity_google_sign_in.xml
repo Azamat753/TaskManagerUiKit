@@ -7,9 +7,7 @@
     android:padding="12dp"
     tools:context=".auth.GoogleSignInActivity">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -76,11 +74,14 @@
                 android:textColor="@color/myWhite"
                 android:textSize="18sp" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:src="@drawable/google_icon" />
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/google_animation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="googlelogonight.json"
+                app:lottie_loop="true" />
 
         </LinearLayout>
 
@@ -97,7 +98,16 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <Button
+                    android:id="@+id/new_google_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/enter"
+                    android:textColor="@color/settings_text_color" />
+
+            </com.google.android.gms.common.SignInButton>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

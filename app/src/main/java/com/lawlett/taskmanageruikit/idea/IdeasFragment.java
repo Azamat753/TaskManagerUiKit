@@ -36,7 +36,7 @@ import com.lawlett.taskmanageruikit.idea.recycler.QuickAdapter;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
-import com.lawlett.taskmanageruikit.utils.IQuickOnClickListener;
+import com.lawlett.taskmanageruikit.utils.IIdeaOnClickListener;
 import com.lawlett.taskmanageruikit.utils.preferences.IdeaViewPreference;
 
 import java.util.ArrayList;
@@ -46,14 +46,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class IdeasFragment extends Fragment implements IQuickOnClickListener {
+public class IdeasFragment extends Fragment implements IIdeaOnClickListener {
     private QuickAdapter adapter;
     private List<QuickModel> list;
     private FloatingActionButton addQuickBtn;
-    private int position;
     private int pos;
     private TextView firstText;
     private RecyclerView recyclerViewQuick;
@@ -75,7 +71,9 @@ public class IdeasFragment extends Fragment implements IQuickOnClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        collectionName = "Идеи" + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        if (user != null) {
+            collectionName = "Идеи" + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        }
         initViews(view);
         initClickers();
         initAdapter();
@@ -83,7 +81,6 @@ public class IdeasFragment extends Fragment implements IQuickOnClickListener {
         btnGridChange();
         initItemTouchHelper();
     }
-
 
     private void getRoomRecordsData() {
         App.getDataBase().ideaDao().getAllLive().observe(this, quickModels -> {
@@ -98,7 +95,7 @@ public class IdeasFragment extends Fragment implements IQuickOnClickListener {
                 }
                 if (quickModels.size() != 0) {
                     writeAllTaskFromRoomToFireStore();
-                }else {
+                } else {
                     readDataFromFireStore();
                 }
             }
@@ -165,7 +162,6 @@ public class IdeasFragment extends Fragment implements IQuickOnClickListener {
 
     @Override
     public void onItemClick(final int position) {
-        this.position = position;
         Intent intent = new Intent(getActivity(), IdeaActivity.class);
         intent.putExtra("task", list.get(position));
         requireActivity().startActivityForResult(intent, 42);

@@ -138,7 +138,7 @@
     <string name="your_patronus">Ваш патронус - </string>
     <string name="lumos">люмос</string>
     <string name="choose_app">Выберите приложение</string>
-    <string name="new_aim">пора ставить новые цели!</string>
+    <string name="new_aim">Пора ставить новые цели!</string>
     <string name="move_tasks">Вы можете поменять задачи местами</string>
     <string name="delete_task">Вы можете удалить ненужную задачу</string>
     <string name="achievement_app">Достижения</string>
@@ -170,4 +170,7 @@
     <string name="good_luck">Желаем дальнейших успехов !</string>
     <string name="wait">Пожалуйста подождите...</string>
     <string name="error">Произошла ошибка</string>
+    <string name="voice_add">Голосовой ввод...</string>
+    <string name="speak_spell">Произнесите заклинание</string>
+    <string name="enter">Войти</string>
 </resources>

@@ -219,13 +219,12 @@ public class SettingsActivity extends AppCompatActivity {
         LanguagePreference.getInstance(SettingsActivity.this).saveLanguage(lang);
     }
 
-
     private void startVoiceRecognitionActivity() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                "Speech recognition demo");
+                getString(R.string.speak_spell));
         startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
     }
 

@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -367,7 +368,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             toolbar.setText(TaskDialogPreference.getPersonTitle());
         }
         if (user != null) {
-            collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+            String categoryName= toolbar.getText().toString();
+            collectionName = categoryName+ "-" + "(" + user.getDisplayName() + ")" + user.getUid();
         }
     }
 
@@ -476,7 +478,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speak_something));
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_add));
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e) {

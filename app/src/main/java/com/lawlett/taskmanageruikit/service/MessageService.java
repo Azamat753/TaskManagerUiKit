@@ -27,8 +27,8 @@ public class MessageService extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-                String title = intent.getStringExtra(TITLE);
-                String text = intent.getStringExtra(TEXT);
+        String title = intent.getStringExtra(TITLE);
+        String text = intent.getStringExtra(TEXT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             if (notificationManager.getNotificationChannel(CHANNEL_ID_HOURS) == null) {
@@ -41,8 +41,8 @@ public class MessageService extends BroadcastReceiver {
                 );
             }
             Intent intent1 = new Intent(context, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context,2
-                    , intent1,PendingIntent.FLAG_ONE_SHOT);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 2
+                    , intent1, PendingIntent.FLAG_ONE_SHOT);
             Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID_HOURS)
                     .setSmallIcon(R.drawable.ic_planner)
                     .setContentTitle(title).setContentText(text)
@@ -50,22 +50,22 @@ public class MessageService extends BroadcastReceiver {
                     .setContentIntent(pendingIntent)
                     .build();
             notificationManager.notify(2, notification);
-        }else {
+        } else {
             Intent intent1 = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context,2 , intent1,PendingIntent.FLAG_ONE_SHOT);
-        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_planner)
-                .setContentTitle(title)
-                .setContentText(text)
-                .setAutoCancel(true)
-                .setSound(soundUri)
-                .setContentIntent(pendingIntent);
-        Notification notification = builder.build();
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 2, intent1, PendingIntent.FLAG_ONE_SHOT);
+            Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                    .setSmallIcon(R.drawable.ic_planner)
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setAutoCancel(true)
+                    .setSound(soundUri)
+                    .setContentIntent(pendingIntent);
+            Notification notification = builder.build();
             NotificationManager notificationManager =
-                        (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+                    (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
             notificationManager.notify(2, notification);
-            }
+        }
     }
 }
 

@@ -160,4 +160,7 @@
     <string name="good_luck">Желаем дальнейших успехов !</string>
     <string name="wait">Пожалуйста подождите...</string>
     <string name="error">Произошла ошибка</string>
+    <string name="voice_add">Голосовой ввод...</string>
+    <string name="speak_spell">Произнесите заклинание</string>
+    <string name="enter">Войти</string>
 </resources>

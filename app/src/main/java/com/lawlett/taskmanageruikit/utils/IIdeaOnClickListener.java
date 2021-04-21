@@ -1,5 +1,5 @@
 package com.lawlett.taskmanageruikit.utils;
 
-public interface IQuickOnClickListener {
+public interface IIdeaOnClickListener {
     void onItemClick(int position);
 }

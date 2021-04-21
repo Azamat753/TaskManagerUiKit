@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#00BCD4</color>
-    <color name="royalEnd">#243B55</color>
-    <color name="royalStart">#122039</color>
+    <color name="royalEnd">#254568</color>
+    <color name="royalStart">#162C53</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="bluePersonal">#03BADA</color>
@@ -14,12 +14,12 @@
     <color name="meetColor">#FF9800</color>
     <color name="allTaskColor">#4CAF50</color>
     <color name="transparent">#00AF4C4C</color>
-    <color name="statusBarC">#122039</color>
+    <color name="statusBarC">#162C53</color>
     <color name="icon_color">#FFF</color>
-    <color name="calendar_background">#122039</color>
+    <color name="calendar_background">#162C53</color>
     <color name="calendar_text">#FFF</color>
-    <color name="plus_background">#122039</color>
-    <color name="navigation_background">#122039 </color>
+    <color name="plus_background">#162C53</color>
+    <color name="navigation_background">#162C53 </color>
     <color name="settings_text_color">#FFF</color>
     <color name="timing_color">#211D44</color>
     <color name="hint_color">#aaa</color>

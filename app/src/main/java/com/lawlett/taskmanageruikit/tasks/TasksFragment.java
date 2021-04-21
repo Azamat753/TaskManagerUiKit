@@ -16,6 +16,9 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.tasksPage.addTask.CustomTaskDialog;
 import com.lawlett.taskmanageruikit.tasksPage.addTask.DoneActivity;
@@ -27,12 +30,15 @@ import com.lawlett.taskmanageruikit.tasksPage.personalTask.PersonalActivity;
 import com.lawlett.taskmanageruikit.tasksPage.privateTask.PrivateActivity;
 import com.lawlett.taskmanageruikit.tasksPage.workTask.WorkActivity;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.Constants;
+import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.PassCodeActivity;
 import com.lawlett.taskmanageruikit.utils.preferences.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.PasswordPassDonePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -46,7 +52,9 @@ public class TasksFragment extends Fragment {
     private LinearLayout addConst, doneConst, bubble;
     private List<DoneModel> list;
     private int buttonListen;
-
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private FirebaseUser user = mAuth.getCurrentUser();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_todo, container, false);
@@ -224,6 +232,7 @@ public class TasksFragment extends Fragment {
             doneImage.setImageResource(image);
             doneConst.setVisibility(visible);
             addConst.setVisibility(gone);
+          saveCategoryName(Constants.CUSTOM_DOCUMENT_NAME,title);
         });
         customTaskDialog.show();
     }
@@ -237,28 +246,39 @@ public class TasksFragment extends Fragment {
                     TaskDialogPreference.savePersonTitle(title);
                     personal_title.setText(title);
                     personalImage.setImageResource(image);
+                    saveCategoryName(Constants.PERSONAL_DOCUMENT_NAME,title);
                     break;
                 case 2:
                     TaskDialogPreference.saveWorkImage(image);
                     TaskDialogPreference.saveWorkTitle(title);
                     work_title.setText(title);
                     workImage.setImageResource(image);
+                    saveCategoryName(Constants.WORK_DOCUMENT_NAME,title);
                     break;
                 case 3:
                     TaskDialogPreference.saveMeetImage(image);
                     TaskDialogPreference.saveMeetTitle(title);
                     meet_title.setText(title);
                     meetImage.setImageResource(image);
+                    saveCategoryName(Constants.MEET_DOCUMENT_NAME,title);
                     break;
                 case 4:
                     TaskDialogPreference.saveHomeImage(image);
                     TaskDialogPreference.saveHomeTitle(title);
                     home_title.setText(title);
                     homeImage.setImageResource(image);
+                    saveCategoryName(Constants.HOME_DOCUMENT_NAME,title);
                     break;
             }
         });
         customHomeDialog.show();
+    }
+    private void saveCategoryName(String documentName,String title){
+        if (user!=null){
+            HashMap<String ,String > map =new HashMap<>();
+            map.put("categoryName",title);
+            FireStoreTools.writeOrUpdateDataByFireStore(documentName, Constants.CATEGORY_COLLECTION,db,map);
+        }
     }
 
     @SuppressLint("SetTextI18n")

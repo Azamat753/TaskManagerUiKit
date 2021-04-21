@@ -123,6 +123,7 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
         list = new ArrayList<>();
         App.getDataBase().eventsDao().getAllLive().observe(this, calendarTaskModels -> {
             if (calendarTaskModels != null) {
+                progressBar.setVisibility(View.GONE);
                 list.clear();
                 list.addAll(App.getDataBase().eventsDao().getSortedCalendarTaskModel());
                 adapter.notifyDataSetChanged();
@@ -152,7 +153,9 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        collectionName = "События" + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        if (user!=null){
+            collectionName = "События" + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        }
         initViews(view);
         initRoom();
         initCalendar();
@@ -231,9 +234,7 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
                             background.setBounds(0, itemView.getTop(), (int) (itemView.getLeft() + dX), itemView.getBottom());
                             background.draw(c);
                             break;
-
                         case DIRECTION_LEFT:
-
                             View itemView2 = viewHolder.itemView;
                             final ColorDrawable background2 = new ColorDrawable(Color.RED);
                             background2.setBounds(itemView2.getRight(), itemView2.getBottom(), (int) (itemView2.getRight() + dX), itemView2.getTop());
@@ -267,12 +268,9 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
             @Override
             public void onDateSelected(Calendar date, int position) {
             }
-
             @Override
             public void onCalendarScroll(HorizontalCalendarView calendarView, int dx, int dy) {
-
             }
-
             @RequiresApi(api = Build.VERSION_CODES.O)
             @SuppressLint("LogNotTimber")
             @Override
