@@ -11,10 +11,14 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/todo_background"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@+id/meetconst"
         app:layout_constraintEnd_toStartOf="@+id/workconst"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -57,10 +61,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/todo_background"
+        android:foreground="?attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@+id/homeconst"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/personconst"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -102,10 +108,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/todo_background"
+        android:foreground="?attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@+id/privateconst"
         app:layout_constraintEnd_toStartOf="@+id/homeconst"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/personconst">
+        app:layout_constraintTop_toBottomOf="@+id/personconst"
+        tools:ignore="UnusedAttribute">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -147,10 +155,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/todo_background"
+        android:foreground="?attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@+id/newconst"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/meetconst"
-        app:layout_constraintTop_toBottomOf="@+id/workconst">
+        app:layout_constraintTop_toBottomOf="@+id/workconst"
+        tools:ignore="UnusedAttribute">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -192,10 +202,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/todo_background"
+        android:foreground="?attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/newconst"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/meetconst">
+        app:layout_constraintTop_toBottomOf="@+id/meetconst"
+        tools:ignore="UnusedAttribute">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -238,10 +250,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/todo_background"
+        android:foreground="?attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/privateconst"
-        app:layout_constraintTop_toBottomOf="@+id/homeconst">
+        app:layout_constraintTop_toBottomOf="@+id/homeconst"
+        tools:ignore="UnusedAttribute">
 
         <LinearLayout
             android:id="@+id/addconst"
@@ -302,8 +316,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="@drawable/bubble"
+        android:foreground="?attr/selectableItemBackground"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute">
 
         <TextView
             android:layout_width="wrap_content"

@@ -163,4 +163,6 @@
     <string name="voice_add">Голосовой ввод...</string>
     <string name="speak_spell">Произнесите заклинание</string>
     <string name="enter">Войти</string>
+    <string name="read">Читать</string>
+    <string name="cloud_save_data">Облачное храннение данных</string>
 </resources>

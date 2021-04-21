@@ -49,6 +49,12 @@ public class GoogleSignInActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this,SplashActivity.class));
+        finish();
+    }
+
     private void initViews() {
         google_button = findViewById(R.id.google_signIn);
         newGoogleBtn = findViewById(R.id.new_google_btn);

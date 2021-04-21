@@ -2,6 +2,7 @@
 <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="56dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/royalStart"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
@@ -19,6 +20,8 @@
             <ImageView
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                android:foreground="?attr/selectableItemBackground"
+                tools:ignore="UnusedAttribute"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:id="@+id/back_view"
                 android:layout_width="30dp"
@@ -45,6 +48,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
+                android:foreground="?attr/selectableItemBackground"
+                tools:ignore="UnusedAttribute"
                 android:layout_marginEnd="15dp"
                 android:id="@+id/done_view"
                 android:layout_width="30dp"

@@ -9,17 +9,18 @@
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"
-        android:overScrollMode="never"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:overScrollMode="never" />
 
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:background="@color/transparent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:background="@color/transparent"
         app:tabBackground="@drawable/tablayout"
+        app:tabUnboundedRipple="true"
         app:tabGravity="center" />
 </RelativeLayout>

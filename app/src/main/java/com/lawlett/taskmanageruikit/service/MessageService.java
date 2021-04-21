@@ -13,6 +13,7 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.main.MainActivity;
@@ -59,6 +60,7 @@ public class MessageService extends BroadcastReceiver {
                     .setContentTitle(title)
                     .setContentText(text)
                     .setAutoCancel(true)
+                    .setColor(ContextCompat.getColor(context,R.color.settings_text_color))
                     .setSound(soundUri)
                     .setContentIntent(pendingIntent);
             Notification notification = builder.build();

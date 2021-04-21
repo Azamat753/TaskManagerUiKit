@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.lawlett.taskmanageruikit.R;
+import com.lawlett.taskmanageruikit.auth.GoogleSignInActivity;
 import com.lawlett.taskmanageruikit.main.MainActivity;
 import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.IntroPreference;
@@ -33,7 +34,7 @@ import java.util.Objects;
 public class BoardFragment extends Fragment {
     ConstraintLayout container;
     ImageView imageDay, imageNight, imageDaySelect, imageNightSelect;
-    LottieAnimationView calendar_anim, notes_anim, todo_anim, time_anim;
+    LottieAnimationView calendar_anim, notes_anim, todo_anim, time_anim, google_anim;
     TextView title_tv, desc_tv, start_tv, change_lang;
 
     public BoardFragment() {
@@ -71,6 +72,7 @@ public class BoardFragment extends Fragment {
                 notes_anim.setVisibility(View.GONE);
                 change_lang.setVisibility(View.VISIBLE);
                 container.setVisibility(View.GONE);
+                google_anim.setVisibility(View.GONE);
                 break;
             case 1:
                 title_tv.setText(R.string.done_tasks);
@@ -80,6 +82,7 @@ public class BoardFragment extends Fragment {
                 notes_anim.setVisibility(View.GONE);
                 change_lang.setVisibility(View.INVISIBLE);
                 container.setVisibility(View.GONE);
+                google_anim.setVisibility(View.GONE);
                 break;
             case 2:
                 title_tv.setText(R.string.record_idea_simple);
@@ -87,10 +90,21 @@ public class BoardFragment extends Fragment {
                 calendar_anim.setVisibility(View.GONE);
                 todo_anim.setVisibility(View.GONE);
                 notes_anim.setVisibility(View.VISIBLE);
-                change_lang.setVisibility(View.INVISIBLE);
                 container.setVisibility(View.GONE);
+                google_anim.setVisibility(View.GONE);
                 break;
             case 3:
+                title_tv.setText(R.string.check_timing);
+                desc_tv.setText(R.string.plus_you_kpd);
+                calendar_anim.setVisibility(View.GONE);
+                todo_anim.setVisibility(View.GONE);
+                notes_anim.setVisibility(View.GONE);
+                time_anim.setVisibility(View.VISIBLE);
+                start_tv.setVisibility(View.GONE);
+                container.setVisibility(View.GONE);
+                google_anim.setVisibility(View.GONE);
+                break;
+            case 4:
                 title_tv.setVisibility(View.GONE);
                 desc_tv.setVisibility(View.GONE);
                 container.setVisibility(View.VISIBLE);
@@ -99,17 +113,17 @@ public class BoardFragment extends Fragment {
                 notes_anim.setVisibility(View.GONE);
                 time_anim.setVisibility(View.GONE);
                 start_tv.setVisibility(View.GONE);
-                change_lang.setVisibility(View.INVISIBLE);
+                google_anim.setVisibility(View.GONE);
                 break;
-            case 4:
-                title_tv.setText(R.string.check_timing);
-                desc_tv.setText(R.string.plus_you_kpd);
+            case 5:
+                title_tv.setText(R.string.cloud_save_data);
+                desc_tv.setText(R.string.sync_planner_with_google);
                 calendar_anim.setVisibility(View.GONE);
                 todo_anim.setVisibility(View.GONE);
                 notes_anim.setVisibility(View.GONE);
-                time_anim.setVisibility(View.VISIBLE);
+                time_anim.setVisibility(View.GONE);
+                google_anim.setVisibility(View.VISIBLE);
                 start_tv.setVisibility(View.VISIBLE);
-                change_lang.setVisibility(View.INVISIBLE);
                 container.setVisibility(View.GONE);
                 break;
         }
@@ -126,15 +140,10 @@ public class BoardFragment extends Fragment {
 
         start_tv.setOnClickListener(v -> {
             IntroPreference.getInstance(getContext()).saveShown();
-            startActivity(new Intent(getContext(), MainActivity.class));
-            Objects.requireNonNull(getActivity()).finish();
+            startActivity(new Intent(getContext(), GoogleSignInActivity.class));
+            Objects.requireNonNull(requireActivity()).finish();
         });
-        change_lang.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showChangeLanguageDialog();
-            }
-        });
+        change_lang.setOnClickListener(v -> showChangeLanguageDialog());
     }
 
     private void initViews(@NonNull View view) {
@@ -142,11 +151,11 @@ public class BoardFragment extends Fragment {
         desc_tv = view.findViewById(R.id.desc_tv);
         start_tv = view.findViewById(R.id.start_tv);
         change_lang = view.findViewById(R.id.change_lang);
-
         calendar_anim = view.findViewById(R.id.calendar_animation);
         todo_anim = view.findViewById(R.id.todo_animation);
         notes_anim = view.findViewById(R.id.notes_animation);
         time_anim = view.findViewById(R.id.time_animation);
+        google_anim = view.findViewById(R.id.google_animation);
         container = view.findViewById(R.id.container_theme);
         imageDay = view.findViewById(R.id.image_day);
         imageNight = view.findViewById(R.id.image_night);
@@ -156,14 +165,14 @@ public class BoardFragment extends Fragment {
 
     private void showChangeLanguageDialog() {
         final String[] listItems = {"English", "Русский", "Кыргызча", "Português", "한국어", "Український"};
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(requireContext());
         mBuilder.setTitle(R.string.choose_language);
         mBuilder.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 if (i == 0) {
                     setLocale("en");
-                   requireActivity().recreate();
+                    requireActivity().recreate();
                 } else if (i == 1) {
                     setLocale("ru");
                     requireActivity().recreate();

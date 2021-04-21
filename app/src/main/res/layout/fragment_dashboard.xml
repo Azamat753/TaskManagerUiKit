@@ -13,6 +13,8 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:foreground="?attr/selectableItemBackground"
+            tools:ignore="UnusedAttribute"
             android:id="@+id/first_con"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,6 +52,8 @@
         </LinearLayout>
 
         <LinearLayout
+            android:foreground="?attr/selectableItemBackground"
+            tools:ignore="UnusedAttribute"
             android:id="@+id/second_con"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -87,6 +91,8 @@
         </LinearLayout>
 
         <LinearLayout
+            android:foreground="?attr/selectableItemBackground"
+            tools:ignore="UnusedAttribute"
             android:id="@+id/third_con"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -282,7 +288,6 @@
             android:overScrollMode="never"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintTop_toBottomOf="@+id/timing_allTask_amount">
-
 
                 <TextView
                     android:id="@+id/allTask_pr_title"

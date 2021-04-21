@@ -46,7 +46,7 @@ public class BoardActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 5;
+            return 6;
         }
     }
 }
