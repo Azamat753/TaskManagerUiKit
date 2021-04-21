@@ -1,17 +1,22 @@
 package com.lawlett.taskmanageruikit.settings;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,6 +29,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,18 +38,22 @@ import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.AchievementActivity;
 import com.lawlett.taskmanageruikit.auth.GoogleSignInActivity;
 import com.lawlett.taskmanageruikit.splash.SplashActivity;
-import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 import com.lawlett.taskmanageruikit.utils.PassCodeActivity;
+import com.lawlett.taskmanageruikit.utils.dialoglanguage.BaseRadioAdapter;
+import com.lawlett.taskmanageruikit.utils.dialoglanguage.GridSpacingItemDecoration;
+import com.lawlett.taskmanageruikit.utils.dialoglanguage.LanguageAdapter;
+import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.PasswordDonePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.PasswordPreference;
 import com.lawlett.taskmanageruikit.utils.preferences.ThemePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.TimingSizePreference;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity implements BaseRadioAdapter.LanguageChooseListener {
     private LinearLayout language_tv, clear_password_layout, clearMinutes_layout, share_layout, achievement_layout, reviews, sign_in;
     private ImageView magick;
     private ListView listView;
@@ -140,7 +151,13 @@ public class SettingsActivity extends AppCompatActivity {
                     }).show();
         });
 
-        language_tv.setOnClickListener(v -> showChangeLanguageDialog());
+        language_tv.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.R)
+            @Override
+            public void onClick(View view) {
+                languageAlert();
+            }
+        });
 
         reviews.setOnClickListener(view -> {
             Intent mailIntent = new Intent(Intent.ACTION_VIEW);
@@ -157,6 +174,7 @@ public class SettingsActivity extends AppCompatActivity {
             imageTheme.setImageResource(R.drawable.ic_nights);
         }
     }
+
     private void initViews() {
         clear_password_layout = findViewById(R.id.first_layout);
         clearMinutes_layout = findViewById(R.id.second_layout);
@@ -180,34 +198,61 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    private void showChangeLanguageDialog() {
-        final String[] listItems = {"English", "Русский", "Кыргызча", "Português", "한국어", "Український"};
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(SettingsActivity.this);
-        mBuilder.setTitle(R.string.choose_language);
-        mBuilder.setSingleChoiceItems(listItems, -1, (dialog, i) -> {
-            if (i == 0) {
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    private void languageAlert() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View view = inflater.inflate(R.layout.language_layout, null);
+
+        Dialog alertDialog = new Dialog(this);
+        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        alertDialog.setContentView(view);
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        RecyclerView recyclerView;
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
+        gridLayoutManager.generateDefaultLayoutParams();
+        List<String> languages = List.of(
+                "English", "Русский", "Кыргызча", "Português", "한국어",
+                "Український", "Deutsche", "हिंदी", "Қазақ тілі");
+        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(gridLayoutManager);
+
+        recyclerView.setAdapter(new LanguageAdapter(this, languages, this));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(45));
+        alertDialog.show();
+    }
+
+    private void showChangeLanguageDialog(int position) {
+        switch (position) {
+            case 0:
                 setLocale("en");
-                startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
-            } else if (i == 1) {
+                break;
+            case 1:
                 setLocale("ru");
-                startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
-            } else if (i == 2) {
+                break;
+            case 2:
                 setLocale("ky");
-                startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
-            } else if (i == 3) {
+                break;
+            case 3:
                 setLocale("pt");
-                startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
-            } else if (i == 4) {
+                break;
+            case 4:
                 setLocale("ko");
-                startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
-            } else if (i == 5) {
+                break;
+            case 5:
                 setLocale("uk");
-                startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
-            }
-            dialog.dismiss();
-        });
-        AlertDialog mDialog = mBuilder.create();
-        mDialog.show();
+                break;
+            case 6:
+                setLocale("de");
+                break;
+            case 7:
+                setLocale("hi");
+                break;
+            case 8:
+                setLocale("kk");
+                break;
+        }
+        startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
     }
 
     private void setLocale(String lang) {
@@ -276,5 +321,10 @@ public class SettingsActivity extends AppCompatActivity {
     private void loadLocale() {
         String language = LanguagePreference.getInstance(this).getLanguage();
         setLocale(language);
+    }
+
+    @Override
+    public void onClick(int position) {
+        showChangeLanguageDialog(position);
     }
 }
