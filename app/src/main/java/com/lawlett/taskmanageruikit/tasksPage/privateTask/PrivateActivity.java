@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -150,18 +151,21 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
                 final int DIRECTION_LEFT = 0;
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
                     int direction = dX > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+                    Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                     switch (direction) {
                         case DIRECTION_RIGHT:
                             View itemView = viewHolder.itemView;
                             final ColorDrawable background = new ColorDrawable(Color.RED);
                             background.setBounds(0, itemView.getTop(), (int) (itemView.getLeft() + dX), itemView.getBottom());
                             background.draw(c);
+                            vb.vibrate(100);
                             break;
                         case DIRECTION_LEFT:
                             View itemView2 = viewHolder.itemView;
                             final ColorDrawable background2 = new ColorDrawable(Color.RED);
                             background2.setBounds(itemView2.getRight(), itemView2.getBottom(), (int) (itemView2.getRight() + dX), itemView2.getTop());
                             background2.draw(c);
+                            vb.vibrate(100);
                             break;
                     }
                 }
@@ -238,11 +242,24 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
                 Collections.sort(list, (privateModel, t1) -> Boolean.compare(t1.isDone, privateModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
+                countUpIsDone();
                 if (privateModels.size() == 0) {
                     readDataFromFireStore();
                 }
             }
         });
+    }
+
+    private void countUpIsDone() {
+        if (PrivateDoneSizePreference.getInstance(this).getDataSize() == 0) {
+            int count = 0;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).isDone) {
+                    count++;
+                }
+            }
+            PrivateDoneSizePreference.getInstance(this).saveDataSize(count);
+        }
     }
 
 
@@ -457,7 +474,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speak_something));
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_add));
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e) {

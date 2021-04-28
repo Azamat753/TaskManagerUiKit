@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -41,9 +42,9 @@ import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
-import com.lawlett.taskmanageruikit.utils.preferences.HomeDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
+import com.lawlett.taskmanageruikit.utils.preferences.HomeDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 
 import java.util.ArrayList;
@@ -216,7 +217,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
 
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
                     int direction = dX > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
-                    Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                     switch (direction) {
                         case DIRECTION_RIGHT:
                             View itemView = viewHolder.itemView;
@@ -237,6 +238,16 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
                 }
             }
         }).attachToRecyclerView(recyclerView);
+    }
+    @SuppressLint("SetTextI18n")
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_SPEECH_INPUT && resultCode == RESULT_OK && data != null) {
+            ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            assert result != null;
+            editText.setText(editText.getText() + " " + result.get(0));
+        }
     }
 
     private void initViews() {
@@ -262,11 +273,24 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
                 list.addAll(homeModels);
                 Collections.reverse(list);
                 adapter.updateList(list);
+                countUpIsDone();
                 if (homeModels.size() == 0) {
                     readDataFromFireStore();
                 }
             }
         });
+    }
+
+    private void countUpIsDone() {
+        if (HomeDoneSizePreference.getInstance(this).getDataSize() == 0) {
+            int count = 0;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).isDone) {
+                    count++;
+                }
+            }
+            HomeDoneSizePreference.getInstance(this).saveDataSize(count);
+        }
     }
 
     private void readDataFromFireStore() {
@@ -308,7 +332,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
             toolbar.setText(TaskDialogPreference.getHomeTitle());
         }
         if (user != null) {
-            collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+            collectionName = Constants.HOME_COLLECTION + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
         }
     }
 
@@ -469,7 +493,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speak_something));
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_add));
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e) {

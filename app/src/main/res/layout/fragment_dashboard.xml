@@ -13,23 +13,23 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:foreground="?attr/selectableItemBackground"
-            tools:ignore="UnusedAttribute"
             android:id="@+id/first_con"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:foreground="?attr/selectableItemBackground"
             android:orientation="vertical"
             app:layout_constraintEnd_toStartOf="@+id/second_con"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UnusedAttribute">
 
             <View
                 android:id="@+id/data_view"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:layout_margin="10dp"
                 android:layout_gravity="center"
+                android:layout_margin="10dp"
                 android:background="@drawable/ic_date_white" />
 
             <TextView
@@ -52,23 +52,23 @@
         </LinearLayout>
 
         <LinearLayout
-            android:foreground="?attr/selectableItemBackground"
-            tools:ignore="UnusedAttribute"
             android:id="@+id/second_con"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:foreground="?attr/selectableItemBackground"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UnusedAttribute">
 
             <View
                 android:id="@+id/todo_view"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:layout_margin="10dp"
                 android:layout_gravity="center"
+                android:layout_margin="10dp"
                 android:background="@drawable/ic_check" />
 
             <TextView
@@ -91,23 +91,23 @@
         </LinearLayout>
 
         <LinearLayout
-            android:foreground="?attr/selectableItemBackground"
-            tools:ignore="UnusedAttribute"
             android:id="@+id/third_con"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:foreground="?attr/selectableItemBackground"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/second_con"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UnusedAttribute">
 
             <View
                 android:id="@+id/notes_view"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:layout_margin="10dp"
                 android:layout_gravity="center"
+                android:layout_margin="10dp"
                 android:background="@drawable/ic_idea" />
 
             <TextView
@@ -284,279 +284,279 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:overScrollMode="never"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintTop_toBottomOf="@+id/timing_allTask_amount">
 
-                <TextView
-                    android:id="@+id/allTask_pr_title"
-                    style="@style/dashboardTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/tasks"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@id/allTask_progress"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/allTask_pr_title"
+                style="@style/dashboardTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/tasks"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/allTask_progress"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
-                <ProgressBar
-                    android:id="@+id/allTask_progress"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="90dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="40dp"
-                    app:layout_constraintEnd_toStartOf="@id/allTask_percent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/allTask_pr_title" />
+            <ProgressBar
+                android:id="@+id/allTask_progress"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="40dp"
+                app:layout_constraintEnd_toStartOf="@id/allTask_percent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/allTask_pr_title" />
 
-                <TextView
-                    android:id="@+id/allTask_percent"
-                    style="@style/dashboardTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="0%"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/allTask_progress"
-                    app:layout_constraintStart_toEndOf="@id/allTask_progress"
-                    app:layout_constraintTop_toTopOf="@id/allTask_progress" />
+            <TextView
+                android:id="@+id/allTask_percent"
+                style="@style/dashboardTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="0%"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/allTask_progress"
+                app:layout_constraintStart_toEndOf="@id/allTask_progress"
+                app:layout_constraintTop_toTopOf="@id/allTask_progress" />
 
-                <TextView
-                    android:id="@+id/personal_pr_title"
-                    style="@style/dashboardTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="150dp"
-                    android:text="@string/personal"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/allTask_progress" />
+            <TextView
+                android:id="@+id/personal_pr_title"
+                style="@style/dashboardTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="150dp"
+                android:text="@string/personal"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/allTask_progress" />
 
-                <ProgressBar
-                    android:id="@+id/personal_progress"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="90dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginStart="15dp"
-                    app:layout_constraintEnd_toStartOf="@id/personal_percent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/personal_pr_title" />
+            <ProgressBar
+                android:id="@+id/personal_progress"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toStartOf="@id/personal_percent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/personal_pr_title" />
 
-                <TextView
-                    android:id="@+id/personal_percent"
-                    style="@style/dashboardTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="0%"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/personal_progress"
-                    app:layout_constraintStart_toEndOf="@id/personal_progress"
-                    app:layout_constraintTop_toTopOf="@id/personal_progress" />
+            <TextView
+                android:id="@+id/personal_percent"
+                style="@style/dashboardTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="0%"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/personal_progress"
+                app:layout_constraintStart_toEndOf="@id/personal_progress"
+                app:layout_constraintTop_toTopOf="@id/personal_progress" />
 
-                <TextView
-                    android:id="@+id/work_pr_title"
-                    style="@style/dashboardTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/work"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/personal_progress" />
+            <TextView
+                android:id="@+id/work_pr_title"
+                style="@style/dashboardTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/work"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/personal_progress" />
 
-                <ProgressBar
-                    android:id="@+id/work_progress"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="90dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="40dp"
-                    app:layout_constraintEnd_toStartOf="@id/work_percent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/work_pr_title" />
-
-
-                <TextView
-                    android:id="@+id/work_percent"
-                    style="@style/dashboardTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="0%"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@id/work_progress"
-                    app:layout_constraintStart_toEndOf="@id/work_progress"
-                    app:layout_constraintTop_toTopOf="@+id/work_progress" />
+            <ProgressBar
+                android:id="@+id/work_progress"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="40dp"
+                app:layout_constraintEnd_toStartOf="@id/work_percent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/work_pr_title" />
 
 
-                <TextView
-                    android:id="@+id/meetTask_pr_title"
-                    style="@style/dashboardTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="30dp"
-                    android:text="@string/meets"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/allTask_pr_title"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/work_percent"
+                style="@style/dashboardTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="0%"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/work_progress"
+                app:layout_constraintStart_toEndOf="@id/work_progress"
+                app:layout_constraintTop_toTopOf="@+id/work_progress" />
 
-                <ProgressBar
-                    android:id="@+id/meetTask_progress"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="90dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/allTask_progress"
-                    app:layout_constraintEnd_toStartOf="@id/meetTask_percent"
-                    app:layout_constraintStart_toEndOf="@id/allTask_percent"
-                    app:layout_constraintTop_toBottomOf="@id/meetTask_pr_title" />
 
-                <TextView
-                    android:id="@+id/meetTask_percent"
-                    style="@style/dashboardTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="0%"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/meetTask_progress"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/meetTask_progress"
-                    app:layout_constraintTop_toTopOf="@id/meetTask_progress" />
+            <TextView
+                android:id="@+id/meetTask_pr_title"
+                style="@style/dashboardTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:text="@string/meets"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/allTask_pr_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/homeTask_pr_title"
-                    style="@style/dashboardTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="30dp"
-                    android:text="@string/home"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@id/personal_pr_title"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/meetTask_progress" />
+            <ProgressBar
+                android:id="@+id/meetTask_progress"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/allTask_progress"
+                app:layout_constraintEnd_toStartOf="@id/meetTask_percent"
+                app:layout_constraintStart_toEndOf="@id/allTask_percent"
+                app:layout_constraintTop_toBottomOf="@id/meetTask_pr_title" />
 
-                <ProgressBar
-                    android:id="@+id/homeTask_progress"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="90dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/personal_progress"
-                    app:layout_constraintEnd_toStartOf="@+id/homeTask_percent"
-                    app:layout_constraintStart_toEndOf="@+id/personal_percent"
-                    app:layout_constraintTop_toBottomOf="@+id/homeTask_pr_title" />
+            <TextView
+                android:id="@+id/meetTask_percent"
+                style="@style/dashboardTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="0%"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/meetTask_progress"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/meetTask_progress"
+                app:layout_constraintTop_toTopOf="@id/meetTask_progress" />
 
-                <TextView
-                    android:id="@+id/homeTask_percent"
-                    style="@style/dashboardTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="0%"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/homeTask_progress"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/homeTask_progress"
-                    app:layout_constraintTop_toTopOf="@id/homeTask_progress" />
+            <TextView
+                android:id="@+id/homeTask_pr_title"
+                style="@style/dashboardTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:text="@string/home"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/personal_pr_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/meetTask_progress" />
 
-                <TextView
-                    android:id="@+id/private_pr_title"
-                    style="@style/textDashboard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="30dp"
-                    android:text="@string/privates"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/work_pr_title"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/homeTask_progress" />
+            <ProgressBar
+                android:id="@+id/homeTask_progress"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/personal_progress"
+                app:layout_constraintEnd_toStartOf="@+id/homeTask_percent"
+                app:layout_constraintStart_toEndOf="@+id/personal_percent"
+                app:layout_constraintTop_toBottomOf="@+id/homeTask_pr_title" />
 
-                <ProgressBar
-                    android:id="@+id/private_progress"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="90dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/work_progress"
-                    app:layout_constraintEnd_toStartOf="@+id/privateTask_percent"
-                    app:layout_constraintStart_toEndOf="@+id/work_percent"
-                    app:layout_constraintTop_toBottomOf="@+id/private_pr_title" />
+            <TextView
+                android:id="@+id/homeTask_percent"
+                style="@style/dashboardTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="0%"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/homeTask_progress"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/homeTask_progress"
+                app:layout_constraintTop_toTopOf="@id/homeTask_progress" />
 
-                <TextView
-                    android:id="@+id/privateTask_percent"
-                    style="@style/dashboardTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="0%"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/private_progress"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/meetTask_progress"
-                    app:layout_constraintTop_toTopOf="@+id/private_progress" />
+            <TextView
+                android:id="@+id/private_pr_title"
+                style="@style/textDashboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:text="@string/privates"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/work_pr_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/homeTask_progress" />
 
-                <TextView
-                    android:id="@+id/add_pr_title"
-                    style="@style/textDashboard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="20dp"
-                    android:text="Свое"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/work_progress" />
+            <ProgressBar
+                android:id="@+id/private_progress"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/work_progress"
+                app:layout_constraintEnd_toStartOf="@+id/privateTask_percent"
+                app:layout_constraintStart_toEndOf="@+id/work_percent"
+                app:layout_constraintTop_toBottomOf="@+id/private_pr_title" />
 
-                <ProgressBar
-                    android:id="@+id/add_progress"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="90dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="40dp"
-                    android:layout_marginStart="15dp"
-                    app:layout_constraintEnd_toStartOf="@id/add_percent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/add_pr_title" />
+            <TextView
+                android:id="@+id/privateTask_percent"
+                style="@style/dashboardTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="0%"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/private_progress"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/meetTask_progress"
+                app:layout_constraintTop_toTopOf="@+id/private_progress" />
 
-                <TextView
-                    android:id="@+id/add_percent"
-                    style="@style/dashboardTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="0%"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@id/add_progress"
-                    app:layout_constraintStart_toEndOf="@id/add_progress"
-                    app:layout_constraintTop_toTopOf="@+id/add_progress" />
+            <TextView
+                android:id="@+id/add_pr_title"
+                style="@style/textDashboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:text="Свое"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/work_progress" />
+
+            <ProgressBar
+                android:id="@+id/add_progress"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="40dp"
+                app:layout_constraintEnd_toStartOf="@id/add_percent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/add_pr_title" />
+
+            <TextView
+                android:id="@+id/add_percent"
+                style="@style/dashboardTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="0%"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/add_progress"
+                app:layout_constraintStart_toEndOf="@id/add_progress"
+                app:layout_constraintTop_toTopOf="@+id/add_progress" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

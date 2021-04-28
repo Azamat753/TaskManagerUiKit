@@ -73,6 +73,7 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
         setThemeImage();
     }
 
+
     private void initClickers() {
         theme_layout.setOnClickListener(v -> {
             if (!ThemePreference.getInstance(SettingsActivity.this).getTheme()) {

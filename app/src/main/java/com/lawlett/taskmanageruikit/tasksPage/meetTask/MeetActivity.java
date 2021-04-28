@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,8 +41,8 @@ import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
-import com.lawlett.taskmanageruikit.utils.preferences.MeetDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
+import com.lawlett.taskmanageruikit.utils.preferences.MeetDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 
 import java.util.ArrayList;
@@ -217,18 +218,21 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                 final int DIRECTION_LEFT = 0;
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
                     int direction = dX > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+                    Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                     switch (direction) {
                         case DIRECTION_RIGHT:
                             View itemView = viewHolder.itemView;
                             final ColorDrawable background = new ColorDrawable(Color.RED);
                             background.setBounds(0, itemView.getTop(), (int) (itemView.getLeft() + dX), itemView.getBottom());
                             background.draw(c);
+                            vb.vibrate(100);
                             break;
                         case DIRECTION_LEFT:
                             View itemView2 = viewHolder.itemView;
                             final ColorDrawable background2 = new ColorDrawable(Color.RED);
                             background2.setBounds(itemView2.getRight(), itemView2.getBottom(), (int) (itemView2.getRight() + dX), itemView2.getTop());
                             background2.draw(c);
+                            vb.vibrate(100);
                             break;
                     }
 
@@ -238,7 +242,6 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
     }
 
     private void getRecordsFromRoom() {
-        list = new ArrayList<>();
         App.getDataBase().meetDao().getAllLive().observe(this, meetModels -> {
             if (meetModels != null) {
                 progressBar.setVisibility(View.GONE);
@@ -247,11 +250,24 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                 Collections.sort(list, (meetModel, t1) -> Boolean.compare(t1.isDone, meetModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
+                countUpIsDone();
                 if (meetModels.size() == 0) {
                     readDataFromFireStore();
                 }
             }
         });
+    }
+
+    private void countUpIsDone() {
+        if (MeetDoneSizePreference.getInstance(this).getDataSize() == 0) {
+            int count = 0;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).isDone) {
+                    count++;
+                }
+            }
+            MeetDoneSizePreference.getInstance(this).saveDataSize(count);
+        }
     }
 
     private void readDataFromFireStore() {
@@ -340,7 +356,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             toolbar.setText(TaskDialogPreference.getMeetTitle());
         }
         if (user != null) {
-            collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+            collectionName = Constants.MEET_COLLECTION + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
         }
     }
 
@@ -469,7 +485,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Hi speak something");
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_add));
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e) {

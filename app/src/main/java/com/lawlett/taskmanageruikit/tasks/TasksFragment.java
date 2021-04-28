@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -41,20 +42,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class TasksFragment extends Fragment {
     private ImageView personalImage, workImage, meetImage, homeImage, privateImage, doneImage;
     private TextView personal_amount, work_amount, meet_amount,
             home_amount, private_amount, done_amount, done_title,
             home_title, meet_title, personal_title, work_title;
     private Integer doneAmount, personalAmount, workAmount, meetAmount, homeAmount, privateAmount;
-    private ConstraintLayout personConst, workConst, meetConst, homeConst, privateConst;
+    private ConstraintLayout personConst, workConst, meetConst, homeConst, privateConst,customConst;
     private LinearLayout addConst, doneConst, bubble;
     private List<DoneModel> list;
     private int buttonListen;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser user = mAuth.getCurrentUser();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_todo, container, false);
@@ -63,7 +64,7 @@ public class TasksFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TaskDialogPreference.init(getContext());
+        TaskDialogPreference.init(requireContext());
         initViews(view);
         setTitleAndImages();
         setBubble();
@@ -79,7 +80,6 @@ public class TasksFragment extends Fragment {
             bubble.setVisibility(View.GONE);
         }
     }
-
     private void setTitleAndImages() {
         if (!TaskDialogPreference.getTitle().isEmpty()) {
             done_title.setText(TaskDialogPreference.getTitle());
@@ -111,7 +111,7 @@ public class TasksFragment extends Fragment {
     }
 
     private void initClickers() {
-        doneConst.setOnClickListener(v -> startActivity(new Intent(getContext(), DoneActivity.class)));
+        customConst.setOnClickListener(v -> startActivity(new Intent(getContext(), DoneActivity.class)));
         personConst.setOnClickListener(v -> startActivity(new Intent(getContext(), PersonalActivity.class)));
         workConst.setOnClickListener(v -> startActivity(new Intent(getContext(), WorkActivity.class)));
         meetConst.setOnClickListener(v -> startActivity(new Intent(getContext(), MeetActivity.class)));
@@ -151,7 +151,6 @@ public class TasksFragment extends Fragment {
         meetConst = view.findViewById(R.id.meetconst);
         homeConst = view.findViewById(R.id.homeconst);
         privateConst = view.findViewById(R.id.privateconst);
-        doneConst = view.findViewById(R.id.doneconst);
         addConst = view.findViewById(R.id.addconst);
         personalImage = view.findViewById(R.id.person_image);
         workImage = view.findViewById(R.id.work_image);
@@ -171,10 +170,13 @@ public class TasksFragment extends Fragment {
         personal_title = view.findViewById(R.id.person_task_title);
         work_title = view.findViewById(R.id.work_task_title);
         bubble = view.findViewById(R.id.bubble);
+        doneConst=view.findViewById(R.id.doneconst);
+        customConst=view.findViewById(R.id.newconst);
+        ProgressBar progressBar = view.findViewById(R.id.tasks_progress_bar);
     }
 
     private void setLongClickListeners() {
-        doneConst.setOnLongClickListener(v -> {
+        customConst.setOnLongClickListener(v -> {
             final String[] listItems = {getString(R.string.change_image_title), getString(R.string.remove_category)};
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle(R.string.what_to_do);
@@ -232,7 +234,7 @@ public class TasksFragment extends Fragment {
             doneImage.setImageResource(image);
             doneConst.setVisibility(visible);
             addConst.setVisibility(gone);
-          saveCategoryName(Constants.CUSTOM_DOCUMENT_NAME,title);
+            saveCategoryName(Constants.CUSTOM_DOCUMENT_NAME, title, image);
         });
         customTaskDialog.show();
     }
@@ -246,38 +248,40 @@ public class TasksFragment extends Fragment {
                     TaskDialogPreference.savePersonTitle(title);
                     personal_title.setText(title);
                     personalImage.setImageResource(image);
-                    saveCategoryName(Constants.PERSONAL_DOCUMENT_NAME,title);
+                    saveCategoryName(Constants.PERSONAL_DOCUMENT_NAME, title, image);
                     break;
                 case 2:
                     TaskDialogPreference.saveWorkImage(image);
                     TaskDialogPreference.saveWorkTitle(title);
                     work_title.setText(title);
                     workImage.setImageResource(image);
-                    saveCategoryName(Constants.WORK_DOCUMENT_NAME,title);
+                    saveCategoryName(Constants.WORK_DOCUMENT_NAME, title, image);
                     break;
                 case 3:
                     TaskDialogPreference.saveMeetImage(image);
                     TaskDialogPreference.saveMeetTitle(title);
                     meet_title.setText(title);
                     meetImage.setImageResource(image);
-                    saveCategoryName(Constants.MEET_DOCUMENT_NAME,title);
+                    saveCategoryName(Constants.MEET_DOCUMENT_NAME, title, image);
                     break;
                 case 4:
                     TaskDialogPreference.saveHomeImage(image);
                     TaskDialogPreference.saveHomeTitle(title);
                     home_title.setText(title);
                     homeImage.setImageResource(image);
-                    saveCategoryName(Constants.HOME_DOCUMENT_NAME,title);
+                    saveCategoryName(Constants.HOME_DOCUMENT_NAME, title, image);
                     break;
             }
         });
         customHomeDialog.show();
     }
-    private void saveCategoryName(String documentName,String title){
-        if (user!=null){
-            HashMap<String ,String > map =new HashMap<>();
-            map.put("categoryName",title);
-            FireStoreTools.writeOrUpdateDataByFireStore(documentName, Constants.CATEGORY_COLLECTION,db,map);
+
+    private void saveCategoryName(String documentName, String title, int icon) {
+        if (user != null) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("categoryName", title);
+            map.put("categoryIcon", icon);
+        FireStoreTools.writeOrUpdateDataByFireStore(documentName, Constants.CATEGORY_COLLECTION + "-"+"("+user.getDisplayName()+")"+user.getUid(), db, map);
         }
     }
 

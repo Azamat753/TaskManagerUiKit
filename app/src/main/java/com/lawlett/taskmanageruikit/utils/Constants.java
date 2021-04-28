@@ -8,4 +8,11 @@ public class Constants {
     public static final String WORK_DOCUMENT_NAME="workPlace";
     public static final String MEET_DOCUMENT_NAME="meetPlace";
     public static final String HOME_DOCUMENT_NAME="homePlace";
+    public static final String TIMING_COLLECTION="Тайминг";
+
+    public static final String PERSONAL_COLLECTION="Персональные";
+    public static final String WORK_COLLECTION="Работа";
+    public static final String MEET_COLLECTION="Встречи";
+    public static final String HOME_COLLECTION="Дом";
+    public static final String CUSTOM_COLLECTION="Кастомный";
 }

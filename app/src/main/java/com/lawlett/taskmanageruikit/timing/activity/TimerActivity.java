@@ -28,9 +28,14 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.timing.model.TimingModel;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.Constants;
+import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.preferences.TimingSizePreference;
 
 import java.text.SimpleDateFormat;
@@ -54,11 +59,14 @@ public class TimerActivity extends AppCompatActivity {
     private Integer timeLeftInMilliseconds = 0;//600.000  10min ||1000//1 second
     private CountDownTimer countDownTimer;
     private NotificationManagerCompat notificationManager;
-
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private final FirebaseUser user = mAuth.getCurrentUser();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     @SuppressLint({"ResourceAsColor", "Range"})
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
         Window window = getWindow();
@@ -177,6 +185,9 @@ public class TimerActivity extends AppCompatActivity {
         int timerTime = Integer.parseInt(editText.getText().toString());
         TimingSizePreference.getInstance(this).saveTimingSize(timerTime + previousTime);
         TimingModel timingModel = new TimingModel(myTask, timerTime, currentDate + " " + month + " " + year, null, null, null);
+       if (user!=null){
+           FireStoreTools.writeOrUpdateDataByFireStore(myTask, Constants.TIMING_COLLECTION,db,timingModel);
+       }
         App.getDataBase().timingDao().insert(timingModel);
         finish();
     }
@@ -207,7 +218,6 @@ public class TimerActivity extends AppCompatActivity {
 
                 notificationManager.notify(1, notification);
             }
-
             @Override
             public void onFinish() {
                 Toast.makeText(TimerActivity.this, "00:00", Toast.LENGTH_SHORT).show();

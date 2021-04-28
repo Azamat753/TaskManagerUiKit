@@ -5,15 +5,18 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -21,16 +24,23 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.timing.activity.StopwatchActivity;
 import com.lawlett.taskmanageruikit.timing.activity.TimerActivity;
 import com.lawlett.taskmanageruikit.timing.adapter.TimingAdapter;
 import com.lawlett.taskmanageruikit.timing.model.TimingModel;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class TimingFragment extends Fragment {
     private TimingAdapter adapter;
@@ -39,12 +49,18 @@ public class TimingFragment extends Fragment {
     private int pos;
     private RecyclerView recyclerView;
     private FloatingActionButton floatingActionStopwatch, floatingActionTimer;
+    private ProgressBar progressBar;
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private final FirebaseUser user = mAuth.getCurrentUser();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String collectionName = Constants.TIMING_COLLECTION;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_timing, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -113,25 +129,65 @@ public class TimingFragment extends Fragment {
         floatingActionStopwatch.setOnClickListener(v -> startActivity(new Intent(getContext(), StopwatchActivity.class)));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void initRoom() {
         list = new ArrayList<>();
         App.getDataBase().timingDao().getAllLive().observe(this, timingModels -> {
             if (timingModels != null) {
+                progressBar.setVisibility(View.GONE);
                 list.clear();
                 tvTiming.setVisibility(View.GONE);
-                list.addAll(App.getDataBase().timingDao().getSortedTimingModel());
+                list.addAll(timingModels);
                 adapter.notifyDataSetChanged();
             }
             if (timingModels.isEmpty()) {
                 tvTiming.setVisibility(View.VISIBLE);
             }
+            if (timingModels.size() == 0) {
+                readDataFromFireStore();
+            }
         });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void readDataFromFireStore() {
+        if (user != null) {
+            String timerTitleKey = "timerTitle";
+            String timerMinutesKey = "timerMinutes";
+            String timerDayKey = "timerDay";
+            String stopwatchTitleKey = "stopwatchTitle";
+            String stopwatchMinutesKey = "stopwatchMinutes";
+            String stopwatchDayKey = "stopwatchDay";
+            progressBar.setVisibility(View.VISIBLE);
+            db.collection(collectionName)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            progressBar.setVisibility(View.GONE);
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                Map<String, Object> dataFromFireBase;
+                                dataFromFireBase = document.getData();
+                                String timerTitle = (String) dataFromFireBase.get(timerTitleKey);
+                                Long timerMinutes = (Long) dataFromFireBase.get(timerMinutesKey);
+                                Long stopwatchMinutes = (Long) dataFromFireBase.get(stopwatchMinutesKey);
+                                String timerDay = (String) dataFromFireBase.get(timerDayKey);
+                                String stopwatchTitle = (String) dataFromFireBase.get(stopwatchTitleKey);
+                                String stopwatchDay = (String) dataFromFireBase.get(stopwatchDayKey);
+                                Integer timerMinutesInt = timerMinutes == null ? null : Math.toIntExact(timerMinutes);
+                                Integer stopwatchMinutesInt = stopwatchMinutes == null ? null : Math.toIntExact(stopwatchMinutes);
+                                TimingModel timingModel = new TimingModel(timerTitle, timerMinutesInt, timerDay, stopwatchTitle, stopwatchMinutesInt, stopwatchDay);
+                                App.getDataBase().timingDao().insert(timingModel);
+                            }
+                        }
+                    });
+        }
     }
 
     private void initViews(View view) {
         floatingActionStopwatch = view.findViewById(R.id.fab_stopwatch);
         floatingActionTimer = view.findViewById(R.id.fab_timer);
         tvTiming = view.findViewById(R.id.timing_tv);
+        progressBar = view.findViewById(R.id.timing_progress_bar);
     }
 
     private void initRecycler(View view) {

@@ -36,6 +36,4 @@ public interface TimingDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateWord(List<TimingModel> timingModel);
 
-    @Query("SELECT * FROM timingmodel ORDER BY timerDay ASC")
-    List<TimingModel> getSortedTimingModel();
 }

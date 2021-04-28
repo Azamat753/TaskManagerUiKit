@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.main.MainActivity;
 import com.lawlett.taskmanageruikit.onboard.BoardActivity;
-import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.IntroPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.ThemePreference;
 
 import java.util.Locale;
@@ -25,16 +25,16 @@ public class SplashActivity extends AppCompatActivity {
         checkedTheme();
         loadLocale();
         setContentView(R.layout.activity_splash);
-            new Handler().postDelayed(() -> {
-                boolean isShown = IntroPreference.getInstance(getApplication()).isShown();
-                if (isShown) {
-                    startActivity(new Intent(getApplication(), MainActivity.class));
-                } else {
-                    startActivity(new Intent(getApplication(), BoardActivity.class));
-                }
-                finish();
+        new Handler().postDelayed(() -> {
+            boolean isShown = IntroPreference.getInstance(getApplication()).isShown();
+            if (isShown) {
+                startActivity(new Intent(getApplication(), MainActivity.class));
+            } else {
+                startActivity(new Intent(getApplication(), BoardActivity.class));
+            }
+            finish();
 
-            }, 1000);
+        }, 1000);
     }
 
     private void checkedTheme() {
@@ -53,8 +53,15 @@ public class SplashActivity extends AppCompatActivity {
         config.locale = locale;
         getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
     }
-    public void loadLocale(){
-        String language= LanguagePreference.getInstance(this).getLanguage();
+
+    public void loadLocale() {
+        String language;
+        if (LanguagePreference.getInstance(this).getLanguage() == null || LanguagePreference.getInstance(this).getLanguage().isEmpty()) {
+            language="ru";
+            LanguagePreference.getInstance(this).saveLanguage(language);
+        }else {
+            language = LanguagePreference.getInstance(this).getLanguage();
+        }
         setLocale(language);
     }
 }

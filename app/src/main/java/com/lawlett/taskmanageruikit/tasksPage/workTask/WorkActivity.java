@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -214,18 +215,21 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                 final int DIRECTION_LEFT = 0;
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
                     int direction = dX > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+                    Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                     switch (direction) {
                         case DIRECTION_RIGHT:
                             View itemView = viewHolder.itemView;
                             final ColorDrawable background = new ColorDrawable(Color.RED);
                             background.setBounds(0, itemView.getTop(), (int) (itemView.getLeft() + dX), itemView.getBottom());
                             background.draw(c);
+                            vb.vibrate(100);
                             break;
                         case DIRECTION_LEFT:
                             View itemView2 = viewHolder.itemView;
                             final ColorDrawable background2 = new ColorDrawable(Color.RED);
                             background2.setBounds(itemView2.getRight(), itemView2.getBottom(), (int) (itemView2.getRight() + dX), itemView2.getTop());
                             background2.draw(c);
+                            vb.vibrate(100);
                             break;
                     }
                 }
@@ -234,19 +238,32 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
     }
 
     private void getDataFromRoom() {
-        list = new ArrayList<>();
         App.getDataBase().workDao().getAllLive().observe(this, workModels -> {
             if (workModels != null) {
                 progressBar.setVisibility(View.GONE);
                 list.clear();
                 list.addAll(workModels);
+                Collections.sort(list, (workModel, t1) -> Boolean.compare(t1.isDone, workModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
+                countUpIsDone();
                 if (workModels.size() == 0) {
                     readDataFromFireStore();
                 }
             }
         });
+    }
+
+    private void countUpIsDone() {
+        if (WorkDoneSizePreference.getInstance(this).getDataSize() == 0) {
+            int count = 0;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).isDone) {
+                    count++;
+                }
+            }
+            WorkDoneSizePreference.getInstance(this).saveDataSize(count);
+        }
     }
 
     private void readDataFromFireStore() {
@@ -256,12 +273,12 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
+                            progressBar.setVisibility(View.GONE);
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                progressBar.setVisibility(View.GONE);
                                 Map<String, Object> dataFromFireBase;
                                 dataFromFireBase = document.getData();
                                 Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
-                                String workTask = dataFromFireBase.get("workTask").toString();
+                                String workTask = (String) dataFromFireBase.get("workTask").toString();
                                 workModel = new WorkModel(workTask, taskBoolean);
                                 App.getDataBase().workDao().insert(workModel);
                             }
@@ -341,7 +358,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
             toolbar.setText(TaskDialogPreference.getWorkTitle());
         }
         if (user != null) {
-            collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+            collectionName = Constants.WORK_COLLECTION + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
         }
     }
 
@@ -379,21 +396,21 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         if (size < 26) {
             if (size % 5 == 0) {
                 int lvl = size / 5;
-                String level = getString(R.string.attaboy) +" "+ lvl;
+                String level = getString(R.string.attaboy) + " " + lvl;
                 addToLocalDate(lvl, level);
                 showDialogLevel(level);
             }
         } else if (size > 26 && size < 51) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Persistent)+" " + lev;
+                String level = getString(R.string.Persistent) + " " + lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
         } else if (size > 51 && size < 76) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Overwhelming) +" "+ lev;
+                String level = getString(R.string.Overwhelming) + " " + lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
@@ -451,7 +468,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speak_something));
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_add));
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e) {
@@ -475,9 +492,11 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
             progressBar.setVisibility(View.VISIBLE);
             if (list.size() != 0) {
                 for (int i = 0; i < list.size(); i++) {
-                    String personalTask = list.get(i).getWorkTask();
-                    FireStoreTools.deleteDataByFireStore(personalTask, collectionName, db, progressBar);
+                    String workTask = list.get(i).workTask;
+                    FireStoreTools.deleteDataByFireStore(workTask, collectionName, db, progressBar);
                 }
+            } else {
+                progressBar.setVisibility(View.GONE);
             }
         }
     }

@@ -13,7 +13,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
         android:elevation="2dp"
-        app:srcCompat="@drawable/ic_planner" />
+        app:srcCompat="@mipmap/app_round" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

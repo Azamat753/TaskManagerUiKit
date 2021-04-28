@@ -24,9 +24,14 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.timing.model.TimingModel;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.Constants;
+import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.preferences.TimingSizePreference;
 
 import java.text.SimpleDateFormat;
@@ -47,13 +52,17 @@ public class StopwatchActivity extends AppCompatActivity {
     String myTask;
     ConstraintLayout imageConstrain, stopwatchConstraint;
     String stopwatchTime;
-
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String collectionName;
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private final FirebaseUser user = mAuth.getCurrentUser();
     private NotificationManagerCompat notificationManager;
 
     @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stopwatch);
         Window window = getWindow();
@@ -63,6 +72,7 @@ public class StopwatchActivity extends AppCompatActivity {
         initAnimations();
         initTypeses();
         initClickers();
+
     }
 
     private void initClickers() {
@@ -149,6 +159,9 @@ public class StopwatchActivity extends AppCompatActivity {
         int previousTimePref = TimingSizePreference.getInstance(this).getTimingSize();
         TimingSizePreference.getInstance(this).saveTimingSize(stopwatchTimePref + previousTimePref);
         timingModel = new TimingModel(null, null, null, myTask, Integer.valueOf(stopwatchTime), currentDate + " " + month + " " + year);
+        if (user!=null){
+            FireStoreTools.writeOrUpdateDataByFireStore(myTask, Constants.TIMING_COLLECTION,db,timingModel);
+        }
         App.getDataBase().timingDao().insert(timingModel);
         finish();
     }

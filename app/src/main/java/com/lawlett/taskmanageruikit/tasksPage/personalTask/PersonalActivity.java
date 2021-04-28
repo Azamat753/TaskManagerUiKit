@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,15 +41,14 @@ import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
-import com.lawlett.taskmanageruikit.utils.preferences.PersonDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
+import com.lawlett.taskmanageruikit.utils.preferences.PersonDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -61,7 +61,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     private List<PersonalModel> list;
     private ImageView addTask_image;
     private ImageView imageMic;
-    private ImageView changeTask_image,back_view;
+    private ImageView changeTask_image, back_view;
     private RecyclerView recyclerView;
     private int position;
     private static final int REQUEST_CODE_SPEECH_INPUT = 22;
@@ -199,18 +199,21 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
                     int direction = dX > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+                    Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                     switch (direction) {
                         case DIRECTION_RIGHT:
                             View itemView = viewHolder.itemView;
                             final ColorDrawable background = new ColorDrawable(Color.RED);
                             background.setBounds(0, itemView.getTop(), (int) (itemView.getLeft() + dX), itemView.getBottom());
                             background.draw(c);
+                            vb.vibrate(100);
                             break;
                         case DIRECTION_LEFT:
                             View itemView2 = viewHolder.itemView;
                             final ColorDrawable background2 = new ColorDrawable(Color.RED);
                             background2.setBounds(itemView2.getRight(), itemView2.getBottom(), (int) (itemView2.getRight() + dX), itemView2.getTop());
                             background2.draw(c);
+                            vb.vibrate(100);
                             break;
                     }
                 }
@@ -249,11 +252,24 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                 Collections.sort(list, (personalModel, t1) -> Boolean.compare(t1.isDone, personalModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
+                countUpIsDone();
                 if (personalModels.size() == 0) {
                     readDataFromFireStore();
                 }
             }
         });
+    }
+
+    private void countUpIsDone() {
+        if (PersonDoneSizePreference.getInstance(this).getPersonalSize() == 0) {
+            int count = 0;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).isDone) {
+                    count++;
+                }
+            }
+            PersonDoneSizePreference.getInstance(this).savePersonalSize(count);
+        }
     }
 
     private void writeAllTaskFromRoomToFireStore() {
@@ -323,7 +339,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         editText = findViewById(R.id.editText_personal);
         changeTask_image = findViewById(R.id.change_task_personal);
         progressBar = findViewById(R.id.personal_progress_bar);
-        back_view=findViewById(R.id.personal_back);
+        back_view = findViewById(R.id.personal_back);
     }
 
     public void recordDataRoom() {
@@ -368,8 +384,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             toolbar.setText(TaskDialogPreference.getPersonTitle());
         }
         if (user != null) {
-            String categoryName= toolbar.getText().toString();
-            collectionName = categoryName+ "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+            String categoryName = Constants.PERSONAL_COLLECTION;
+            collectionName = categoryName + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
         }
     }
 

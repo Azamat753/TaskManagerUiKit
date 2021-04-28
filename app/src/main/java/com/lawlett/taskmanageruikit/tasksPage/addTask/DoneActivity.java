@@ -4,7 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,7 +35,6 @@ import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.addTask.adapter.DoneAdapter;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.DoneModel;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
-import com.lawlett.taskmanageruikit.utils.preferences.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
@@ -39,6 +42,7 @@ import com.lawlett.taskmanageruikit.utils.DoneTasksPreferences;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.KeyboardHelper;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
+import com.lawlett.taskmanageruikit.utils.preferences.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 
 import java.util.ArrayList;
@@ -87,8 +91,8 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
+                            progressBar.setVisibility(View.GONE);
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                progressBar.setVisibility(View.GONE);
                                 Map<String, Object> dataFromFireBase;
                                 dataFromFireBase = document.getData();
                                 Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
@@ -222,7 +226,34 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
                 });
                 adapter.notifyDataSetChanged();
             }
-        });
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                final int DIRECTION_RIGHT = 1;
+                final int DIRECTION_LEFT = 0;
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
+                    int direction = dX > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+                    Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    switch (direction) {
+                        case DIRECTION_RIGHT:
+                            View itemView = viewHolder.itemView;
+                            final ColorDrawable background = new ColorDrawable(Color.RED);
+                            background.setBounds(0, itemView.getTop(), (int) (itemView.getLeft() + dX), itemView.getBottom());
+                            background.draw(c);
+                            vb.vibrate(100);
+                            break;
+                        case DIRECTION_LEFT:
+                            View itemView2 = viewHolder.itemView;
+                            final ColorDrawable background2 = new ColorDrawable(Color.RED);
+                            background2.setBounds(itemView2.getRight(), itemView2.getBottom(), (int) (itemView2.getRight() + dX), itemView2.getTop());
+                            background2.draw(c);
+                            vb.vibrate(100);
+                            break;
+                    }
+                }
+            }
+        }).attachToRecyclerView(recyclerView);
     }
 
     private void getRecordsRoomData() {
@@ -234,11 +265,24 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
                 Collections.sort(list, (doneModel, t1) -> Boolean.compare(t1.isDone, doneModel.isDone));
                 Collections.reverse(list);
                 adapter.updateList(list);
+                countUpIsDone();
                 if (doneModels.size() == 0) {
                     readDataFromFireStore();
                 }
             }
         });
+    }
+
+    private void countUpIsDone() {
+        if (AddDoneSizePreference.getInstance(this).getDataSize() == 0) {
+            int count = 0;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).isDone) {
+                    count++;
+                }
+            }
+            AddDoneSizePreference.getInstance(this).saveDataSize(count);
+        }
     }
 
     private void initViews() {
@@ -268,7 +312,7 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
         TextView toolbar = findViewById(R.id.toolbar_title);
         toolbar.setText(TaskDialogPreference.getTitle());
         if (user != null) {
-            collectionName = toolbar.getText().toString() + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+            collectionName = Constants.CUSTOM_COLLECTION + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
         }
     }
 
@@ -387,7 +431,7 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speak_something));
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_add));
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e) {
