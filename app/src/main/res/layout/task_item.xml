@@ -1,85 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:paddingTop="12dp"
+    android:paddingEnd="12dp"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    tools:ignore="RtlSymmetry">
 
     <TextView
         android:id="@+id/data_day"
         style="@style/todoTextColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/m_light"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
         android:text="20 july"
+        android:textAlignment="center"
         android:textColor="@color/myWhite"
-        android:textSize="30sp" />
+        android:textSize="30sp"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <TextView
+        android:id="@+id/task_title"
+        style="@style/todoTextColor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp">
+        android:layout_marginHorizontal="36dp"
+        android:text="djsadnsa"
+        android:textColor="@color/myWhite"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/data_day" />
 
-        <TextView
-            android:id="@+id/task_title"
-            style="@style/todoTextColor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="36dp"
-            android:text=""
-            android:textColor="@color/myWhite"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/data_time"
+        style="@style/todoTextColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="36dp"
+        android:layout_marginTop="10dp"
+        android:text="08:00"
+        android:textColor="@color/myWhite"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/task_title" />
 
-        <View
-            android:id="@+id/left_view"
-            android:layout_width="20dp"
-            android:layout_height="70dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/end_time"
+        style="@style/todoTextColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="110dp"
+        android:layout_marginTop="10dp"
+        android:text="09:00"
+        android:textColor="@color/myWhite"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/data_time"
+        app:layout_constraintTop_toBottomOf="@id/task_title" />
 
-        <TextView
-            android:id="@+id/data_time"
-            style="@style/todoTextColor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="36dp"
-            android:text="08:00"
-            android:layout_marginTop="10dp"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/myWhite"
-            app:layout_constraintStart_toEndOf="@id/left_view"
-            app:layout_constraintTop_toBottomOf="@id/task_title" />
+    <View
+        android:id="@+id/down_separator"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="55dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/task_title" />
 
-        <TextView
-            app:layout_constraintTop_toBottomOf="@id/task_title"
-            app:layout_constraintStart_toEndOf="@id/data_time"
-            android:id="@+id/end_time"
-            style="@style/todoTextColor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="110dp"
-            android:textColor="@color/myWhite"
-            android:text="09:00"
-            android:textSize="20sp"
-            android:layout_marginTop="10dp"
-            android:textStyle="bold" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginTop="55dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/task_title"
-            android:background="@android:color/darker_gray"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</LinearLayout>
+    <View
+        android:id="@+id/left_view"
+        android:layout_width="20dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/down_separator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

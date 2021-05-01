@@ -277,12 +277,12 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
+                            progressBar.setVisibility(View.GONE);
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                progressBar.setVisibility(View.GONE);
                                 Map<String, Object> dataFromFireBase;
                                 dataFromFireBase = document.getData();
                                 Boolean taskBoolean = (Boolean) dataFromFireBase.get("isDone");
-                                String meetTask = dataFromFireBase.get("meetTask").toString();
+                                String meetTask = (String) dataFromFireBase.get("meetTask");
                                 meetModel = new MeetModel(meetTask, taskBoolean);
                                 App.getDataBase().meetDao().insert(meetModel);
                             }

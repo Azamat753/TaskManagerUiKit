@@ -24,7 +24,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.lawlett.taskmanageruikit.R;
+import com.lawlett.taskmanageruikit.policy.PrivatePolicyActivity;
 import com.lawlett.taskmanageruikit.splash.SplashActivity;
+import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 
 public class GoogleSignInActivity extends AppCompatActivity {
 
@@ -45,13 +47,13 @@ public class GoogleSignInActivity extends AppCompatActivity {
             if (v == newGoogleBtn) {
                 google_button.performClick();
             }
-            signIn();
+            PlannerDialog.showPlannerDialog(this, getString(R.string.you_sure_read_private_policy), this::signIn);
         });
     }
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(this,SplashActivity.class));
+        startActivity(new Intent(this, SplashActivity.class));
         finish();
     }
 
@@ -105,5 +107,9 @@ public class GoogleSignInActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void openPrivatePolicy(View view) {
+startActivity(new Intent(GoogleSignInActivity.this, PrivatePolicyActivity.class));
     }
 }

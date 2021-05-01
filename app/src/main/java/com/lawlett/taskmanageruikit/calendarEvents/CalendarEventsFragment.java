@@ -20,7 +20,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +36,7 @@ import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.ICalendarEventOnClickListener;
+import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 
 import java.util.ArrayList;
@@ -206,17 +206,17 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(requireContext());
-                dialog.setTitle(R.string.are_you_sure).setMessage(R.string.to_delete)
-                        .setNegativeButton(R.string.no, (dialog1, which) ->
-                                dialog1.cancel())
-                        .setPositiveButton(R.string.yes, (dialog12, which) -> {
-                            pos = viewHolder.getAdapterPosition();
-                            App.getDataBase().eventsDao().delete(list.get(pos));
-                            adapter.notifyDataSetChanged();
-                            Toast.makeText(getContext(), R.string.delete, Toast.LENGTH_SHORT).show();
-                        }).show();
+                PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.you_sure_delete), () -> {
+                    pos = viewHolder.getAdapterPosition();
+                    App.getDataBase().eventsDao().delete(list.get(pos));
+                    Toast.makeText(getContext(), R.string.delete, Toast.LENGTH_SHORT).show();
+                    adapter.notifyDataSetChanged();
+                    if (user!=null){
+                        FireStoreTools.deleteDataByFireStore(list.get(pos).getTitle(),collectionName,db,progressBar);
+                    }
+                });
                 adapter.notifyDataSetChanged();
+
             }
 
             @SuppressLint("ResourceAsColor")

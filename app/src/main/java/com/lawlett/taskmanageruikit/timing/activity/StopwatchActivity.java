@@ -160,7 +160,7 @@ public class StopwatchActivity extends AppCompatActivity {
         TimingSizePreference.getInstance(this).saveTimingSize(stopwatchTimePref + previousTimePref);
         timingModel = new TimingModel(null, null, null, myTask, Integer.valueOf(stopwatchTime), currentDate + " " + month + " " + year);
         if (user!=null){
-            FireStoreTools.writeOrUpdateDataByFireStore(myTask, Constants.TIMING_COLLECTION,db,timingModel);
+            FireStoreTools.writeOrUpdateDataByFireStore(myTask, Constants.TIMING_COLLECTION+ "-" + "(" + user.getDisplayName() + ")" + user.getUid(),db,timingModel);
         }
         App.getDataBase().timingDao().insert(timingModel);
         finish();

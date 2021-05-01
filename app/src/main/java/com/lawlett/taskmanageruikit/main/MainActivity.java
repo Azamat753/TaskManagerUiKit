@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                     changeFragment(new ProgressFragment());
                     toolbar_title.setText(R.string.progress);
                     btnGrid.setVisibility(View.GONE);
-                    btnHelp.setVisibility(View.GONE);
+                    btnHelp.setVisibility(View.VISIBLE);
                     break;
                 case 1:
                     changeFragment(new TasksFragment());

@@ -19,11 +19,11 @@ public class PrivateDoneSizePreference {
     }
 
     public int getDataSize() {
-        return preferences.getInt("private", 0);
+        return preferences.getInt("private.html", 0);
     }
 
     public void saveDataSize(int size) {
-        preferences.edit().putInt("private", size).apply();
+        preferences.edit().putInt("private.html", size).apply();
     }
 
     public void clearSettings() {

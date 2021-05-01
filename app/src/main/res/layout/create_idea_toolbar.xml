@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="56dp"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/royalStart"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -18,44 +18,44 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/back_view"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:foreground="?attr/selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:foreground="?attr/selectableItemBackground"
-                tools:ignore="UnusedAttribute"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:id="@+id/back_view"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                app:srcCompat="@drawable/ic_left_arrow" />
+                app:srcCompat="@drawable/ic_left_arrow"
+                tools:ignore="UnusedAttribute" />
 
             <TextView
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 android:id="@+id/toolbar_title_quick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="25dp"
                 android:layout_gravity="center"
                 android:layout_marginStart="35dp"
+                android:layout_marginEnd="25dp"
                 android:text="@string/write_idea"
                 android:textColor="@android:color/white"
                 android:textSize="23dp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:foreground="?attr/selectableItemBackground"
-                tools:ignore="UnusedAttribute"
-                android:layout_marginEnd="15dp"
                 android:id="@+id/done_view"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="40dp"
-                app:srcCompat="@drawable/ic_done" />
+                android:layout_marginEnd="15dp"
+                android:foreground="?attr/selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_done"
+                tools:ignore="UnusedAttribute" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </RelativeLayout>
 

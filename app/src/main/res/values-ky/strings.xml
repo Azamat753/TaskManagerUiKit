@@ -165,14 +165,20 @@
     <string name="write_reviews">Пикир жазуу</string>
     <string name="important_message">Маанилүү билдирүү!</string>
     <string name="you_got">Сиз наамды алдыңыз: </string>
-    <string name="you_sure_delete">Вы уверены что хотите удалить запись?</string>
-    <string name="sync_planner_with_google">Синхронизируйте Planner с вашим Google аккаунтом для безопасности ваших записей</string>
-    <string name="good_luck">Желаем дальнейших успехов !</string>
-    <string name="wait">Пожалуйста подождите...</string>
-    <string name="error">Произошла ошибка</string>
-    <string name="voice_add">Голосовой ввод...</string>
+    <string name="you_sure_delete">Киргизүүнү чын эле жок кылгыңыз келеби?</string>
+    <string name="sync_planner_with_google">Жазууларыңыздын коопсуздугун сактоо үчүн, Google каттоо эсебиңиз Planner менен синхрондоштуруңуз</string>
+    <string name="good_luck">Мындан ары дагы ийгиликтерди каалайбыз!</string>
+    <string name="wait">Күтө туруңуз…</string>
+    <string name="error">Ката кетти</string>
+    <string name="voice_add">Үн менен киргизүү …</string>
     <string name="speak_spell">Произнесите заклинание</string>
-    <string name="enter">Войти</string>
-    <string name="read">Читать</string>
-    <string name="cloud_save_data">Облачное храннение данных</string>
+    <string name="enter">Кирүү</string>
+    <string name="read">Китеп окуу</string>
+    <string name="cloud_save_data">Сервер тараптагы маалыматтарды сактоо</string>
+    <string name="speak_something">Бир нерсе айтсаныз</string>
+    <string name="private_policy">Купуялык саясаты</string>
+    <string name="you_sure_read_private_policy">Купуялык саясатын окуп чыктыңызбы?</string>
+    <string name="date">Датасы</string>
+    <string name="sync">Синхрондоштуруу</string>
+
 </resources>
