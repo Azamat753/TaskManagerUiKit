@@ -89,7 +89,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
             titleT = title_ed.getText().toString();
             setNotification();
             recordDataRoom();
-            setNotification();
         });
 
         backView.setOnClickListener(v -> onBackPressed());
