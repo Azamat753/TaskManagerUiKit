@@ -179,4 +179,5 @@
     <string name="you_sure_read_private_policy">Құпиялылық саясатын оқығаныңызға сенімдісіз бе?</string>
     <string name="date">Күні</string>
     <string name="sync">Қадамдастыру</string>
+    <string name="want_save_data_in_google">Вы хотите защитить свои записи ?</string>
 </resources>

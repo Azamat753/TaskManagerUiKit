@@ -180,5 +180,6 @@
     <string name="you_sure_read_private_policy">Купуялык саясатын окуп чыктыңызбы?</string>
     <string name="date">Датасы</string>
     <string name="sync">Синхрондоштуруу</string>
+    <string name="want_save_data_in_google">Вы хотите защитить свои записи ?</string>
 
 </resources>

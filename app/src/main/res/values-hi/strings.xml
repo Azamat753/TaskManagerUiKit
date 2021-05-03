@@ -180,4 +180,5 @@
     <string name="you_sure_read_private_policy">क्या आप सुनिश्चित हैं कि आपने गोपनीयता नीति पढ़ी है?</string>
     <string name="date">तारीख</string>
     <string name="sync">सिंक्रनाइज़</string>
+    <string name="want_save_data_in_google">Вы хотите защитить свои записи ?</string>
 </resources>

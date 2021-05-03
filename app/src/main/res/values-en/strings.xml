@@ -180,5 +180,6 @@
     <string name="you_sure_read_private_policy">Are you sure you \'ve read the privacy policy?</string>
     <string name="date">Date</string>
     <string name="sync">Synchronize</string>
+    <string name="want_save_data_in_google">Вы хотите защитить свои записи ?</string>
 
 </resources>

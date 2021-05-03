@@ -180,5 +180,6 @@
     <string name="you_sure_read_private_policy">개인 정보 보호 정책을 읽었습니까?</string>
     <string name="date">날짜</string>
     <string name="sync">동기화</string>
+    <string name="want_save_data_in_google">Вы хотите защитить свои записи ?</string>
 
 </resources>

@@ -179,4 +179,5 @@
     <string name="you_sure_read_private_policy">Sind Sie sicher, dass Sie die Datenschutzrichtlinie gelesen haben?</string>
     <string name="date">Datum</string>
     <string name="sync">Synchronisieren</string>
+    <string name="want_save_data_in_google">Вы хотите защитить свои записи ?</string>
 </resources>
