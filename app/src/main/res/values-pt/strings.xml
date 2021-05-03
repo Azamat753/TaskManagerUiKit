@@ -165,15 +165,20 @@
     <string name="timer_title">Cronômetro</string>
     <string name="stopwatch_title">Cronômetro</string>
     <string name="intro">Introdução</string>
-    <string name="you_sure_delete">Вы уверены что хотите удалить запись?</string>
-    <string name="sync_planner_with_google">Синхронизируйте Planner с вашим Google аккаунтом для безопасности ваших записей</string>
-    <string name="good_luck">Желаем дальнейших успехов !</string>
-    <string name="wait">Пожалуйста подождите...</string>
-    <string name="error">Произошла ошибка</string>
-    <string name="voice_add">Голосовой ввод...</string>
-    <string name="speak_spell">Произнесите заклинание</string>
-    <string name="enter">Войти</string>
-    <string name="read">Читать</string>
-    <string name="cloud_save_data">Облачное храннение данных</string>
-    <string name="want_save_data_in_google">Вы хотите хранить свои записи в облаке Google ?</string>
+    <string name="you_sure_delete">Tem certeza de que deseja excluir um registro?</string>
+    <string name="sync_planner_with_google">Sincronize o Planner com sua conta do Google para manter seus registros seguros</string>
+    <string name="good_luck">Desejamos-lhe mais sucesso !</string>
+    <string name="wait">Por favor, espere…</string>
+    <string name="error">Ocorreu um erro</string>
+    <string name="voice_add">Entrada de voz…</string>
+    <string name="speak_spell">Faça um feitiço</string>
+    <string name="enter">Entrar</string>
+    <string name="read">Ler</string>
+    <string name="cloud_save_data">Armazenamento em nuvem</string>
+    <string name="speak_something">Diga alguma coisa</string>
+    <string name="private_policy">Política de Privacidade</string>
+    <string name="you_sure_read_private_policy">Tem a certeza que leu a Política de Privacidade?</string>
+    <string name="date">Data</string>
+    <string name="sync">Sincronizar</string>
+
 </resources>

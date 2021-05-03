@@ -1,23 +1,17 @@
 package com.lawlett.taskmanageruikit.settings;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -48,16 +42,11 @@ import com.lawlett.taskmanageruikit.utils.preferences.PasswordPreference;
 import com.lawlett.taskmanageruikit.utils.preferences.ThemePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.TimingSizePreference;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 
 public class SettingsActivity extends AppCompatActivity implements BaseRadioAdapter.LanguageChooseListener {
     private LinearLayout language_tv, clear_password_layout, clearMinutes_layout, share_layout, achievement_layout, reviews, sign_in;
-    private ImageView magick;
-    private ListView listView;
-    private static final int VOICE_RECOGNITION_REQUEST_CODE = 1234;
     private ImageView back;
     private ImageView imageTheme;
     private ConstraintLayout theme_layout;
@@ -85,8 +74,6 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
             }
         });
         sign_in.setOnClickListener(view -> startActivity(new Intent(SettingsActivity.this, GoogleSignInActivity.class)));
-
-        magick.setOnClickListener(v -> startVoiceRecognitionActivity());
 
         back.setOnClickListener(v -> onBackPressed());
 
@@ -187,8 +174,6 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
         reviews = findViewById(R.id.six_layout);
         sign_in = findViewById(R.id.seven_layout);
         achievement_layout = findViewById(R.id.achievement_layout);
-        magick = findViewById(R.id.btn_magick);
-        listView = findViewById(R.id.listView);
     }
 
     private void checkUser() {
@@ -263,60 +248,6 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
         config.locale = locale;
         getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
         LanguagePreference.getInstance(SettingsActivity.this).saveLanguage(lang);
-    }
-
-    private void startVoiceRecognitionActivity() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                getString(R.string.speak_spell));
-        startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
-    }
-
-    @SuppressLint("NewApi")
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        CameraManager cameraManager = (CameraManager) getSystemService(CAMERA_SERVICE);
-        if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
-            ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            listView.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, matches));
-            if (matches.contains(getString(R.string.patronum))) {
-                Random random = new Random();
-                String[] animals = {getString(R.string.fox), getString(R.string.deer), getString(R.string.bull), getString(R.string.dog), getString(R.string.cat), getString(R.string.rat), getString(R.string.crane), getString(R.string.hippo), getString(R.string.giraffe), getString(R.string.lion), getString(R.string.zebra)};
-                int a = random.nextInt(animals.length);
-                Toast.makeText(this, getString(R.string.your_patronus) + animals[a], Toast.LENGTH_SHORT).show();
-            }
-            if (matches.contains(getString(R.string.lumos))) {
-                if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
-                    if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
-                        try {
-                            cameraManager.setTorchMode("0", true);
-                        } catch (CameraAccessException e) {
-                            e.printStackTrace();
-                        }
-                    } else
-                        Toast.makeText(this, "FailureCamera", Toast.LENGTH_SHORT).show();
-                } else
-                    Toast.makeText(this, "Failure", Toast.LENGTH_SHORT).show();
-            }
-
-            if (matches.contains("Nox")) {
-                if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
-                    if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
-                        try {
-                            cameraManager.setTorchMode("0", false);
-                        } catch (CameraAccessException e) {
-                            e.printStackTrace();
-                        }
-                    } else
-                        Toast.makeText(this, "Failure", Toast.LENGTH_SHORT).show();
-                } else
-                    Toast.makeText(this, "Failure", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     private void loadLocale() {

@@ -14,8 +14,8 @@
 
             <ImageView
                 android:id="@+id/back_view_event"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:foreground="?attr/selectableItemBackground"
                 tools:ignore="UnusedAttribute"
                 android:layout_centerVertical="true"

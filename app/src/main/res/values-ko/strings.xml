@@ -165,15 +165,20 @@
     <string name="timer_title">시간제 노동자</string>
     <string name="stopwatch_title">스톱워치</string>
     <string name="intro">소개</string>
-    <string name="you_sure_delete">Вы уверены что хотите удалить запись?</string>
-    <string name="sync_planner_with_google">Синхронизируйте Planner с вашим Google аккаунтом для безопасности ваших записей</string>
-    <string name="good_luck">Желаем дальнейших успехов !</string>
-    <string name="wait">Пожалуйста подождите...</string>
-    <string name="error">Произошла ошибка</string>
-    <string name="voice_add">Голосовой ввод...</string>
-    <string name="speak_spell">Произнесите заклинание</string>
-    <string name="enter">Войти</string>
-    <string name="read">Читать</string>
-    <string name="cloud_save_data">Облачное храннение данных</string>
-    <string name="want_save_data_in_google">Вы хотите хранить свои записи в облаке Google ?</string>
+    <string name="you_sure_delete">기록을 삭제하시겠습니까?</string>
+    <string name="sync_planner_with_google">기록의 보안을 위해 Google 계정과 Planner 동기화</string>
+    <string name="good_luck">우리는 당신에게 더 많은 성공을 기원합니다!</string>
+    <string name="wait">기다려주세요…</string>
+    <string name="error">오류가 발생했습니다</string>
+    <string name="voice_add">음성 입력…</string>
+    <string name="speak_spell">주문 시전</string>
+    <string name="enter">입력</string>
+    <string name="read">읽기</string>
+    <string name="cloud_save_data">데이터의 클라우드 스토리지</string>
+    <string name="speak_something">무언가를 말하십시오</string>
+    <string name="private_policy">개인정보 보호정책</string>
+    <string name="you_sure_read_private_policy">개인 정보 보호 정책을 읽었습니까?</string>
+    <string name="date">날짜</string>
+    <string name="sync">동기화</string>
+
 </resources>

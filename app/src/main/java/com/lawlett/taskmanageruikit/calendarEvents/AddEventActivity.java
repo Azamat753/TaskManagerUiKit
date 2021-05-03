@@ -8,6 +8,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,13 +28,14 @@ import com.lawlett.taskmanageruikit.calendarEvents.data.model.CalendarTaskModel;
 import com.lawlett.taskmanageruikit.service.MessageService;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DatePickerFragment;
-import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 import com.lawlett.taskmanageruikit.utils.TimePickerFragment;
+import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class AddEventActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     private TextView startData, startTime, endTime, startDataText, startTimeNumber, endTimeNumber;
@@ -42,7 +44,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
     private ImageView backView, doneView;
     private String currentDataString;
     private String titleT;
-    private int choosedColor;
     private long time;
     private final Calendar baseCalendar = Calendar.getInstance();
     private String startHour, endingHour;
@@ -160,20 +161,21 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
         String myStartData = startData.getText().toString();
         String myStartTime = startTimeNumber.getText().toString();
         String myEndTime = endTimeNumber.getText().toString();
-        int myColor = choosedColor;
+        Random rnd = new Random();
+        int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
         if (calendarTaskModel != null) {
             calendarTaskModel.setTitle(myTitle);
             calendarTaskModel.setDataTime(myStartData);
             calendarTaskModel.setStartTime(myStartTime);
             calendarTaskModel.setEndTime(myEndTime);
-            calendarTaskModel.setChooseColor(myColor);
+            calendarTaskModel.setChooseColor(color);
             App.getDataBase().eventsDao().update(calendarTaskModel);
             finish();
         } else {
             titleT = title_ed.getText().toString();
             if (currentDataString != null && startHour != null && endingHour != null) {
                 calendarTaskModel = new CalendarTaskModel(currentDataString, title_ed.getText().toString().trim(),
-                        startHour, endingHour, choosedColor);
+                        startHour, endingHour, color);
                 App.getDataBase().eventsDao().insert(calendarTaskModel);
                 finish();
             } else {
@@ -192,7 +194,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
             startTimeNumber.setText(getStart);
             String getEndTime = calendarTaskModel.getEndTime();
             endTimeNumber.setText(getEndTime);
-            choosedColor = calendarTaskModel.getChooseColor();
             String getDataTime = calendarTaskModel.getDataTime();
             startData.setText(getDataTime);
         }

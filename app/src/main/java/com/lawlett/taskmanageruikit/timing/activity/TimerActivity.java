@@ -62,6 +62,7 @@ public class TimerActivity extends AppCompatActivity {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseUser user = mAuth.getCurrentUser();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     @SuppressLint({"ResourceAsColor", "Range"})
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -185,9 +186,9 @@ public class TimerActivity extends AppCompatActivity {
         int timerTime = Integer.parseInt(editText.getText().toString());
         TimingSizePreference.getInstance(this).saveTimingSize(timerTime + previousTime);
         TimingModel timingModel = new TimingModel(myTask, timerTime, currentDate + " " + month + " " + year, null, null, null);
-       if (user!=null){
-           FireStoreTools.writeOrUpdateDataByFireStore(myTask, Constants.TIMING_COLLECTION,db,timingModel);
-       }
+        if (user != null) {
+            FireStoreTools.writeOrUpdateDataByFireStore(myTask, Constants.TIMING_COLLECTION + "-" + "(" + user.getDisplayName() + ")" + user.getUid(), db, timingModel);
+        }
         App.getDataBase().timingDao().insert(timingModel);
         finish();
     }
@@ -218,6 +219,7 @@ public class TimerActivity extends AppCompatActivity {
 
                 notificationManager.notify(1, notification);
             }
+
             @Override
             public void onFinish() {
                 Toast.makeText(TimerActivity.this, "00:00", Toast.LENGTH_SHORT).show();

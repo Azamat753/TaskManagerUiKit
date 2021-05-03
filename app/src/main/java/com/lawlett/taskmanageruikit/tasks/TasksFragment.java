@@ -34,6 +34,7 @@ import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.PassCodeActivity;
+import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.preferences.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.PasswordPassDonePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
@@ -221,10 +222,7 @@ public class TasksFragment extends Fragment {
     }
 
     private void showAlertDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle(R.string.attention)
-                .setMessage(R.string.change_image_title)
-                .setPositiveButton(R.string.yes, (dialog, which) -> showCustomHomeDialog()).setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel()).show();
+        PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.change_image_title), this::showCustomHomeDialog);
     }
 
     public void showCustomTaskDialog() {
@@ -279,7 +277,7 @@ public class TasksFragment extends Fragment {
     private void saveCategoryName(String documentName, String title, int icon) {
         if (user != null) {
             HashMap<String, Object> map = new HashMap<>();
-            map.put("categoryName", title);
+            map.put("categoryName", title.trim());
             map.put("categoryIcon", icon);
         FireStoreTools.writeOrUpdateDataByFireStore(documentName, Constants.CATEGORY_COLLECTION + "-"+"("+user.getDisplayName()+")"+user.getUid(), db, map);
         }

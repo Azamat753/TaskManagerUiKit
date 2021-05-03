@@ -372,7 +372,9 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
             workModel.isDone = false;
             decrementDone();
         }
-        FireStoreTools.writeOrUpdateDataByFireStore(workModel.getWorkTask(), collectionName, db, workModel);
+        if (user!=null){
+            FireStoreTools.writeOrUpdateDataByFireStore(workModel.getWorkTask(), collectionName, db, workModel);
+        }
         App.getDataBase().workDao().update(list.get(id));
     }
 

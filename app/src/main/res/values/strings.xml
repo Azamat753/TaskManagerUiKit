@@ -143,16 +143,6 @@
     <string name="delete_task">Вы можете удалить ненужную задачу</string>
     <string name="achievement_app">Достижения</string>
     <string name="completed">Выполненных</string>
-    <string name="done">Done</string>
-    <string name="help_bubble">Нажмите чтобы увидеть подсказки</string>
-    <string name="timer_text">Вы можете использовать таймер</string>
-    <string name="stopwatch_text">Вы можете использовать секундомер</string>
-    <string name="dialog_title">Смена картинки и названия</string>
-    <string name="move_title">Смена положения задачи</string>
-    <string name="delete_title">Удаление задачи</string>
-    <string name="timer_title">Таймер</string>
-    <string name="stopwatch_title">Секундомер</string>
-    <string name="intro">Интро</string>
     <string name="write_reviews">Написать отзыв</string>
     <string name="review_on_app">Отзыв на приложение Planner</string>
     <string name="hello">Здравствуйте </string>
@@ -165,6 +155,16 @@
     <string name="important_message">Важное сообщение!</string>
     <string name="you_got">Вы получили звание</string>
     <string name="speak_something">Скажите что-нибудь</string>
+    <string name="done">Done</string>
+    <string name="help_bubble">Нажмите чтобы увидеть подсказки</string>
+    <string name="timer_text">Вы можете использовать таймер</string>
+    <string name="stopwatch_text">Вы можете использовать секундомер</string>
+    <string name="dialog_title">Смена картинки и названия</string>
+    <string name="move_title">Смена положения задачи</string>
+    <string name="delete_title">Удаление задачи</string>
+    <string name="timer_title">Таймер</string>
+    <string name="stopwatch_title">Секундомер</string>
+    <string name="intro">Интро</string>
     <string name="you_sure_delete">Вы уверены что хотите удалить запись?</string>
     <string name="sync_planner_with_google">Синхронизируйте Planner с вашим Google аккаунтом для безопасности ваших записей</string>
     <string name="good_luck">Желаем дальнейших успехов !</string>
@@ -175,5 +175,8 @@
     <string name="enter">Войти</string>
     <string name="read">Читать</string>
     <string name="cloud_save_data">Облачное храннение данных</string>
-    <string name="want_save_data_in_google">Вы хотите защитить свои записи ?</string>
+    <string name="private_policy">Политика конфидициальности</string>
+    <string name="you_sure_read_private_policy">Вы прочитали политику о конфиденциальности?</string>
+    <string name="date">Дата</string>
+    <string name="sync">Синхронизировать</string>
 </resources>

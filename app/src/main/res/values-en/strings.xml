@@ -153,8 +153,8 @@
     <string name="move_tasks">You can swap tasks</string>
     <string name="delete_task">You can delete an unnecessary task:</string>
     <string name="achievement_app">Achievements</string>
-    <string name="completed">completed</string>
-    <string name="hippo">hippo</string>
+    <string name="completed">Completed</string>
+    <string name="hippo">Hippo</string>
     <string name="patronum">Expecto patronum</string>
     <string name="write_reviews">Write a review</string>
     <string name="review_on_app">Planner app review</string>
@@ -165,15 +165,20 @@
     <string name="crane">Crane</string>
     <string name="important_message">Important message!</string>
     <string name="you_got">You got the rank \"</string>
-    <string name="you_sure_delete">Вы уверены что хотите удалить запись?</string>
-    <string name="sync_planner_with_google">Синхронизируйте Planner с вашим Google аккаунтом для безопасности ваших записей</string>
-    <string name="good_luck">Желаем дальнейших успехов !</string>
-    <string name="wait">Пожалуйста подождите...</string>
-    <string name="error">Произошла ошибка</string>
-    <string name="voice_add">Голосовой ввод...</string>
-    <string name="speak_spell">Произнесите заклинание</string>
-    <string name="enter">Войти</string>
-    <string name="read">Читать</string>
-    <string name="cloud_save_data">Облачное храннение данных</string>
-    <string name="want_save_data_in_google">Вы хотите хранить свои записи в облаке Google ?</string>
+    <string name="you_sure_delete">Are you sure you want to delete the record?</string>
+    <string name="sync_planner_with_google">Sync Planner with your Google account for the security of your records</string>
+    <string name="good_luck">We wish you further success !</string>
+    <string name="wait">Please wait…</string>
+    <string name="error">An error occurred</string>
+    <string name="voice_add">Voice input …</string>
+    <string name="speak_spell">Cast a spell</string>
+    <string name="enter">Enter</string>
+    <string name="read">Read a book</string>
+    <string name="cloud_save_data">Cloud storage of data</string>
+    <string name="speak_something">Sagen Sie etwas</string>
+    <string name="private_policy">Privacy Policy</string>
+    <string name="you_sure_read_private_policy">Are you sure you \'ve read the privacy policy?</string>
+    <string name="date">Date</string>
+    <string name="sync">Synchronize</string>
+
 </resources>

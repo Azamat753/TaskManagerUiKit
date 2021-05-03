@@ -2,7 +2,6 @@ package com.lawlett.taskmanageruikit.idea;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
@@ -19,7 +18,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +35,7 @@ import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.IIdeaOnClickListener;
+import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.preferences.IdeaViewPreference;
 
 import java.util.ArrayList;
@@ -212,24 +211,21 @@ public class IdeasFragment extends Fragment implements IIdeaOnClickListener {
                 super.clearView(recyclerView, viewHolder);
                 App.getDataBase().ideaDao().updateWord(list);
             }
-
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-                dialog.setTitle(R.string.are_you_sure).setMessage(R.string.to_delete)
-                        .setNegativeButton(R.string.no, (dialog1, which) -> {
-                            adapter.notifyDataSetChanged();
-                            dialog1.cancel();
-                        })
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                pos = viewHolder.getAdapterPosition();
-                                App.getDataBase().ideaDao().delete(list.get(pos));
-                                adapter.notifyDataSetChanged();
-                                Toast.makeText(getContext(), R.string.delete, Toast.LENGTH_SHORT).show();
-                            }
-                        }).show();
+                PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.you_sure_delete), new PlannerDialog.PlannerDialogClick() {
+                    @Override
+                    public void clickOnYes() {
+                        pos = viewHolder.getAdapterPosition();
+                        App.getDataBase().ideaDao().delete(list.get(pos));
+                        adapter.notifyDataSetChanged();
+                        Toast.makeText(getContext(), R.string.delete, Toast.LENGTH_SHORT).show();
+                        if(user!=null){
+                            FireStoreTools.deleteDataByFireStore(list.get(pos).getTitle(),collectionName,db,progressBar);
+                        }
+                    }
+                });
+                adapter.notifyDataSetChanged();
             }
 
             @SuppressLint("ResourceAsColor")

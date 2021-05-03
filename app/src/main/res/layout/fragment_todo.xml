@@ -26,11 +26,12 @@
         android:clickable="true"
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
+        tools:ignore="UnusedAttribute"
         app:layout_constraintBottom_toTopOf="@+id/meetconst"
         app:layout_constraintEnd_toStartOf="@+id/workconst"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UnusedAttribute">
+        >
 
         <LinearLayout
             android:layout_width="wrap_content"

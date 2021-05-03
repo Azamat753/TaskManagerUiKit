@@ -1,6 +1,7 @@
 package com.lawlett.taskmanageruikit.achievement;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -83,5 +84,9 @@ public class AchievementActivity extends AppCompatActivity {
             adapter.clearAll();
             adapter.setData(levelModels);
         });
+    }
+
+    public void backBtn(View view) {
+        onBackPressed();
     }
 }

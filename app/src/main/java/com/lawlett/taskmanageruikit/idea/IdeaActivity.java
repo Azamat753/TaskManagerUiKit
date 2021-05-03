@@ -12,10 +12,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -35,21 +35,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import petrov.kristiyan.colorpicker.ColorPicker;
+import java.util.Random;
 
 public class IdeaActivity extends AppCompatActivity {
     public static final int CAMERA_REQUEST = 500;
     public static final int GALLERY_REQUEST = 01;
 
     FloatingActionMenu materialDesignFAM;
-    FloatingActionButton floatingActionButtonColorPicker, floatingActionButtonCameraPicker, floatingActionButtonImagePicker;
+    FloatingActionButton  floatingActionButtonCameraPicker, floatingActionButtonImagePicker;
     QuickModel quickModel;
     EditText e_title, e_description;
     ImageView back_view, done_view, image_title;
     String pickImage, textTitle, textDescription, captureImage, gallImage,
     defColor;
-    int choosedColor;
     boolean isGallery = false;
 
     @SuppressLint("ResourceAsColor")
@@ -66,21 +64,13 @@ public class IdeaActivity extends AppCompatActivity {
         getIncomingIntent();
 
 
-        findViewById(R.id.back_view).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recordDataRoom();
-            }
-        });
+        findViewById(R.id.back_view).setOnClickListener(v -> recordDataRoom());
 
-        done_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (e_title.getText().toString().trim().isEmpty()) {
-                    Toast.makeText(IdeaActivity.this, R.string.add_title, Toast.LENGTH_LONG).show();
-                } else {
-                    recordDataRoom();
-                }
+        done_view.setOnClickListener(v -> {
+            if (e_title.getText().toString().trim().isEmpty()) {
+                Toast.makeText(IdeaActivity.this, R.string.add_title, Toast.LENGTH_LONG).show();
+            } else {
+                recordDataRoom();
             }
         });
 
@@ -109,8 +99,8 @@ public class IdeaActivity extends AppCompatActivity {
             getCurrentPhoto();
             String myTitle = e_title.getText().toString();
             String myDesk = e_description.getText().toString();
-
-            int myChoosedColor = choosedColor;
+            Random rnd = new Random();
+            int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
 
             if (quickModel != null) {
                 if (pickImage != null) {
@@ -120,17 +110,17 @@ public class IdeaActivity extends AppCompatActivity {
                     quickModel.setTitle(myTitle);
                     quickModel.setDescription(myDesk);
                     quickModel.setImage(myPickImage);
-                    quickModel.setColor(myChoosedColor);
+                    quickModel.setColor(color);
                     quickModel.setCreateData(currentDate + " " + month + " " + year);
                 }
                 App.getDataBase().ideaDao().update(quickModel);
             } else {
-                if(choosedColor == 0){
-                    choosedColor = getResources().getColor(R.color.titleColor);
+                if(color == 0){
+                    color = getResources().getColor(R.color.titleColor);
                 }else {
-                choosedColor = e_title.getCurrentTextColor();
+                    color = e_title.getCurrentTextColor();
                 }
-                quickModel = new QuickModel(textTitle, textDescription, currentDate + " " + month + " " + year, pickImage, choosedColor, null);
+                quickModel = new QuickModel(textTitle, textDescription, currentDate + " " + month + " " + year, pickImage, color, null);
                 App.getDataBase().ideaDao().insert(quickModel);
             }
         }
@@ -146,8 +136,6 @@ public class IdeaActivity extends AppCompatActivity {
             e_title.setText(textTitle);
             textDescription = quickModel.getDescription();
             e_description.setText(textDescription);
-            choosedColor = quickModel.getColor();
-            e_title.setTextColor(choosedColor);
             gallImage = quickModel.getImage();
             Glide.with(this).load(gallImage).into(image_title);
         }
@@ -156,7 +144,6 @@ public class IdeaActivity extends AppCompatActivity {
     @SuppressLint("ResourceAsColor")
     public void initView() {
         materialDesignFAM = findViewById(R.id.menu_floating);
-        floatingActionButtonColorPicker = findViewById(R.id.fab);
         floatingActionButtonCameraPicker = findViewById(R.id.fab2);
         floatingActionButtonImagePicker = findViewById(R.id.fab3);
         image_title = findViewById(R.id.image_title);
@@ -164,52 +151,6 @@ public class IdeaActivity extends AppCompatActivity {
         e_description = findViewById(R.id.edit_description);
         back_view = findViewById(R.id.back_view);
         done_view = findViewById(R.id.done_view);
-
-
-        floatingActionButtonColorPicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final ColorPicker colorPicker = new ColorPicker(IdeaActivity.this);
-                colorPicker.setTitle(getString(R.string.choose_color));
-                ArrayList<String> colors = new ArrayList<>();
-                colors.add("#82B926");
-                colors.add("#a276eb");
-                colors.add("#6a3ab2");
-                colors.add("#666666");
-                colors.add("#FFFFFF");
-                colors.add("#3C8D2F");
-                colors.add("#FA9F00");
-                colors.add("#FF0000");
-                colors.add("#03DAC5");
-                colors.add("#005EFF");
-
-                colorPicker
-                        .setDefaultColorButton(Color.parseColor("#FFFFFF"))
-                        .setColors(colors)
-                        .setColumns(5)
-                        .setRoundColorButton(true)
-                        .setOnChooseColorListener(new ColorPicker.OnChooseColorListener() {
-                            @Override
-                            public void onChooseColor(int position, int color) {
-                                if (color == -1) {
-                                    Toast.makeText(IdeaActivity.this, R.string.color_dont_choosed, Toast.LENGTH_SHORT).show();
-                                } else {
-                                    e_title.setTextColor(color);
-                                    choosedColor = color;
-                                }
-                            }
-
-                            @Override
-                            public void onCancel() {
-
-                            }
-                        })
-                        .addListenerButton(getString(R.string.try_color), (v1, position, color) -> {
-                            e_title.setTextColor(color);
-                        }).show();
-            }
-        });
-
         floatingActionButtonCameraPicker.setOnClickListener(v -> {
             if (checkAndRequestPermissions(IdeaActivity.this)) {
                 materialDesignFAM.close(true);
@@ -222,7 +163,6 @@ public class IdeaActivity extends AppCompatActivity {
             startActivityForResult(intent, GALLERY_REQUEST);
             materialDesignFAM.close(true);
         });
-
     }
 
     private void openCamera() {

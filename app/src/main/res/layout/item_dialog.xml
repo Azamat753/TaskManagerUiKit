@@ -109,15 +109,16 @@
             android:textColor="@color/myWhite"
             android:layout_margin="10dp"
             android:text="@string/Cancel"
-            android:background="@drawable/bg_button_normal"
+            android:background="@color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
         <Button
             android:id="@+id/dialog_btn_ok"
             android:textColor="@color/myWhite"
+            android:background="@color/transparent"
             android:layout_margin="10dp"
             android:text="ok"
-            android:background="@drawable/bg_button_normal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
