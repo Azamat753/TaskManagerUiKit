@@ -13,7 +13,7 @@ import java.util.List;
 @Dao
 public interface SpendingDao {
 
-    @Query("select * from spendingmodel")
+    @Query("select * from spendingmodel order by id desc")
     List<SpendingModel> getAll();
 
     @Insert

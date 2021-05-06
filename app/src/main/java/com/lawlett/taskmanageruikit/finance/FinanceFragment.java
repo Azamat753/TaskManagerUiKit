@@ -89,10 +89,14 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
 
         topRecycler = view.findViewById(R.id.finance_recycler);
         FinanceMainAdapter adapter = new FinanceMainAdapter(position -> {
-            switch (position){
-                case 0: break;
-                case 1: break;
-                case 2: break;
+            switch (position) {
+                case 0:
+                    break;
+                case 1:
+                    new SpendingDialogFragment().show(getChildFragmentManager(), "spending dialog");
+                    break;
+                case 2:
+                    break;
             }
         });
         topRecycler.setAdapter(adapter);
@@ -124,7 +128,7 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
 
     private String getResult(String from, String to, String operation) {
         if (operation.equals("+"))
-             return String.valueOf(Double.parseDouble(from) + Double.parseDouble(to));
+            return String.valueOf(Double.parseDouble(from) + Double.parseDouble(to));
         else return String.valueOf(Double.parseDouble(from) - Double.parseDouble(to));
     }
 
@@ -133,28 +137,28 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
         String amountSum;
         assert alertDialog.getTag() != null;
         if (alertDialog.getTag().equals("savings")) {
-            amountSum = getResult(preference.getSavingsAmount(),amount,"+");
+            amountSum = getResult(preference.getSavingsAmount(), amount, "+");
             preference.setSavingsAmount(amountSum);
             tvSavingsAmount.setText(amountSum);
         } else if (alertDialog.getTag().equals("income")) {
-            amountSum = getResult(preference.getBalance(),amount,"+");
+            amountSum = getResult(preference.getBalance(), amount, "+");
             preference.setBalance(amountSum);
             preference.setIncomeAmount(amount);
             tvBalanceAmount.setText(preference.getBalance());
             tvIncomeAmount.setText(amount);
-        } else {
+        } else { // frequent spending
             if (checkBalance(Double.parseDouble(amount))) {
                 preference.setBalance(getResult(preference.getBalance(), amount, "-"));
                 tvBalanceAmount.setText(preference.getBalance());
-                amountSum = getResult(amount,preference.getSpendingAmount(),"+") ;
+                amountSum = getResult(amount, preference.getSpendingAmount(), "+");
                 preference.setSpendingAmount(amountSum);
                 tvSpendingAmount.setText(amountSum);
                 FrequentSpendingModel model = list.get(position);
-                App.getDataBase().spendingDao().insert(new SpendingModel(amount, model.getName(),System.currentTimeMillis()));
+                App.getDataBase().spendingDao().insert(new SpendingModel(amount, model.getName(), System.currentTimeMillis()));
                 model.setAmount(getResult(amount, model.getAmount(), "+"));
                 App.getDataBase().frequentSpendingDao().update(model);
             } else
-                new DialogHelper().myDialog2(requireContext(), "Ошибка", "У вас недостаточно средств на балансе !");
+                new DialogHelper().myDialog2(requireContext(), "Ошибка", "Недостаточно средств на балансе !");
         }
     }
 
@@ -165,14 +169,14 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
     @Override
     public void onClick(SpendingModel spendingModel) {
         if (checkBalance(Double.parseDouble(spendingModel.getAmount()))) {
-            String amountSum =getResult(spendingModel.getAmount(),preference.getSpendingAmount(),"+");
+            String amountSum = getResult(spendingModel.getAmount(), preference.getSpendingAmount(), "+");
             preference.setSpendingAmount(amountSum);
             preference.setBalance(getResult(preference.getBalance(), spendingModel.getAmount(), "-"));
             tvBalanceAmount.setText(preference.getBalance());
             tvSpendingAmount.setText(amountSum);
             App.getDataBase().spendingDao().insert(spendingModel);
         } else
-            new DialogHelper().myDialog2(requireContext(), "Ошибка", "У вас недостаточно средств на балансе!");
+            new DialogHelper().myDialog2(requireContext(), "Ошибка", "Недостаточно средств на балансе!");
     }
 
     private int position;

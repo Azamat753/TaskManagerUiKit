@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.finance.adapter.SpendingDialogAdapter;
 
-public class SpendingDialogFragment extends Fragment {
+public class SpendingDialogFragment extends DialogFragment {
 
 
     @Override
@@ -35,6 +35,6 @@ public class SpendingDialogFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.spending_recycler);
         SpendingDialogAdapter adapter = new SpendingDialogAdapter();
         recyclerView.setAdapter(adapter);
-
+        view.findViewById(R.id.dialog_spending_cancelTv).setOnClickListener(v -> dismiss());
     }
 }

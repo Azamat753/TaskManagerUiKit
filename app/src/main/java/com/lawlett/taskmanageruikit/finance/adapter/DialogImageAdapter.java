@@ -3,6 +3,8 @@ package com.lawlett.taskmanageruikit.finance.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 
 public class DialogImageAdapter extends RecyclerView.Adapter<DialogImageAdapter.ViewHolder> {
     private final ArrayList<Integer> list = new ArrayList<>();
+    private Animation animation ;
     private IIdeaOnClickListener listener;
 
     public DialogImageAdapter() {
@@ -37,6 +40,7 @@ public class DialogImageAdapter extends RecyclerView.Adapter<DialogImageAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        animation = AnimationUtils.loadAnimation(parent.getContext(), R.anim.rotate);
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_dialog_image_rv, parent, false));
     }
 
@@ -52,8 +56,10 @@ public class DialogImageAdapter extends RecyclerView.Adapter<DialogImageAdapter.
                 listener.onItemClick(position);
             }
         });
-        if (row_index == position)
+        if (row_index == position) {
             holder.imageView.setBackgroundColor(holder.itemView.getResources().getColor(R.color.browser_actions_bg_grey));
+            holder.imageView.setAnimation(animation);
+        }
     }
 
     @Override
@@ -67,12 +73,10 @@ public class DialogImageAdapter extends RecyclerView.Adapter<DialogImageAdapter.
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.item_image);
-
         }
 
         public void onBind(Integer dialogImage) {
             imageView.setImageResource(dialogImage);
-
         }
 
         @Override

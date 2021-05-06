@@ -1,18 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     tools:context=".utils.SpendingDialogFragment">
 
-   <androidx.recyclerview.widget.RecyclerView
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:id="@+id/spending_recycler"
-       app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-       android:orientation="vertical"
-       />
+    <LinearLayout
+        android:id="@+id/fragment_spending_linear"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:background="@color/icon_color"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Расходы"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/dialog_spending_cancelTv"
+        style="@style/financeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:text="Назад"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spending_recycler" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/spending_recycler"
+        android:layout_width="320dp"
+        android:layout_height="400dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/fragment_spending_linear"
+        app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

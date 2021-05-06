@@ -1,58 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/financeText"
-        android:text="Сумма: "
-        android:id="@+id/textViewAmount"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/spending_item_tvAmount"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/spending_item_tvDesc"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/financeText"
-        android:padding="8dp"
-        android:textSize="19sp"
-        android:id="@+id/spending_item_tvAmount"
-        app:layout_constraintStart_toEndOf="@id/textViewAmount"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/spending_item_tvDesc"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/spending_item_tvTime"
-        style="@style/financeText"
-        android:textSize="14sp"
-        android:padding="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/spending_item_tvDesc"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/financeText"
-        android:text="Описание: "
-        android:id="@+id/textViewDesc"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spending_item_tvAmount"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
-    <TextView
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spending_item_tvDesc"
-        style="@style/financeText"
-        android:textSize="14sp"
-        android:layout_marginStart="70dp"
-        app:layout_constraintTop_toTopOf="@id/textViewDesc"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:layout_margin="8dp"
+        android:background="@drawable/rounded_rec8"
+        android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/textViewAmount"
+            style="@style/financeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+            android:text="Сумма: "
+            app:layout_constraintEnd_toStartOf="@id/spending_item_tvAmount"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/spending_item_tvAmount"
+            style="@style/financeText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="500000"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/spending_item_tvTime"
+            app:layout_constraintStart_toEndOf="@id/textViewAmount"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/spending_item_tvTime"
+            style="@style/financeText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="23.09.21"
+            android:textAlignment="viewEnd"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/spending_item_tvAmount"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewDesc"
+            style="@style/financeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Описание: "
+            app:layout_constraintEnd_toStartOf="@id/spending_item_tvDesc"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spending_item_tvAmount"
+
+            />
+
+        <TextView
+            android:id="@+id/spending_item_tvDesc"
+            style="@style/financeText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="lkjflsjflsjflsdf kljfsljflsjfls lksjflsjflsjfsl lkjflsjflskjf kljflksjflsjf kjsfljslf"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/textViewDesc"
+            app:layout_constraintTop_toTopOf="@id/textViewDesc" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>
