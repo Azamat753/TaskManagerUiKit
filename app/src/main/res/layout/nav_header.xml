@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="176dp"
+    android:orientation="vertical"
+    android:background="#0365C4"
+    android:gravity="bottom"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:id="@+id/nav_header_iv"
+        android:src="@drawable/mipmap_logo_1_3"
+        android:layout_marginStart="32dp"
+        />
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Planner"
+    android:id="@+id/nav_header_tv"
+    android:textColor="@color/white"
+    android:textSize="25sp"
+    android:layout_marginStart="16dp"
+    android:fontFamily="@font/roboto_bold"
+    android:padding="16dp"/>
+
+
+</LinearLayout>

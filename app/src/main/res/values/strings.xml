@@ -49,7 +49,6 @@
     <string name="check_timing">Отслеживание тайминга</string>
     <string name="most_effect_idea">Самый эффективный способ перенести идеи, мысли и задачи, не теряя внимания</string>
     <string name="plus_you_kpd">Один из лучших способов повысить свой КПД</string>
-    <string name="settings">Настройки</string>
     <string name="create_password">Создание пароля</string>
     <string name="create_question">Создание вопроса</string>
     <string name="create_question_answer">Создание ответа</string>
@@ -179,4 +178,10 @@
     <string name="you_sure_read_private_policy">Вы прочитали политику о конфиденциальности?</string>
     <string name="date">Дата</string>
     <string name="sync">Синхронизировать</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="home_menu" translatable="false">Главное</string>
+    <string name="finance" translatable="false">Финансы</string>
+    <string name="settings">Настройки</string>
+    <string name="nav_open" translatable="false">Open</string>
+    <string name="nav_close" translatable="false">Close</string>
 </resources>
