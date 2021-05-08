@@ -1,6 +1,12 @@
 package com.lawlett.taskmanageruikit.finance;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,18 +14,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.finance.adapter.FinanceMainAdapter;
 import com.lawlett.taskmanageruikit.finance.adapter.FrequentSpendingAdapter;
 import com.lawlett.taskmanageruikit.finance.model.FrequentSpendingModel;
 import com.lawlett.taskmanageruikit.finance.model.SpendingModel;
-import com.lawlett.taskmanageruikit.main.MainActivity;
 import com.lawlett.taskmanageruikit.utils.AlertDialogFragment;
 import com.lawlett.taskmanageruikit.utils.AlertDialogFragmentQt2;
 import com.lawlett.taskmanageruikit.utils.App;
@@ -35,7 +34,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class FinanceFragment extends Fragment implements OkButtonClickListener, IIdeaOnClickListener {
-    RecyclerView frequentSpendRecycler, topRecycler;
     private TextView tvBalanceAmount, tvIncomeAmount, tvSavingsAmount, tvSpendingAmount;
     private ImageView ivAddSavings, ivAddIncome, ivAddSpending, ivAddFrequentSpending;
     private List<FrequentSpendingModel> list = new ArrayList<>();
@@ -83,19 +81,20 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
         ivAddIncome = view.findViewById(R.id.income_plus_iv);
         ivAddSpending = view.findViewById(R.id.spending_minus_iv);
         ivAddFrequentSpending = view.findViewById(R.id.frequent_spending_add_iv);
-        frequentSpendRecycler = view.findViewById(R.id.frequent_spending_recycler);
+        RecyclerView frequentSpendRecycler = view.findViewById(R.id.frequent_spending_recycler);
         frequentSpendRecycler.setAdapter(adapterFS);
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(frequentSpendRecycler);
 
-        topRecycler = view.findViewById(R.id.finance_recycler);
+        RecyclerView topRecycler = view.findViewById(R.id.finance_recycler);
         FinanceMainAdapter adapter = new FinanceMainAdapter(position -> {
             switch (position) {
                 case 0:
+                    Toast.makeText(requireContext(),"Advice",Toast.LENGTH_SHORT).show();
                     break;
                 case 1:
                     new SpendingDialogFragment().show(getChildFragmentManager(), "spending dialog");
                     break;
-                case 2:
+                case 2: Toast.makeText(requireContext(),"Store",Toast.LENGTH_SHORT).show();
                     break;
             }
         });
@@ -158,7 +157,8 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
                 model.setAmount(getResult(amount, model.getAmount(), "+"));
                 App.getDataBase().frequentSpendingDao().update(model);
             } else
-                new DialogHelper().myDialog2(requireContext(), "Ошибка", "Недостаточно средств на балансе !");
+                new DialogHelper().myDialog2(requireContext(), "Ошибка", "Недостаточно средств на балансе !",
+                        "", "Понятно", () -> {});
         }
     }
 
@@ -176,7 +176,8 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
             tvSpendingAmount.setText(amountSum);
             App.getDataBase().spendingDao().insert(spendingModel);
         } else
-            new DialogHelper().myDialog2(requireContext(), "Ошибка", "Недостаточно средств на балансе!");
+            new DialogHelper().myDialog2(requireContext(), "Ошибка", "Недостаточно средств на балансе !",
+                    "", "Понятно", () -> {});
     }
 
     private int position;
@@ -202,7 +203,9 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            App.getDataBase().frequentSpendingDao().delete(list.get(viewHolder.getAdapterPosition()));
+            new DialogHelper().myDialog2(requireContext(), "Внимание!",
+                    "Вы действительно хотите удалить запись?", "Да", "нет", () ->
+                        App.getDataBase().frequentSpendingDao().delete(list.get(viewHolder.getAdapterPosition())));
         }
     };
 
