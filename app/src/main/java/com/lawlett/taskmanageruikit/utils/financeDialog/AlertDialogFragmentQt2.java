@@ -1,4 +1,4 @@
-package com.lawlett.taskmanageruikit.utils;
+package com.lawlett.taskmanageruikit.utils.financeDialog;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -15,6 +15,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.finance.model.SpendingModel;
+import com.lawlett.taskmanageruikit.utils.OkButtonClickListener;
 
 public class AlertDialogFragmentQt2 extends DialogFragment {
     private final OkButtonClickListener listener;

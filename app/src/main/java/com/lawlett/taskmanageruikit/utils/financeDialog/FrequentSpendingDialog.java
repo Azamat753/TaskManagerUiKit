@@ -1,4 +1,4 @@
-package com.lawlett.taskmanageruikit.utils;
+package com.lawlett.taskmanageruikit.utils.financeDialog;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -18,6 +18,9 @@ import android.widget.TextView;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.finance.adapter.DialogImageAdapter;
 import com.lawlett.taskmanageruikit.finance.model.FrequentSpendingModel;
+import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.IIdeaOnClickListener;
+import com.lawlett.taskmanageruikit.utils.OkButtonClickListener;
 
 import java.util.Objects;
 

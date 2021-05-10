@@ -1,4 +1,4 @@
-package com.lawlett.taskmanageruikit.utils;
+package com.lawlett.taskmanageruikit.utils.financeDialog;
 
 import android.os.Bundle;
 

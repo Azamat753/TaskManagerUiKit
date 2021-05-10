@@ -10,7 +10,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="18dp"
         android:layout_marginBottom="18dp"
-        android:backgroundTint="#0365C4"
+        android:backgroundTint="@color/royalStart"
         app:cardCornerRadius="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

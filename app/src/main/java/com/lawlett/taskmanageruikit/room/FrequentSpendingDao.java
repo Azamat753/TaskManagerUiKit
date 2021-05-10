@@ -14,7 +14,7 @@ import java.util.List;
 @Dao
 public interface FrequentSpendingDao {
 
-    @Query("SELECT * FROM frequentspendingmodel")
+    @Query("SELECT * FROM frequentspendingmodel order by id desc")
     LiveData<List<FrequentSpendingModel>> getAll();
 
     @Query("SELECT * FROM frequentspendingmodel")

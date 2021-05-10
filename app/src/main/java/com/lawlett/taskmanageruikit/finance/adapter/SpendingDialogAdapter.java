@@ -23,7 +23,7 @@ public class SpendingDialogAdapter extends RecyclerView.Adapter<SpendingDialogAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.spending_item,parent,false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.spending_item, parent, false));
     }
     public List<SpendingModel> getList(){
         return list;
@@ -39,7 +39,7 @@ public class SpendingDialogAdapter extends RecyclerView.Adapter<SpendingDialogAd
         return list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView amount;
         private final TextView desc;
         private final TextView date;

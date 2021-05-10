@@ -23,7 +23,7 @@ public class FinanceMainAdapter extends RecyclerView.Adapter<FinanceMainAdapter.
         list = new ArrayList<>();
         list.add(new MainRecyclerModel("СОВЕТЫ", R.drawable.ic_advice));
         list.add(new MainRecyclerModel("РАСХОДЫ", R.drawable.ic_currency_usd));
-        list.add(new MainRecyclerModel("ПОКУПКИ", R.drawable.ic_cart_outline));
+        list.add(new MainRecyclerModel("ПОМОЩЬ", R.drawable.ic_baseline_help_outline_24));
     }
 
     @NonNull

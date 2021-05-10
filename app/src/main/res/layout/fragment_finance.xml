@@ -59,36 +59,6 @@
 
     </RelativeLayout>
 
-<!--    <RelativeLayout-->
-<!--        android:id="@+id/relative_layout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="55dp"-->
-<!--        android:background="#0365C4"-->
-<!--        app:layout_constraintBottom_toTopOf="@id/finance_recycler"-->
-<!--        app:layout_constraintTop_toTopOf="parent">-->
-
-<!--&lt;!&ndash;        <ImageView&ndash;&gt;-->
-<!--&lt;!&ndash;            android:id="@+id/menu_imageView"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_width="wrap_content"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_height="wrap_content"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_alignParentStart="true"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_alignParentTop="true"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_alignParentBottom="true"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:layout_marginStart="16dp"&ndash;&gt;-->
-<!--&lt;!&ndash;            android:contentDescription="меню"&ndash;&gt;-->
-<!--&lt;!&ndash;            />&ndash;&gt;-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/finance_textView"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_centerInParent="true"-->
-<!--            android:fontFamily="@font/roboto_bold"-->
-<!--            android:text="ФИНАНСЫ"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:textSize="16sp" />-->
-<!--    </RelativeLayout>-->
-
     <RelativeLayout
         android:id="@+id/relative_layout_income"
         android:layout_width="115dp"
@@ -121,9 +91,8 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="8dp"
-            android:fontFamily="@font/roboto_bold"
+            style="@style/financeText"
             android:text="0"
-            android:textColor="#0365C4"
             android:textSize="19sp" />
 
 

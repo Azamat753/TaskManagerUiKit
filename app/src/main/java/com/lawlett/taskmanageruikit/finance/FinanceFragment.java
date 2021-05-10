@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,14 +18,16 @@ import com.lawlett.taskmanageruikit.finance.adapter.FinanceMainAdapter;
 import com.lawlett.taskmanageruikit.finance.adapter.FrequentSpendingAdapter;
 import com.lawlett.taskmanageruikit.finance.model.FrequentSpendingModel;
 import com.lawlett.taskmanageruikit.finance.model.SpendingModel;
-import com.lawlett.taskmanageruikit.utils.AlertDialogFragment;
-import com.lawlett.taskmanageruikit.utils.AlertDialogFragmentQt2;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
-import com.lawlett.taskmanageruikit.utils.FrequentSpendingDialog;
 import com.lawlett.taskmanageruikit.utils.IIdeaOnClickListener;
 import com.lawlett.taskmanageruikit.utils.OkButtonClickListener;
-import com.lawlett.taskmanageruikit.utils.SpendingDialogFragment;
+import com.lawlett.taskmanageruikit.utils.financeDialog.AdviceDialog;
+import com.lawlett.taskmanageruikit.utils.financeDialog.AlertDialogFragment;
+import com.lawlett.taskmanageruikit.utils.financeDialog.AlertDialogFragmentQt2;
+import com.lawlett.taskmanageruikit.utils.financeDialog.FrequentSpendingDialog;
+import com.lawlett.taskmanageruikit.utils.financeDialog.HelpDialogFragment;
+import com.lawlett.taskmanageruikit.utils.financeDialog.SpendingDialogFragment;
 import com.lawlett.taskmanageruikit.utils.preferences.FinancePreference;
 
 import java.util.ArrayList;
@@ -89,12 +90,12 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
         FinanceMainAdapter adapter = new FinanceMainAdapter(position -> {
             switch (position) {
                 case 0:
-                    Toast.makeText(requireContext(),"Advice",Toast.LENGTH_SHORT).show();
+                    new AdviceDialog().show(getChildFragmentManager(),"advice dialog");
                     break;
                 case 1:
                     new SpendingDialogFragment().show(getChildFragmentManager(), "spending dialog");
                     break;
-                case 2: Toast.makeText(requireContext(),"Store",Toast.LENGTH_SHORT).show();
+                case 2: new HelpDialogFragment().show(getChildFragmentManager(),"help dialog");
                     break;
             }
         });
@@ -122,6 +123,13 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
         ivAddSpending.setOnClickListener(v ->
                 new AlertDialogFragmentQt2(this).show(requireActivity().getSupportFragmentManager(), "alertQ2"));
 
+        ivAddSavings.setOnLongClickListener(v -> {
+            new DialogHelper().myDialog2(requireContext(), "Внимание!",
+                    "Вы действительно хотите удалить запись?", "Да", "нет", () -> {
+                        preference.setSavingsAmount("0");
+                        tvSavingsAmount.setText(preference.getSavingsAmount());
+                    });
+         return true;});
     }
 
 
@@ -136,10 +144,12 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
         String amountSum;
         assert alertDialog.getTag() != null;
         if (alertDialog.getTag().equals("savings")) {
+            //savings
             amountSum = getResult(preference.getSavingsAmount(), amount, "+");
             preference.setSavingsAmount(amountSum);
             tvSavingsAmount.setText(amountSum);
-        } else if (alertDialog.getTag().equals("income")) {
+        } else if ( // income
+            alertDialog.getTag().equals("income")) {
             amountSum = getResult(preference.getBalance(), amount, "+");
             preference.setBalance(amountSum);
             preference.setIncomeAmount(amount);
