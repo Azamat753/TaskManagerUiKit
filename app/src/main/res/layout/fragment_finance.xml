@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/add_savings_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/ic_baseline_add_circle_24"
+        app:layout_constraintBottom_toTopOf="@id/income_plus_iv"
+        app:layout_constraintStart_toStartOf="@id/relative_layout_balance"
+        app:layout_constraintTop_toBottomOf="@id/relative_layout_balance" />
+
+    <ImageView
+        android:id="@+id/spending_minus_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_baseline_minus_24"
+        app:layout_constraintEnd_toEndOf="@id/relative_layout_balance"
+        app:layout_constraintStart_toEndOf="@id/income_plus_iv"
+        app:layout_constraintTop_toTopOf="@id/income_plus_iv" />
+
+    <ImageView
+        android:id="@+id/income_plus_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_baseline_add_circle_24"
+        app:layout_constraintEnd_toStartOf="@+id/spending_minus_iv"
+        app:layout_constraintStart_toStartOf="@id/relative_layout_balance"
+        app:layout_constraintTop_toBottomOf="@id/savings_amount_tv" />
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_balance"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/rounded_rec8"
+        app:layout_constraintBottom_toTopOf="@id/add_savings_iv"
+        app:layout_constraintTop_toBottomOf="@id/balance_text_tv">
+
+        <TextView
+            android:id="@+id/balance_amount_tv"
+            style="@style/financeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:text="0"
+            android:textSize="25sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_income"
+        android:layout_width="115dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="46dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/rounded_rec15"
+        app:layout_constraintBottom_toTopOf="@+id/constraint_layout"
+        app:layout_constraintEnd_toEndOf="@id/income_plus_iv"
+        app:layout_constraintStart_toStartOf="@id/income_plus_iv"
+        app:layout_constraintTop_toBottomOf="@+id/savings_amount_tv">
+
+        <TextView
+            android:id="@+id/income_text_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="18dp"
+            style="@style/financeText"
+            android:text="ДОХОД"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/income_amount_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/income_text_tv"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="8dp"
+            style="@style/financeText"
+            android:text="0"
+            android:textSize="19sp" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="105dp"
+        android:layout_height="100dp"
+        android:background="@drawable/rounded_rec15_red"
+        app:layout_constraintBottom_toBottomOf="@id/relative_layout_income"
+        app:layout_constraintEnd_toEndOf="@id/spending_minus_iv"
+        app:layout_constraintStart_toStartOf="@id/spending_minus_iv"
+        app:layout_constraintTop_toTopOf="@id/relative_layout_income">
+
+        <TextView
+            android:id="@+id/spending_text_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="18dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="РАСХОД"
+            android:textColor="#FF0000"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/spending_amount_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spending_text_tv"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="0"
+            android:textColor="#FF0000"
+            android:textSize="19sp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/savings_text_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Сбережения"
+        style="@style/financeText"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@id/add_savings_iv"
+        app:layout_constraintTop_toTopOf="@id/add_savings_iv" />
+
+    <TextView
+        android:id="@+id/savings_amount_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/financeText"
+        android:text="0"
+        android:textSize="19sp"
+        app:layout_constraintStart_toStartOf="@id/savings_text_tv"
+        app:layout_constraintTop_toBottomOf="@id/savings_text_tv" />
+
+    <TextView
+        android:id="@+id/balance_text_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="34dp"
+        android:text="БАЛАНС"
+        style="@style/financeText"
+        app:layout_constraintBottom_toTopOf="@id/relative_layout_balance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/finance_recycler" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/rounded_rec8"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/relative_layout_income">
+
+        <ImageView
+            android:id="@+id/frequent_spending_add_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="2dp"
+            android:src="@drawable/ic_baseline_add_circle_24"
+            app:layout_constraintEnd_toEndOf="@id/frequent_spending_recycler"
+            app:layout_constraintTop_toTopOf="@id/frequent_spending_text_tv" />
+
+        <TextView
+            android:id="@+id/frequent_spending_text_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="10dp"
+            style="@style/financeText"
+            android:text="Частые траты"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/frequent_spending_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/frequent_spending_text_tv" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/finance_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/balance_text_tv"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

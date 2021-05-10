@@ -29,5 +29,5 @@
     <color name="helpText">#0E182B</color>
     <color name="timing_color">#211D44</color>
     <color name="green">#2AAE30</color>
-
+    <color name="iconBackground">#EAEAEA</color>
 </resources>

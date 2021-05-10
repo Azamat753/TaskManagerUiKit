@@ -8,19 +8,27 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.navigation.NavigationView;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.calendarEvents.CalendarEventsFragment;
+import com.lawlett.taskmanageruikit.finance.FinanceFragment;
 import com.lawlett.taskmanageruikit.help.HelpActivity;
 import com.lawlett.taskmanageruikit.idea.IdeasFragment;
 import com.lawlett.taskmanageruikit.idea.data.model.QuickModel;
@@ -43,11 +51,12 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private TextView toolbar_title;
     private ImageView settings_view;
     private ImageView btnGrid, btnHelp;
     private List<QuickModel> list;
+    private DrawerLayout drawerLayout;
     private IdeaAdapter adapter;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -56,11 +65,62 @@ public class MainActivity extends AppCompatActivity {
         loadLocale();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initDrawerNavigation(savedInstanceState);
         initBottomNavigation();
         checkInstance();
         initViews();
-        initClickers();
+     //   initClickers();
         initListFromRoom();
+    }
+
+    private void initDrawerNavigation(Bundle savedInstanceState) {
+        Toolbar toolbar = findViewById(R.id.toolbar_b);
+        setSupportActionBar(toolbar);
+
+        drawerLayout = findViewById(R.id.my_drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_open, R.string.nav_close);
+        actionBarDrawerToggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.white));
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+
+        if (savedInstanceState == null) {
+            checkInstance();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            PlannerDialog.showPlannerDialog(this, getString(R.string.are_you_sure), this::finishAffinity);
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_finance:
+                changeFragment(new FinanceFragment());
+                toolbar_title.setText(R.string.finance);
+                btnGrid.setVisibility(View.GONE);
+                btnHelp.setVisibility(View.GONE);
+                break;
+            case R.id.nav_home:
+                changeFragment(new ProgressFragment());
+                toolbar_title.setText(R.string.progress);
+                btnGrid.setVisibility(View.GONE);
+                btnHelp.setVisibility(View.VISIBLE);
+                break;
+            case R.id.nav_settings:
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                break;
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return false;
     }
 
     private void initClickers() {
@@ -85,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViews() {
         toolbar_title = findViewById(R.id.toolbar_title);
-        settings_view = findViewById(R.id.settings_view);
+       // settings_view = findViewById(R.id.settings_view);
         btnGrid = findViewById(R.id.tool_btn_grid);
         btnHelp = findViewById(R.id.tool_btn_help);
     }
@@ -195,11 +255,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         PasswordPassDonePreference.getInstance(MainActivity.this).clearSettings();
-    }
-
-    @Override
-    public void onBackPressed() {
-        PlannerDialog.showPlannerDialog(this, getString(R.string.are_you_sure), this::finishAffinity);
     }
 
     private void setLocale(String lang) {

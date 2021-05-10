@@ -1,36 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".main.MainActivity">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/toolbar_a"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/toolbar_b"
-            layout="@layout/tool_bar" />
-    </androidx.cardview.widget.CardView>
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/bottomNavigation"
+            android:layout_below="@id/toolbar_a" />
 
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/toolbar_a"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <include
+                android:id="@+id/toolbar_b"
+                layout="@layout/tool_bar" />
+        </androidx.cardview.widget.CardView>
+
+        <com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationView
+            android:id="@+id/bottomNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            app:bnv_active_text_size="9sp"
+            app:bnv_inactive_text_size="9sp"
+            app:itemIconTint="@color/myWhite"
+            app:itemRippleColor="@color/myWhite"
+            app:itemTextColor="@color/myWhite" />
+    </RelativeLayout>
+
+    <!--this the navigation view which draws
+        and shows the navigation drawer-->
+    <!--include the menu created in the menu folder-->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottomNavigation"
-        android:layout_below="@id/toolbar_a" />
+        android:layout_gravity="start"
+        android:background="@color/royalEnd"
+        app:headerLayout="@layout/nav_header"
+        app:itemIconTint="@color/icon_color"
+        app:itemTextColor="@color/icon_color"
+        app:menu="@menu/activity_main_drawer" />
 
-    <com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationView
-        android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:bnv_active_text_size="9sp"
-        app:bnv_inactive_text_size="9sp"
-        app:itemIconTint="@color/myWhite"
-        app:itemRippleColor="@color/myWhite"
-        app:itemTextColor="@color/myWhite" />
-</RelativeLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
