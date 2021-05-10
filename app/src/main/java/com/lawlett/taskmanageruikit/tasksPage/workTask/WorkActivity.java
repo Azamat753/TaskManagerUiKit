@@ -2,7 +2,6 @@ package com.lawlett.taskmanageruikit.tasksPage.workTask;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
@@ -22,7 +21,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,6 +33,7 @@ import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.WorkModel;
 import com.lawlett.taskmanageruikit.tasksPage.workTask.recycler.WorkAdapter;
+import com.lawlett.taskmanageruikit.utils.AchievementDialog;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.Constants;
@@ -425,17 +424,7 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
     }
 
     private void showDialogLevel(String l) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.important_message))
-                .setMessage(getString(R.string.you_got) + l)
-                .setPositiveButton(getString(R.string.apply), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Закрываем окно
-                        dialog.cancel();
-                    }
-                });
-        builder.create();
-        builder.show();
+        AchievementDialog.showAchievementDialog(this, getString(R.string.you_got)+"\n" + l);
     }
 
     private void incrementAllDone() {
@@ -505,9 +494,9 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
 
     @Override
     public void pressOk() {
+        deleteAllDocumentsFromFireStore();
         App.getDataBase().workDao().deleteAll(list);
         WorkDoneSizePreference.getInstance(WorkActivity.this).clearSettings();
-        deleteAllDocumentsFromFireStore();
     }
 }
 

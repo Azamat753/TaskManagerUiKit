@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 import devs.mulham.horizontalcalendar.HorizontalCalendar;
 import devs.mulham.horizontalcalendar.HorizontalCalendarView;
@@ -58,7 +59,7 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
     private CalendarEventAdapter adapter;
     private TextView calendarText;
     private int pos;
-    ProgressBar progressBar;
+    private ProgressBar progressBar;
     private FirebaseFirestore db = com.google.firebase.firestore.FirebaseFirestore.getInstance();
     private String collectionName;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -93,8 +94,11 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
             }
         }
     }
+
     private void readDataFromFireStore() {
         if (user != null) {
+            Random rnd = new Random();
+            int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
             String dateTimeKey = "dataTime";
             String endTimeKey = "endTime";
             String startTimeKey = "startTime";
@@ -112,13 +116,14 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
                                 String endTime = (String) dataFromFireBase.get(endTimeKey);
                                 String startTime = (String) dataFromFireBase.get(startTimeKey);
                                 String title = (String) dataFromFireBase.get(titleKey);
-                                CalendarTaskModel calendarTaskModel = new CalendarTaskModel(dateTime, title, startTime, endTime, 0);
+                                CalendarTaskModel calendarTaskModel = new CalendarTaskModel(dateTime, title, startTime, endTime, color);
                                 App.getDataBase().eventsDao().insert(calendarTaskModel);
                             }
                         }
                     });
         }
     }
+
     private void initRoom() {
         list = new ArrayList<>();
         App.getDataBase().eventsDao().getAllLive().observe(this, calendarTaskModels -> {
@@ -133,27 +138,28 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
             if (calendarTaskModels.isEmpty()) {
                 calendarText.setVisibility(View.VISIBLE);
             }
-            if (list.size()!=0){
+            if (list.size() != 0) {
                 writeAllTaskFromRoomToFireStore();
-            }else {
+            } else {
                 readDataFromFireStore();
             }
         });
         adapter = new CalendarEventAdapter((ArrayList<CalendarTaskModel>) list, this, getContext());
         recyclerViewToday.setAdapter(adapter);
     }
+
     private void initViews(View view) {
         calendarText = view.findViewById(R.id.calendar_tv);
         addEventBtn = view.findViewById(R.id.add_task_btn);
         recyclerViewToday = view.findViewById(R.id.today_recycler);
-        progressBar=view.findViewById(R.id.progress_bar);
+        progressBar = view.findViewById(R.id.progress_bar);
     }
 
     @SuppressLint("ResourceAsColor")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (user!=null){
+        if (user != null) {
             collectionName = "События" + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
         }
         initViews(view);
@@ -197,7 +203,6 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
                 return true;
             }
 
-
             @Override
             public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 super.clearView(recyclerView, viewHolder);
@@ -211,8 +216,8 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
                     App.getDataBase().eventsDao().delete(list.get(pos));
                     Toast.makeText(getContext(), R.string.delete, Toast.LENGTH_SHORT).show();
                     adapter.notifyDataSetChanged();
-                    if (user!=null){
-                        FireStoreTools.deleteDataByFireStore(list.get(pos).getTitle(),collectionName,db,progressBar);
+                    if (user != null) {
+                        FireStoreTools.deleteDataByFireStore(list.get(pos).getTitle(), collectionName, db, progressBar);
                     }
                 });
                 adapter.notifyDataSetChanged();
@@ -223,6 +228,7 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
             @Override
             public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                pos = viewHolder.getAdapterPosition();
                 final int DIRECTION_RIGHT = 1;
                 final int DIRECTION_LEFT = 0;
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
@@ -230,13 +236,13 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
                     switch (direction) {
                         case DIRECTION_RIGHT:
                             View itemView = viewHolder.itemView;
-                            final ColorDrawable background = new ColorDrawable(Color.RED);
+                            final ColorDrawable background = new ColorDrawable(list.get(pos).chooseColor);
                             background.setBounds(0, itemView.getTop(), (int) (itemView.getLeft() + dX), itemView.getBottom());
                             background.draw(c);
                             break;
                         case DIRECTION_LEFT:
                             View itemView2 = viewHolder.itemView;
-                            final ColorDrawable background2 = new ColorDrawable(Color.RED);
+                            final ColorDrawable background2 = new ColorDrawable(list.get(pos).chooseColor);
                             background2.setBounds(itemView2.getRight(), itemView2.getBottom(), (int) (itemView2.getRight() + dX), itemView2.getTop());
                             background2.draw(c);
                             break;
@@ -268,9 +274,11 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
             @Override
             public void onDateSelected(Calendar date, int position) {
             }
+
             @Override
             public void onCalendarScroll(HorizontalCalendarView calendarView, int dx, int dy) {
             }
+
             @RequiresApi(api = Build.VERSION_CODES.O)
             @SuppressLint("LogNotTimber")
             @Override

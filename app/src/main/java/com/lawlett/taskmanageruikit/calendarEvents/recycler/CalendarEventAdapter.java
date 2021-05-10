@@ -32,7 +32,7 @@ public class CalendarEventAdapter extends RecyclerView.Adapter<CalendarEventAdap
     @NonNull
     @Override
     public DayViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new DayViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.task_item, parent, false), listener);
+        return new DayViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.event_item, parent, false), listener);
     }
 
     @Override

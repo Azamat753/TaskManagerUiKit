@@ -24,16 +24,16 @@ import com.lawlett.taskmanageruikit.calendarEvents.CalendarEventsFragment;
 import com.lawlett.taskmanageruikit.help.HelpActivity;
 import com.lawlett.taskmanageruikit.idea.IdeasFragment;
 import com.lawlett.taskmanageruikit.idea.data.model.QuickModel;
-import com.lawlett.taskmanageruikit.idea.recycler.QuickAdapter;
+import com.lawlett.taskmanageruikit.idea.recycler.IdeaAdapter;
 import com.lawlett.taskmanageruikit.progress.ProgressFragment;
 import com.lawlett.taskmanageruikit.service.MessageService;
 import com.lawlett.taskmanageruikit.settings.SettingsActivity;
 import com.lawlett.taskmanageruikit.tasks.TasksFragment;
 import com.lawlett.taskmanageruikit.timing.fragment.TimingFragment;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.PasswordPassDonePreference;
-import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.preferences.TaskDialogPreference;
 import com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationItem;
 import com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationView;
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView settings_view;
     private ImageView btnGrid, btnHelp;
     private List<QuickModel> list;
-    private QuickAdapter adapter;
+    private IdeaAdapter adapter;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initListFromRoom() {
         list = new ArrayList<>();
-        adapter = new QuickAdapter(list, null, this);
+        adapter = new IdeaAdapter(list, null, null, this);
         list = App.getDataBase().ideaDao().getAll();
         App.getDataBase().ideaDao().getAllLive().observe(this, tasks -> {
             list.clear();
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        PlannerDialog.showPlannerDialog(this,getString(R.string.are_you_sure), this::finishAffinity);
+        PlannerDialog.showPlannerDialog(this, getString(R.string.are_you_sure), this::finishAffinity);
     }
 
     private void setLocale(String lang) {

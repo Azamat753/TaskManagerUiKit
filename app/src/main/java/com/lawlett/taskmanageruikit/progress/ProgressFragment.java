@@ -47,9 +47,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ProgressFragment extends Fragment {
     private ImageView btnChange;
     private TextView toolbar_title;
@@ -68,8 +65,8 @@ public class ProgressFragment extends Fragment {
     private LinearLayout firstCon, secondCon, thirdCon;
     private BottomNavigationView bottomNavigationView;
     Calendar c = Calendar.getInstance();
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private FirebaseUser user = mAuth.getCurrentUser();
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private final FirebaseUser user = mAuth.getCurrentUser();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

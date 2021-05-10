@@ -126,17 +126,6 @@
     <string name="changing_theme">Thema ändern</string>
     <string name="board_theme_desc">Sie können hier ein Thema auswählen, indem Sie auf eine der Optionen klicken oder zu Einstellungen gehen</string>
     <string name="are_you_sure_delete_all">Möchten Sie wirklich alle Einträge löschen?</string>
-    <string name="fox">Fuchs</string>
-    <string name="deer">Damhirschkuh</string>
-    <string name="bull">Stier</string>
-    <string name="dog">Hund</string>
-    <string name="cat">Katze</string>
-    <string name="rat">Ratte</string>
-    <string name="giraffe">Giraffe</string>
-    <string name="lion">Ein Löwe</string>
-    <string name="zebra">Zebra</string>
-    <string name="your_patronus">Ihr Patronus ist - </string>
-    <string name="lumos">Lumos</string>
     <string name="choose_app">Wählen Sie eine Anwendung aus</string>
     <string name="new_aim">Es ist Zeit, neue Ziele zu setzen!</string>
     <string name="helper_dialog_text">Sie können den Namen und das Bild der Kategorie mit einem langen Druck ändern:</string>
@@ -149,9 +138,6 @@
     <string name="attaboy">Gut gemacht </string>
     <string name="Persistent">Hartnäckig </string>
     <string name="Overwhelming">Überwältigend </string>
-    <string name="crane">Kran</string>
-    <string name="hippo">Nilpferd</string>
-    <string name="patronum">Expecto patronum</string>
     <string name="important_message">Wichtige Mitteilung!</string>
     <string name="you_got">Du hast den Titel:</string>
     <string name="you_sure_delete">Sind Sie sicher, dass Sie den Eintrag löschen möchten?</string>
@@ -160,7 +146,6 @@
     <string name="wait">Bitte warten Sie…</string>
     <string name="error">Fehler aufgetreten</string>
     <string name="voice_add">Spracheingabe…</string>
-    <string name="speak_spell">Sprich einen Zauber</string>
     <string name="enter">Hereinkommen</string>
     <string name="read">Lesen</string>
     <string name="cloud_save_data">Cloud-Speicher</string>

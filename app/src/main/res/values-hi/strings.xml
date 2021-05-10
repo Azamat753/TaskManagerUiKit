@@ -127,17 +127,6 @@
     <string name="changing_theme">विषय को परिवर्तित करें</string>
     <string name="board_theme_desc">आप यहां किसी एक विकल्प पर क्लिक करके या सेटिंग्स में जाकर एक थीम चुन सकते हैं</string>
     <string name="are_you_sure_delete_all">क्या आप वाकई सभी प्रविष्टियों को हटाना चाहते हैं?</string>
-    <string name="fox">लोमड़ी</string>
-    <string name="deer">हरिणी</string>
-    <string name="bull">सांड</string>
-    <string name="dog">कुत्ता</string>
-    <string name="cat">बिल्ली</string>
-    <string name="rat">चूहा</string>
-    <string name="giraffe">जिराफ़</string>
-    <string name="lion">एक शेर</string>
-    <string name="zebra">ज़ेबरा</string>
-    <string name="your_patronus">आपका संरक्षक है</string>
-    <string name="lumos">लुमोस</string>
     <string name="choose_app">एक एप्लिकेशन का चयन करें</string>
     <string name="new_aim">यह नए लक्ष्य निर्धारित करने का समय है!</string>
     <string name="helper_dialog_text">आप एक लंबी प्रेस के साथ श्रेणी का नाम और चित्र बदल सकते हैं:</string>
@@ -150,9 +139,6 @@
     <string name="attaboy">बहुत बढ़िया </string>
     <string name="Persistent">दृढ़ </string>
     <string name="Overwhelming">को रोके </string>
-    <string name="crane">क्रेन</string>
-    <string name="hippo">हिप्पो</string>
-    <string name="patronum">Expecto patronum</string>
     <string name="important_message">महत्वपूर्ण संदेश!</string>
     <string name="you_got">आपको शीर्षक मिला: </string>
     <string name="you_sure_delete">क्या आप वाकई रिकॉर्ड हटाना चाहते हैं?</string>
@@ -161,7 +147,6 @@
     <string name="wait">कृपया प्रतीक्षा करें । ..</string>
     <string name="error">एक त्रुटि हुई</string>
     <string name="voice_add">आवाज इनपुट…</string>
-    <string name="speak_spell">एक जादू डाली</string>
     <string name="enter">दर्ज करें</string>
     <string name="read">पढ़ें</string>
     <string name="cloud_save_data">डेटा का क्लाउड स्टोरेज</string>

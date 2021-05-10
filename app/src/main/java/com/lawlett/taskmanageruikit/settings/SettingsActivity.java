@@ -15,7 +15,6 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -61,8 +60,6 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
         checkUser();
         setThemeImage();
     }
-
-
     private void initClickers() {
         theme_layout.setOnClickListener(v -> {
             if (!ThemePreference.getInstance(SettingsActivity.this).getTheme()) {
@@ -199,7 +196,7 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
         gridLayoutManager.generateDefaultLayoutParams();
         List<String> languages = List.of(
                 "English", "Русский", "Кыргызча", "Português", "한국어",
-                "Український", "Deutsche", "हिंदी", "Қазақ тілі");
+                "Український", "Deutsche", "हिंदी", "Қазақ тілі","Беларускі","Español","Italiano","Français","Türk","中文","日本語");
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(gridLayoutManager);
 
@@ -208,7 +205,7 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
         alertDialog.show();
     }
 
-    private void showChangeLanguageDialog(int position) {
+    private void setLanguage(int position) {
         switch (position) {
             case 0:
                 setLocale("en");
@@ -237,6 +234,27 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
             case 8:
                 setLocale("kk");
                 break;
+            case 9:
+                setLocale("be");
+                break;
+            case 10:
+                setLocale("es");
+                break;
+            case 11:
+                setLocale("it");
+                break;
+            case 12:
+                setLocale("fr");
+                break;
+            case 13:
+                setLocale("tr");
+                break;
+            case 14:
+                setLocale("zh");
+                break;
+            case 15:
+                setLocale("ja");
+                break;
         }
         startActivity(new Intent(SettingsActivity.this, SplashActivity.class));
     }
@@ -257,6 +275,6 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
 
     @Override
     public void onClick(int position) {
-        showChangeLanguageDialog(position);
+        setLanguage(position);
     }
 }

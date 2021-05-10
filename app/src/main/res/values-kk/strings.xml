@@ -126,17 +126,6 @@
 <string name="changing_theme">Смена темы</string>
 <string name="board_theme_desc">Мұнда тақырыпты опциялардың біреуін басу арқылы таңдауға немесе параметрлерге өтуге болады</string>
 <string name="are_you_sure_delete_all">Сіз шынымен барлық жазбаларды жойғыңыз келе ме?</string>
-<string name="fox">Түлкі</string>
-<string name="deer">Лань</string>
-<string name="bull">Бұқа</string>
-<string name="dog">Ит</string>
-<string name="cat">Мысық</string>
-<string name="rat">Егеуқұйрық</string>
-<string name="giraffe">Керік</string>
-<string name="lion">Лев</string>
-<string name="zebra">Зебра</string>
-<string name="your_patronus">Ваш патронус - </string>
-<string name="lumos">люмос</string>
 <string name="choose_app">Бағдарламаны таңдаңыз</string>
 <string name="new_aim">Жаңа мақсаттар қоятын кез келді!</string>
 <string name="helper_dialog_text">Санат атауы мен суретін ұзақ басу арқылы өзгертуге болады:</string>
@@ -149,9 +138,6 @@
 <string name="attaboy">Жарайсың</string>
 <string name="Persistent">Табанды </string>
 <string name="Overwhelming">Жеңу </string>
-<string name="crane">Тырна</string>
-<string name="hippo">Гиппопотам</string>
-<string name="patronum">Экспекто патронум</string>
 <string name="important_message">Маңызды хабарлама!</string>
 <string name="you_got">Сіз атағын алдыңыз: </string>
     <string name="you_sure_delete">Сіз сенімді деп келсе, удалить запись?</string>
@@ -160,7 +146,6 @@
     <string name="wait">Күте тұрыңыз…</string>
     <string name="error">Қате кетті</string>
     <string name="voice_add">Дауыстық енгізу…</string>
-    <string name="speak_spell">Емлені айтыңыз</string>
     <string name="enter">Кіру</string>
     <string name="read">Әрі қарай</string>
     <string name="cloud_save_data">Бұлтты деректерді сақтау</string>

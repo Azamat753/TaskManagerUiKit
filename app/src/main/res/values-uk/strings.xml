@@ -127,17 +127,6 @@
     <string name="changing_theme">Зміна теми</string>
     <string name="board_theme_desc">Ви можете вибрати тему тут, натисканням на один з варіантів, або перейти в Налаштування</string>
     <string name="are_you_sure_delete_all">Ви дійсно хочете видалити всі записи?</string>
-    <string name="fox">лисиця</string>
-    <string name="deer">Лань</string>
-    <string name="bull">Бик</string>
-    <string name="dog">Собака</string>
-    <string name="cat">кішка</string>
-    <string name="rat">Щур</string>
-    <string name="giraffe">Жираф</string>
-    <string name="lion">Лев</string>
-    <string name="zebra">Зебра</string>
-    <string name="your_patronus">Ваш патронус - </string>
-    <string name="lumos">люмос</string>
     <string name="choose_app">Виберіть програму</string>
     <string name="new_aim">Пора ставити нові цілі!</string>
     <string name="helper_dialog_text">Ви можете змінити назву і картинку категорії на довге натискання:</string>
@@ -150,9 +139,6 @@
     <string name="attaboy">Молодець </string>
     <string name="Persistent">Наполегливий </string>
     <string name="Overwhelming">Преодолеватель </string>
-    <string name="crane">Журавель</string>
-    <string name="hippo">Бегемот</string>
-    <string name="patronum">Экспекто патронум</string>
     <string name="important_message">Важливе повідомлення!</string>
     <string name="you_got">Ви отримали звання: </string>
     <string name="done">Готово</string>
@@ -171,7 +157,6 @@
     <string name="wait">Будь ласка почекайте…</string>
     <string name="error">Сталася помилка</string>
     <string name="voice_add">Голосове введення…</string>
-    <string name="speak_spell">Вимовте заклинання</string>
     <string name="enter">Увійти</string>
     <string name="read">Читавши</string>
     <string name="cloud_save_data">Хмарне зберігання даних</string>

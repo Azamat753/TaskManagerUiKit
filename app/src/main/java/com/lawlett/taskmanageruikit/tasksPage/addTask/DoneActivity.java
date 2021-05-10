@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +33,7 @@ import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.addTask.adapter.DoneAdapter;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.DoneModel;
+import com.lawlett.taskmanageruikit.utils.AchievementDialog;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.Constants;
@@ -377,9 +377,9 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
 
     @Override
     public void pressOk() {
+        deleteAllDocumentsFromFireStore();
         App.getDataBase().doneDao().deleteAll(list);
         AddDoneSizePreference.getInstance(DoneActivity.this).clearSettings();
-        deleteAllDocumentsFromFireStore();
     }
 
     private void deleteAllDocumentsFromFireStore() {
@@ -481,13 +481,6 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
     }
 
     private void showDialogLevel(String l) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.important_message))
-                .setMessage(getString(R.string.you_got) + l)
-                .setPositiveButton(getString(R.string.apply), (dialog, id) -> {
-                    dialog.cancel();
-                });
-        builder.create();
-        builder.show();
+        AchievementDialog.showAchievementDialog(this, getString(R.string.you_got)+"\n" + l);
     }
 }

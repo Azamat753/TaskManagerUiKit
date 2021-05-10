@@ -4,12 +4,12 @@
         android:id="@+id/delete_all_popup"
         android:title="@string/clear_list" />
 
-<!--    <item-->
-<!--        android:id="@+id/sort_popup"-->
-<!--        android:title="Сортировать список" />-->
+    <item
+        android:id="@+id/sort_popup"
+        android:title="Цветные коробки" />
 
-<!--    <item-->
-<!--        android:id="@+id/set_view_list"-->
-<!--        android:title="Задать вид списоа" />-->
+    <item
+        android:id="@+id/set_view_list"
+        android:title="Стандартные коробки" />
 
 </menu>

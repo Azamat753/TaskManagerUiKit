@@ -12,16 +12,11 @@ import android.widget.TextView;
 
 import com.lawlett.taskmanageruikit.R;
 
-public class PlannerDialog extends App {
-    public static PlannerDialogClick listener;
+public class AchievementDialog extends App {
 
-    public PlannerDialog(PlannerDialogClick listener) {
-        PlannerDialog.listener = listener;
-    }
-
-    public static void showPlannerDialog(Activity activity,String alertTitle, PlannerDialogClick plannerDialog) {
+    public static void showAchievementDialog(Activity activity, String alertTitle) {
         LayoutInflater inflater = LayoutInflater.from(activity);
-        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.delete_alert_layout, null);
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.achievement_alert_layout, null);
         Dialog alertDialog = new Dialog(activity);
         alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         alertDialog.setContentView(view);
@@ -29,17 +24,8 @@ public class PlannerDialog extends App {
         TextView alertTitleView = alertDialog.findViewById(R.id.alert_title);
         alertTitleView.setText(alertTitle);
         alertDialog.findViewById(R.id.yesBtn).setOnClickListener(v -> {
-            plannerDialog.clickOnYes();
-            alertDialog.cancel();
-        });
-
-        alertDialog.findViewById(R.id.noBtn).setOnClickListener(v -> {
             alertDialog.cancel();
         });
         alertDialog.show();
-    }
-
-    public interface PlannerDialogClick {
-        void clickOnYes();
     }
 }

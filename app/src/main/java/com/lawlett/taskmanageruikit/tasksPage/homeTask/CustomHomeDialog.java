@@ -64,7 +64,6 @@ public class CustomHomeDialog extends Dialog implements View.OnClickListener {
                 imageView.setImageResource(dialogImg);
                 view.startAnimation(animation);
                 hideKeyboard();
-
             }
         });
     }
@@ -119,14 +118,12 @@ public class CustomHomeDialog extends Dialog implements View.OnClickListener {
                     Toast.makeText(getContext(),R.string.add_icon, Toast.LENGTH_LONG).show();
                 }
                 else {
-//                    actionForDialog.pressOk();
                     customDialogListener.addInformation(title, dialogImg);
                     dismiss();
                 }
             }
         });
     }
-
 
     @Override
     public void onClick(View v) {
@@ -144,5 +141,4 @@ public class CustomHomeDialog extends Dialog implements View.OnClickListener {
     public interface CustomDialogListener{
         void addInformation(String title, Integer image);
     }
-
 }

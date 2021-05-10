@@ -57,6 +57,11 @@ public class PersonalAdapter extends RecyclerView.Adapter<PersonalAdapter.Person
         public void onBind(PersonalModel personalModel) {
             personalTaskTv.setText(personalModel.getPersonalTask());
             personalTaskCheck.setChecked(personalModel.isDone);
+//            Random rnd = new Random();
+//            int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+//            int states[][] = {{android.R.attr.state_checked}, {}};
+//            int colors[] = {color, color};
+//            CompoundButtonCompat.setButtonTintList(personalTaskCheck, new ColorStateList(states, colors));
             personalTaskCheck.setOnClickListener(v -> listener.onItemCheckClick(getAdapterPosition()));
             personalTaskTv.setOnLongClickListener(view -> {
                 listener.onItemLongClick(getAdapterPosition());

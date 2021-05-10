@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +33,7 @@ import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.PersonalModel;
 import com.lawlett.taskmanageruikit.tasksPage.personalTask.recyclerview.PersonalAdapter;
+import com.lawlett.taskmanageruikit.utils.AchievementDialog;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.Constants;
@@ -196,7 +196,6 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
                 final int DIRECTION_RIGHT = 1;
                 final int DIRECTION_LEFT = 0;
-
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
                     int direction = dX > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
                     Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -224,9 +223,9 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
     @Override
     public void pressOk() {
+        deleteAllDocumentsFromFireStore();
         App.getDataBase().personalDao().deleteAll(list);
         PersonDoneSizePreference.getInstance(PersonalActivity.this).clearSettings();
-        deleteAllDocumentsFromFireStore();
     }
 
     private void deleteAllDocumentsFromFireStore() {
@@ -472,14 +471,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     }
 
     private void showDialogLevel(String l) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.important_message))
-                .setMessage(getString(R.string.you_got) + l)
-                .setPositiveButton(getString(R.string.apply), (dialog, id) -> {
-                    dialog.cancel();
-                });
-        builder.create();
-        builder.show();
+        AchievementDialog.showAchievementDialog(this, getString(R.string.you_got)+"\n" + l);
     }
 
     private void decrementDone() {

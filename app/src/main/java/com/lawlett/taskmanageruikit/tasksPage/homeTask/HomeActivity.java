@@ -2,7 +2,6 @@ package com.lawlett.taskmanageruikit.tasksPage.homeTask;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,6 +34,7 @@ import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.models.LevelModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.HomeModel;
 import com.lawlett.taskmanageruikit.tasksPage.homeTask.recycler.HomeAdapter;
+import com.lawlett.taskmanageruikit.utils.AchievementDialog;
 import com.lawlett.taskmanageruikit.utils.ActionForDialog;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.Constants;
@@ -399,16 +398,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
     }
 
     private void showDialogLevel(String l) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.important_message))
-                .setMessage(getString(R.string.you_got) + l)
-                .setPositiveButton(getString(R.string.apply), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        builder.create();
-        builder.show();
+        AchievementDialog.showAchievementDialog(this, getString(R.string.you_got)+"\n" + l);
     }
 
     private void incrementAllDone() {
@@ -440,9 +430,9 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
 
     @Override
     public void pressOk() {
+        deleteAllDocumentsFromFireStore();
         App.getDataBase().homeDao().deleteAll(list);
         HomeDoneSizePreference.getInstance(HomeActivity.this).clearSettings();
-        deleteAllDocumentsFromFireStore();
     }
 
     private void deleteAllDocumentsFromFireStore() {

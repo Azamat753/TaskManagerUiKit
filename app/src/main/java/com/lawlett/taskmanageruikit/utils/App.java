@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.widget.Toast;
 
 import androidx.multidex.MultiDex;
 import androidx.room.Room;
@@ -31,6 +32,10 @@ public class App extends Application {
     }
     public static AppDataBase getDataBase() {
         return dataBase;
+    }
+
+    public static void showToast(Context context,String text){
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
 
     @Override

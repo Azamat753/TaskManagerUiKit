@@ -1,37 +1,47 @@
 package com.lawlett.taskmanageruikit.onboard;
 
-import android.content.DialogInterface;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.auth.GoogleSignInActivity;
-import com.lawlett.taskmanageruikit.main.MainActivity;
-import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
+import com.lawlett.taskmanageruikit.splash.SplashActivity;
+import com.lawlett.taskmanageruikit.utils.dialoglanguage.BaseRadioAdapter;
+import com.lawlett.taskmanageruikit.utils.dialoglanguage.GridSpacingItemDecoration;
+import com.lawlett.taskmanageruikit.utils.dialoglanguage.LanguageAdapter;
 import com.lawlett.taskmanageruikit.utils.preferences.IntroPreference;
+import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.ThemePreference;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BoardFragment extends Fragment {
+public class BoardFragment extends Fragment implements BaseRadioAdapter.LanguageChooseListener{
     ConstraintLayout container;
     ImageView imageDay, imageNight, imageDaySelect, imageNightSelect;
     LottieAnimationView calendar_anim, notes_anim, todo_anim, time_anim, google_anim;
@@ -48,6 +58,7 @@ public class BoardFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_board, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -143,7 +154,31 @@ public class BoardFragment extends Fragment {
             startActivity(new Intent(getContext(), GoogleSignInActivity.class));
             Objects.requireNonNull(requireActivity()).finish();
         });
-        change_lang.setOnClickListener(v -> showChangeLanguageDialog());
+        change_lang.setOnClickListener(v -> languageAlert());
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    private void languageAlert() {
+        LayoutInflater inflater = LayoutInflater.from(requireActivity());
+        View view = inflater.inflate(R.layout.language_layout, null);
+
+        Dialog alertDialog = new Dialog(requireContext());
+        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        alertDialog.setContentView(view);
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        RecyclerView recyclerView;
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(requireActivity().getApplicationContext(), 1);
+        gridLayoutManager.generateDefaultLayoutParams();
+        List<String> languages = List.of(
+                "English", "Русский", "Кыргызча", "Português", "한국어",
+                "Український", "Deutsche", "हिंदी", "Қазақ тілі", "Беларускі", "Español", "Italiano", "Français", "Türk", "中文", "日本語");
+        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(gridLayoutManager);
+
+        recyclerView.setAdapter(new LanguageAdapter(requireContext(), languages, this));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(45));
+        alertDialog.show();
     }
 
     private void initViews(@NonNull View view) {
@@ -163,38 +198,58 @@ public class BoardFragment extends Fragment {
         imageNightSelect = view.findViewById(R.id.image_night_select);
     }
 
-    private void showChangeLanguageDialog() {
-        final String[] listItems = {"English", "Русский", "Кыргызча", "Português", "한국어", "Український"};
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(requireContext());
-        mBuilder.setTitle(R.string.choose_language);
-        mBuilder.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int i) {
-                if (i == 0) {
-                    setLocale("en");
-                    requireActivity().recreate();
-                } else if (i == 1) {
-                    setLocale("ru");
-                    requireActivity().recreate();
-                } else if (i == 2) {
-                    setLocale("ky");
-                    requireActivity().recreate();
-                } else if (i == 3) {
-                    setLocale("pt");
-                    requireActivity().recreate();
-                } else if (i == 4) {
-                    setLocale("ko");
-                    requireActivity().recreate();
-                } else if (i == 5) {
-                    setLocale("uk");
-                    requireActivity().recreate();
-                }
-                dialog.dismiss();
-            }
-        });
-
-        AlertDialog mDialog = mBuilder.create();
-        mDialog.show();
+    private void setLanguage(int position) {
+        switch (position) {
+            case 0:
+                setLocale("en");
+                break;
+            case 1:
+                setLocale("ru");
+                break;
+            case 2:
+                setLocale("ky");
+                break;
+            case 3:
+                setLocale("pt");
+                break;
+            case 4:
+                setLocale("ko");
+                break;
+            case 5:
+                setLocale("uk");
+                break;
+            case 6:
+                setLocale("de");
+                break;
+            case 7:
+                setLocale("hi");
+                break;
+            case 8:
+                setLocale("kk");
+                break;
+            case 9:
+                setLocale("be");
+                break;
+            case 10:
+                setLocale("es");
+                break;
+            case 11:
+                setLocale("it");
+                break;
+            case 12:
+                setLocale("fr");
+                break;
+            case 13:
+                setLocale("tr");
+                break;
+            case 14:
+                setLocale("zh");
+                break;
+            case 15:
+                setLocale("ja");
+                break;
+        }
+        startActivity(new Intent(requireContext(), SplashActivity.class));
     }
 
     private void setLocale(String lang) {
@@ -209,5 +264,10 @@ public class BoardFragment extends Fragment {
     public void loadLocale() {
         String language = LanguagePreference.getInstance(getContext()).getLanguage();
         setLocale(language);
+    }
+
+    @Override
+    public void onClick(int position) {
+        setLanguage(position);
     }
 }

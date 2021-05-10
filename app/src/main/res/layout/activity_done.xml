@@ -55,6 +55,7 @@
             android:id="@+id/editText_done"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
+            android:maxLength="32"
             android:layout_height="wrap_content"
             android:inputType="textCapSentences"
             android:textColor="@color/myWhite"
