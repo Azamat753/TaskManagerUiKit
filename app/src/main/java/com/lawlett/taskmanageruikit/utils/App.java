@@ -4,6 +4,7 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Build;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ public class App extends Application {
     private static AppDataBase dataBase;
     public static final String CHANNEL_ID = "exampleChannel";
     public static final String CHANNEL_ID_HOURS = "exampleChannelHours";
+    private static Resources resources;
 
     @Override
     public void onCreate() {
@@ -28,6 +30,7 @@ public class App extends Application {
              .fallbackToDestructiveMigration().allowMainThreadQueries().build();
 
         createNotificationChannel();
+        resources = getResources();
 
     }
     public static AppDataBase getDataBase() {
@@ -42,6 +45,9 @@ public class App extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+    public static Resources getAppResources() {
+        return resources;
     }
     public void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

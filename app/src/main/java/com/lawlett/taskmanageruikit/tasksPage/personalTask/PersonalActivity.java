@@ -220,7 +220,6 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
         }).attachToRecyclerView(recyclerView);
     }
 
-
     @Override
     public void pressOk() {
         deleteAllDocumentsFromFireStore();

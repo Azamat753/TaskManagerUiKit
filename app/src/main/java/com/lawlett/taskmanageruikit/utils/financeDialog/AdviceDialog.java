@@ -35,11 +35,12 @@ public class AdviceDialog extends DialogFragment {
     private void setTvText() {
         AdvicePreference prefs = new AdvicePreference(requireContext());
 
-        Log.e("TAG", "setTvText: "+AdviceText.getTitleAdvice(prefs.getDayPosition()));
-        Log.e("TAG", "setTvText: "+AdviceText.getDescAdvice(prefs.getDayPosition()));
+        Log.e("TAG", "setTvText: " + AdviceText.getTitleAdvice(prefs.getDayPosition()));
+        Log.e("TAG", "setTvText: " + AdviceText.getDescAdvice(prefs.getDayPosition()));
 
         title.setText(AdviceText.getTitleAdvice(prefs.getDayPosition()));
         subTitle.setText(AdviceText.getDescAdvice(prefs.getDayPosition()));
+
     }
 
     private void initViews(View view) {

@@ -147,7 +147,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/achievement_layout"
+            android:id="@+id/rate_layout"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_margin="20dp"
@@ -160,12 +160,12 @@
             tools:ignore="UnusedAttribute">
 
             <TextView
-                android:id="@+id/achievement"
+                android:id="@+id/rate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
                 android:drawablePadding="15dp"
-                android:text="@string/achievement_app"
+                android:text="@string/rate_app"
                 android:textColor="@color/settings_text_color"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -181,7 +181,7 @@
             android:foreground="?attr/selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/achievement_layout"
+            app:layout_constraintTop_toBottomOf="@id/rate_layout"
             tools:ignore="UnusedAttribute">
 
             <TextView

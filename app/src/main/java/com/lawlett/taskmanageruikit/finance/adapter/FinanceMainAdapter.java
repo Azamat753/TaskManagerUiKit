@@ -11,19 +11,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.finance.model.MainRecyclerModel;
-import com.lawlett.taskmanageruikit.utils.IIdeaOnClickListener;
+import com.lawlett.taskmanageruikit.utils.App;
 
 import java.util.ArrayList;
 
 public class FinanceMainAdapter extends RecyclerView.Adapter<FinanceMainAdapter.MainViewHolder> {
     ArrayList<MainRecyclerModel> list;
-    IIdeaOnClickListener listener;
-    public FinanceMainAdapter(IIdeaOnClickListener listener) {
+    DialogImageAdapter.IIdeaOnClickListener listener;
+    public FinanceMainAdapter(DialogImageAdapter.IIdeaOnClickListener listener) {
         this.listener = listener;
         list = new ArrayList<>();
-        list.add(new MainRecyclerModel("СОВЕТЫ", R.drawable.ic_advice));
-        list.add(new MainRecyclerModel("РАСХОДЫ", R.drawable.ic_currency_usd));
-        list.add(new MainRecyclerModel("ПОМОЩЬ", R.drawable.ic_baseline_help_outline_24));
+        list.add(new MainRecyclerModel(App.getAppResources().getString(R.string.advices), R.drawable.ic_advice));
+        list.add(new MainRecyclerModel(App.getAppResources().getString(R.string.costs), R.drawable.ic_currency_usd));
+        list.add(new MainRecyclerModel(App.getAppResources().getString(R.string.help), R.drawable.ic_baseline_help_outline_24));
     }
 
     @NonNull

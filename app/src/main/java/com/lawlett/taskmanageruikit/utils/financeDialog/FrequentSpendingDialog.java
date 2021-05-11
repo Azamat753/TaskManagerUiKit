@@ -3,28 +3,26 @@ package com.lawlett.taskmanageruikit.utils.financeDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.finance.adapter.DialogImageAdapter;
 import com.lawlett.taskmanageruikit.finance.model.FrequentSpendingModel;
 import com.lawlett.taskmanageruikit.utils.App;
-import com.lawlett.taskmanageruikit.utils.IIdeaOnClickListener;
 import com.lawlett.taskmanageruikit.utils.OkButtonClickListener;
 
 import java.util.Objects;
 
-public class FrequentSpendingDialog extends DialogFragment implements IIdeaOnClickListener {
+public class FrequentSpendingDialog extends DialogFragment implements DialogImageAdapter.IIdeaOnClickListener {
     private int imgResId = 0;
     private TextView okTv,cancelTv,pickTheImageTv;
     private EditText spendingNameEdt;

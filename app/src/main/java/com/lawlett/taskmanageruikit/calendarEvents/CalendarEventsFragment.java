@@ -97,8 +97,6 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
 
     private void readDataFromFireStore() {
         if (user != null) {
-            Random rnd = new Random();
-            int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
             String dateTimeKey = "dataTime";
             String endTimeKey = "endTime";
             String startTimeKey = "startTime";
@@ -110,6 +108,8 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
                         if (task.isSuccessful()) {
                             progressBar.setVisibility(View.GONE);
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                Random rnd = new Random();
+                                int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
                                 Map<String, Object> dataFromFireBase;
                                 dataFromFireBase = document.getData();
                                 String dateTime = (String) dataFromFireBase.get(dateTimeKey);

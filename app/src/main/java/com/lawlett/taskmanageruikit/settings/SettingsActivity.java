@@ -28,9 +28,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.lawlett.taskmanageruikit.R;
-import com.lawlett.taskmanageruikit.achievement.AchievementActivity;
 import com.lawlett.taskmanageruikit.auth.GoogleSignInActivity;
 import com.lawlett.taskmanageruikit.splash.SplashActivity;
+import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.PassCodeActivity;
 import com.lawlett.taskmanageruikit.utils.dialoglanguage.BaseRadioAdapter;
 import com.lawlett.taskmanageruikit.utils.dialoglanguage.GridSpacingItemDecoration;
@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class SettingsActivity extends AppCompatActivity implements BaseRadioAdapter.LanguageChooseListener {
-    private LinearLayout language_tv, clear_password_layout, clearMinutes_layout, share_layout, achievement_layout, reviews, sign_in;
+    private LinearLayout language_tv, clear_password_layout, clearMinutes_layout, share_layout, rate_layout, reviews, sign_in;
     private ImageView back;
     private ImageView imageTheme;
     private ConstraintLayout theme_layout;
@@ -76,12 +76,11 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
 
         share_layout.setOnClickListener(v -> {
             try {
-                String applicationLink = "https://play.google.com/store/apps/details?id=com.lawlett.taskmanageruikit";
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Planner");
                 String shareMessage = "\nPlanner\n";
-                shareMessage = shareMessage + applicationLink;
+                shareMessage = shareMessage + Constants.APP_LINK;
                 shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.choose_app)));
             } catch (Exception e) {
@@ -89,7 +88,11 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
             }
         });
 
-        achievement_layout.setOnClickListener(v -> startActivity(new Intent(this, AchievementActivity.class)));
+        rate_layout.setOnClickListener(view -> {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(Constants.APP_LINK));
+            startActivity(i);
+        });
 
         clear_password_layout.setOnClickListener(v -> {
             SharedPreferences sPref = getSharedPreferences("qst", 0);
@@ -170,7 +173,7 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
         share_layout = findViewById(R.id.five_layout);
         reviews = findViewById(R.id.six_layout);
         sign_in = findViewById(R.id.seven_layout);
-        achievement_layout = findViewById(R.id.achievement_layout);
+        rate_layout = findViewById(R.id.rate_layout);
     }
 
     private void checkUser() {

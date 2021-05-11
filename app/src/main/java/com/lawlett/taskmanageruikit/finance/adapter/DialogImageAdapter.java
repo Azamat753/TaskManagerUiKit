@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lawlett.taskmanageruikit.R;
-import com.lawlett.taskmanageruikit.utils.IIdeaOnClickListener;
 
 import java.util.ArrayList;
 
@@ -90,5 +89,8 @@ public class DialogImageAdapter extends RecyclerView.Adapter<DialogImageAdapter.
 
     public void setAdapterOnClick(IIdeaOnClickListener itemClickListener) {
         this.listener = itemClickListener;
+    }
+    public interface IIdeaOnClickListener {
+        void onItemClick(int position);
     }
 }

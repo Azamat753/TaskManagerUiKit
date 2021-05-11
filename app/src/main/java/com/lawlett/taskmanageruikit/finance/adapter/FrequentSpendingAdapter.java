@@ -11,16 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.finance.model.FrequentSpendingModel;
-import com.lawlett.taskmanageruikit.utils.IIdeaOnClickListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FrequentSpendingAdapter extends RecyclerView.Adapter<FrequentSpendingAdapter.ViewHolder> {
     public List<FrequentSpendingModel> list;
-    final IIdeaOnClickListener listener;
+    final DialogImageAdapter.IIdeaOnClickListener listener;
 
-    public FrequentSpendingAdapter(List<FrequentSpendingModel> list, IIdeaOnClickListener listener) {
+    public FrequentSpendingAdapter(List<FrequentSpendingModel> list, DialogImageAdapter.IIdeaOnClickListener listener) {
         this.list = list;
         this.listener = listener;
     }
@@ -39,11 +37,6 @@ public class FrequentSpendingAdapter extends RecyclerView.Adapter<FrequentSpendi
     @Override
     public int getItemCount() {
         return list.size();
-    }
-
-    public void addAmount(String amount, int position) {
-        list.get(position).setAmount(String.valueOf(Integer.parseInt(amount) + Integer.parseInt(list.get(position).getAmount())));
-        notifyItemChanged(position);
     }
 
     public void update(List<FrequentSpendingModel> list) {

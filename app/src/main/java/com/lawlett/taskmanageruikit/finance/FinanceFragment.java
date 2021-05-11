@@ -14,13 +14,13 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lawlett.taskmanageruikit.R;
+import com.lawlett.taskmanageruikit.finance.adapter.DialogImageAdapter;
 import com.lawlett.taskmanageruikit.finance.adapter.FinanceMainAdapter;
 import com.lawlett.taskmanageruikit.finance.adapter.FrequentSpendingAdapter;
 import com.lawlett.taskmanageruikit.finance.model.FrequentSpendingModel;
 import com.lawlett.taskmanageruikit.finance.model.SpendingModel;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
-import com.lawlett.taskmanageruikit.utils.IIdeaOnClickListener;
 import com.lawlett.taskmanageruikit.utils.OkButtonClickListener;
 import com.lawlett.taskmanageruikit.utils.financeDialog.AdviceDialog;
 import com.lawlett.taskmanageruikit.utils.financeDialog.AlertDialogFragment;
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FinanceFragment extends Fragment implements OkButtonClickListener, IIdeaOnClickListener {
+public class FinanceFragment extends Fragment implements OkButtonClickListener, DialogImageAdapter.IIdeaOnClickListener {
     private TextView tvBalanceAmount, tvIncomeAmount, tvSavingsAmount, tvSpendingAmount;
     private ImageView ivAddSavings, ivAddIncome, ivAddSpending, ivAddFrequentSpending;
     private List<FrequentSpendingModel> list = new ArrayList<>();
@@ -90,12 +90,13 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
         FinanceMainAdapter adapter = new FinanceMainAdapter(position -> {
             switch (position) {
                 case 0:
-                    new AdviceDialog().show(getChildFragmentManager(),"advice dialog");
+                    new AdviceDialog().show(getChildFragmentManager(), "advice dialog");
                     break;
                 case 1:
                     new SpendingDialogFragment().show(getChildFragmentManager(), "spending dialog");
                     break;
-                case 2: new HelpDialogFragment().show(getChildFragmentManager(),"help dialog");
+                case 2:
+                    new HelpDialogFragment().show(getChildFragmentManager(), "help dialog");
                     break;
             }
         });
@@ -124,12 +125,13 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
                 new AlertDialogFragmentQt2(this).show(requireActivity().getSupportFragmentManager(), "alertQ2"));
 
         ivAddSavings.setOnLongClickListener(v -> {
-            new DialogHelper().myDialog2(requireContext(), "Внимание!",
-                    "Вы действительно хотите удалить запись?", "Да", "нет", () -> {
+            new DialogHelper().myDialog2(requireContext(), getString(R.string.attention),
+                    getString(R.string.you_sure_delete),getString(R.string.yes),getString(R.string.no), () -> {
                         preference.setSavingsAmount("0");
                         tvSavingsAmount.setText(preference.getSavingsAmount());
                     });
-         return true;});
+            return true;
+        });
     }
 
 
@@ -149,7 +151,7 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
             preference.setSavingsAmount(amountSum);
             tvSavingsAmount.setText(amountSum);
         } else if ( // income
-            alertDialog.getTag().equals("income")) {
+                alertDialog.getTag().equals("income")) {
             amountSum = getResult(preference.getBalance(), amount, "+");
             preference.setBalance(amountSum);
             preference.setIncomeAmount(amount);
@@ -167,8 +169,9 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
                 model.setAmount(getResult(amount, model.getAmount(), "+"));
                 App.getDataBase().frequentSpendingDao().update(model);
             } else
-                new DialogHelper().myDialog2(requireContext(), "Ошибка", "Недостаточно средств на балансе !",
-                        "", "Понятно", () -> {});
+                new DialogHelper().myDialog2(requireContext(), getString(R.string.error), getString(R.string.not_enough_balane),
+                        "", getString(R.string.apply), () -> {
+                        });
         }
     }
 
@@ -186,8 +189,9 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
             tvSpendingAmount.setText(amountSum);
             App.getDataBase().spendingDao().insert(spendingModel);
         } else
-            new DialogHelper().myDialog2(requireContext(), "Ошибка", "Недостаточно средств на балансе !",
-                    "", "Понятно", () -> {});
+            new DialogHelper().myDialog2(requireContext(), getString(R.string.error), getString(R.string.not_enough_balane),
+                    "", getString(R.string.apply), () -> {
+                    });
     }
 
     private int position;
@@ -213,9 +217,9 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            new DialogHelper().myDialog2(requireContext(), "Внимание!",
-                    "Вы действительно хотите удалить запись?", "Да", "нет", () ->
-                        App.getDataBase().frequentSpendingDao().delete(list.get(viewHolder.getAdapterPosition())));
+            new DialogHelper().myDialog2(requireContext(), getString(R.string.attention),
+                    getString(R.string.you_sure_delete), getString(R.string.yes), getString(R.string.no), () ->
+                            App.getDataBase().frequentSpendingDao().delete(list.get(viewHolder.getAdapterPosition())));
         }
     };
 

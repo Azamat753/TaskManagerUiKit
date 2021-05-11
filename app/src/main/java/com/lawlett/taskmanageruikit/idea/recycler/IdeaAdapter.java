@@ -87,8 +87,8 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.QuickViewHolde
             itemView.setOnClickListener(view -> listener.onItemClick(quickModel));
             leftView.setBackgroundColor(quickModel.getColor());
             leftView2.setBackgroundColor(quickModel.getColor());
-                Glide.with(context).load(quickModel.getImage()).into(imageDesc);
-                Glide.with(context).load(quickModel.getImage()).into(imageDesc2);
+                Glide.with(context).load(quickModel.getImage()).placeholder(R.drawable.ic_choose_image).into(imageDesc);
+                Glide.with(context).load(quickModel.getImage()).placeholder(R.drawable.ic_choose_image).into(imageDesc2);
         }
 
         public void checkView() {

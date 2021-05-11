@@ -29,7 +29,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -79,7 +79,6 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
     private String collectionName;
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseUser user = mAuth.getCurrentUser();
-    private final int YOUR_SELECT_PICTURE_REQUEST_CODE = 10001;
     private String imageIdeaUri;
     private ImageView imageView;
     private String titleIdea;
@@ -147,6 +146,7 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
 
     private void readDataFromFireStore() {
         if (user != null) {
+
             String createDateKey = "createData";
             String imageKey = "image";
             String titleKey = "title";
@@ -157,12 +157,14 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
                         if (task.isSuccessful()) {
                             progressBar.setVisibility(View.GONE);
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                Random rnd = new Random();
+                                int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
                                 Map<String, Object> dataFromFireBase;
                                 dataFromFireBase = document.getData();
                                 String createDate = (String) dataFromFireBase.get(createDateKey);
                                 String image = (String) dataFromFireBase.get(imageKey);
                                 String title = (String) dataFromFireBase.get(titleKey);
-                                QuickModel quickModel = new QuickModel(title, createDate, image, 0);
+                                QuickModel quickModel = new QuickModel(title, createDate, image, color);
                                 App.getDataBase().ideaDao().insert(quickModel);
                             }
                         }
@@ -199,9 +201,9 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
     private void openGallery() {
         final Intent galleryIntent = new Intent();
         galleryIntent.setType("image/*");
-        galleryIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+        galleryIntent.setAction(Intent.ACTION_PICK);
         final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
-        startActivityForResult(chooserIntent, YOUR_SELECT_PICTURE_REQUEST_CODE);
+        startActivityForResult(chooserIntent, Constants.YOUR_SELECT_PICTURE_REQUEST_CODE);
     }
 
     private boolean hasImage(@NonNull ImageView view) {
@@ -243,9 +245,15 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
                 alertDialog.cancel();
             }
         });
-        imageView.setOnClickListener(view1 -> {
-            if (checkAndRequestPermissions(requireActivity())) {
-                openGallery();
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onClick(View view) {
+                if (checkPermissionForReadExternalStorage()) {
+                    openGallery();
+                }else {
+                    requestPermissionForReadExternalStorage();
+                }
             }
         });
         alertDialog.show();
@@ -275,21 +283,32 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
-                if (checkAndRequestPermissions(requireActivity())) {
+                if (checkPermissionForReadExternalStorage()) {
                     openGallery();
+                }else {
+                    requestPermissionForReadExternalStorage();
                 }
             }
         });
         alertDialog.show();
     }
 
-    public static boolean checkAndRequestPermissions(Activity context) {
-        int storagePermissions = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        List<String> listPermissions = new ArrayList<>();
-        if (storagePermissions != PackageManager.PERMISSION_GRANTED) {
-            listPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    public void requestPermissionForReadExternalStorage() {
+        try {
+            ActivityCompat.requestPermissions((Activity) requireContext(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    01);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
-        return true;
+    }
+
+    public boolean checkPermissionForReadExternalStorage() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int result = requireContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+            return result == PackageManager.PERMISSION_GRANTED;
+        }
+        return false;
     }
 
     private void initClickers() {
@@ -324,7 +343,7 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == YOUR_SELECT_PICTURE_REQUEST_CODE) {
+            if (requestCode == Constants.YOUR_SELECT_PICTURE_REQUEST_CODE) {
                 Uri selectedImageUri = data == null ? null : data.getData();
                 imageIdeaUri = selectedImageUri.toString();
                 imageView.setImageURI(selectedImageUri);

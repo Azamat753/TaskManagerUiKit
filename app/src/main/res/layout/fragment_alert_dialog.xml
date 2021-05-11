@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="match_parent">
@@ -14,14 +13,15 @@
 
         <EditText
             android:id="@+id/income_amount_edt"
+            style="@style/financeText"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_margin="16dp"
-            android:inputType="number"
             android:background="@drawable/rounded_rec8"
-            android:hint="Введите сумму"
+            android:hint="@string/enter_amount"
+            android:inputType="number"
+            android:textColorHint="@color/hint_color"
             android:padding="8dp"
-            style="@style/financeText"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,32 +29,33 @@
 
         <TextView
             android:id="@+id/ok_tv_qt1"
+            style="@style/financeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:padding="20dp"
             android:text="Ok"
-            style="@style/financeText"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/income_amount_edt"
             app:layout_constraintTop_toTopOf="@id/cancel_tv_qt1" />
 
         <TextView
             android:id="@+id/cancel_tv_qt1"
+            style="@style/financeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:padding="20dp"
             android:text="Отмена"
-            style="@style/financeText"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/income_amount_edt"
             app:layout_constraintTop_toBottomOf="@id/income_amount_edt" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <ImageView
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@drawable/mipmap_logo_1_3"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/app_round" />
 </RelativeLayout>

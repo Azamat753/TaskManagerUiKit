@@ -11,6 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:foreground="?attr/selectableItemBackground"
+        tools:ignore="UnusedAttribute,VectorDrawableCompat"
         android:layout_marginBottom="8dp"
         android:src="@drawable/ic_baseline_add_circle_24"
         app:layout_constraintBottom_toTopOf="@id/income_plus_iv"
@@ -23,6 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:src="@drawable/ic_baseline_minus_24"
+        android:foreground="?attr/selectableItemBackground"
+        tools:ignore="UnusedAttribute,VectorDrawableCompat"
         app:layout_constraintEnd_toEndOf="@id/relative_layout_balance"
         app:layout_constraintStart_toEndOf="@id/income_plus_iv"
         app:layout_constraintTop_toTopOf="@id/income_plus_iv" />
@@ -33,6 +37,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:foreground="?attr/selectableItemBackground"
+        tools:ignore="UnusedAttribute,VectorDrawableCompat"
         android:src="@drawable/ic_baseline_add_circle_24"
         app:layout_constraintEnd_toStartOf="@+id/spending_minus_iv"
         app:layout_constraintStart_toStartOf="@id/relative_layout_balance"
@@ -80,7 +86,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="18dp"
             style="@style/financeText"
-            android:text="ДОХОД"
+            android:text="@string/income"
             android:textSize="12sp" />
 
         <TextView
@@ -116,7 +122,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="18dp"
             android:fontFamily="@font/roboto_bold"
-            android:text="РАСХОД"
+            android:text="@string/costs"
             android:textColor="#FF0000"
             android:textSize="12sp" />
 
@@ -140,7 +146,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Сбережения"
+        android:text="@string/saving"
         style="@style/financeText"
         android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@id/add_savings_iv"
@@ -161,7 +167,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="34dp"
-        android:text="БАЛАНС"
+        android:text="@string/balance"
         style="@style/financeText"
         app:layout_constraintBottom_toTopOf="@id/relative_layout_balance"
         app:layout_constraintStart_toStartOf="parent"
@@ -193,7 +199,7 @@
             android:layout_height="0dp"
             android:layout_marginStart="10dp"
             style="@style/financeText"
-            android:text="Частые траты"
+            android:text="@string/frequent_spending"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
