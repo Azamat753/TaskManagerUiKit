@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.calendarEvents.CalendarEventsFragment;
 import com.lawlett.taskmanageruikit.dashboard.DashboardFragment;
+import com.lawlett.taskmanageruikit.habit.fragment.HabitFragment;
 import com.lawlett.taskmanageruikit.help.HelpActivity;
 import com.lawlett.taskmanageruikit.idea.IdeasFragment;
 import com.lawlett.taskmanageruikit.idea.data.model.QuickModel;
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationItem bottomNavigationItem1 = new BottomNavigationItem
                 (getString(R.string.tasks), ContextCompat.getColor(this, R.color.navigation_background), R.drawable.ic_check);
         BottomNavigationItem bottomNavigationItem4 = new BottomNavigationItem
-                (getString(R.string.timing), ContextCompat.getColor(this, R.color.navigation_background), R.drawable.ic_timer);
+                (getString(R.string.habit), ContextCompat.getColor(this, R.color.navigation_background), R.drawable.ic_timer);
         BottomNavigationItem bottomNavigationItem2 = new BottomNavigationItem
                 (getString(R.string.events), ContextCompat.getColor(this, R.color.navigation_background), R.drawable.ic_date_white);
         BottomNavigationItem bottomNavigationItem3 = new BottomNavigationItem
@@ -150,8 +151,8 @@ public class MainActivity extends AppCompatActivity {
                         openTasksFrag();
                         break;
                     case 2:
-                        changeFragment(new TimingFragment());
-                        toolbar_title.setText(R.string.timing);
+                        changeFragment(new HabitFragment());
+                        toolbar_title.setText(R.string.habit);
                         btnGrid.setVisibility(View.GONE);
                         btnHelp.setVisibility(View.GONE);
                         break;

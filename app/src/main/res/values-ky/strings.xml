@@ -131,4 +131,11 @@
     <string name="timer_title">Таймер</string>
     <string name="stopwatch_title">Секундомер</string>
     <string name="intro">Интро</string>
+    <string name="habit">Habit</string>
+    <string name="day_amount">Введите количество дней:</string>
+    <string name="habit_add">Для добавления привычки нажмите на +</string>
+    <string name="your_habit_is_done">Сегодня вы уже отметили выполнение этой задачи</string>
+    <string name="you_is_done_habit_today">Вы действительно выполнили сегодня задание?</string>
+    <string name="edit">Изменить</string>
+    <string name="change_day">Изменить количество дней</string>
 </resources>

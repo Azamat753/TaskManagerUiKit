@@ -8,6 +8,7 @@ import com.lawlett.taskmanageruikit.achievement.models.AchievementModel;
 import com.lawlett.taskmanageruikit.calendarEvents.data.model.CalendarTaskModel;
 import com.lawlett.taskmanageruikit.idea.data.model.QuickModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.DoneModel;
+import com.lawlett.taskmanageruikit.tasksPage.data.model.HabitModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.HomeModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.MeetModel;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.PersonalModel;
@@ -18,7 +19,7 @@ import com.lawlett.taskmanageruikit.timing.model.TimingModel;
 @TypeConverters(Converters.class)
 @Database(entities = {QuickModel.class,  PrivateModel.class, CalendarTaskModel.class,
         TimingModel.class, AchievementModel.class, PersonalModel.class, WorkModel.class, MeetModel.class,
-        HomeModel.class, DoneModel.class
+        HomeModel.class, DoneModel.class, HabitModel.class
        }, version = 2, exportSchema = false)
 public abstract class AppDataBase extends RoomDatabase {
 
@@ -40,5 +41,7 @@ public abstract class AppDataBase extends RoomDatabase {
     public abstract TimingDao timingDao();
 
     public abstract AchievementDao achievementDao();
+
+    public abstract HabitDao habitDao();
 
 }
