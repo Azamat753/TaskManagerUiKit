@@ -21,7 +21,7 @@ import com.lawlett.taskmanageruikit.timing.model.TimingModel;
 @TypeConverters(Converters.class)
 @Database(entities = {QuickModel.class, PersonalModel.class, WorkModel.class, MeetModel.class,
         HomeModel.class, DoneModel.class, PrivateModel.class, CalendarTaskModel.class,
-        TimingModel.class, AchievementModel.class, LevelModel.class, SpendingModel.class, FrequentSpendingModel.class}, version = 5, exportSchema = false)
+        TimingModel.class, AchievementModel.class, LevelModel.class, SpendingModel.class, FrequentSpendingModel.class,HabitModel.class}, version = 5, exportSchema = false)
 public abstract class AppDataBase extends RoomDatabase {
 
     public abstract QuickDao ideaDao();
@@ -49,5 +49,7 @@ public abstract class AppDataBase extends RoomDatabase {
     public abstract SpendingDao spendingDao();
 
     public abstract FrequentSpendingDao frequentSpendingDao();
+
+    public abstract HabitDao habitDao();
 
 }

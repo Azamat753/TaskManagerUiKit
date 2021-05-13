@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/royalEnd">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dialog_habit_container"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/todo_background"
+        app:layout_constraintEnd_toStartOf="@+id/habit_textInputLayout_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/dialog_example_tittle"
+            style="@style/TextTitleQuick2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/dialog_example_progress"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Example" />
+
+        <ImageView
+            android:id="@+id/dialog_example_progress"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/circle_progress"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/dialog_example_img"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/dialog_example_amount"
+            style="@style/todoAmountTextColor2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_example_progress"
+            tools:text="0/10" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/habit_textInputLayout_title"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:hint="@string/habit_name"
+        android:textColorHint="@color/hint_color"
+        app:boxStrokeColor="#00BCD4"
+        app:hintTextColor="#00BCD4"
+        app:layout_constraintBottom_toTopOf="@+id/habit_textInputLayout_day"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dialog_habit_container"
+        app:layout_constraintTop_toTopOf="@+id/dialog_habit_container">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/dialog_habit_title"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:maxLength="26"
+            android:paddingTop="8dp"
+            android:textAlignment="inherit"
+            android:textColor="@color/myWhite" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/habit_textInputLayout_day"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:hint="@string/day_amount"
+        android:textColorHint="@color/hint_color"
+        app:boxStrokeColor="#00BCD4"
+        app:hintTextColor="#00BCD4"
+        app:layout_constraintBottom_toBottomOf="@+id/dialog_habit_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dialog_habit_container"
+        app:layout_constraintTop_toBottomOf="@+id/habit_textInputLayout_title">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/dialog_habit_amount"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLength="26"
+            android:paddingBottom="5dp"
+            android:textColor="@color/myWhite" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/dialog_habit_tv"
+        style="@style/TextTitleQuick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/add_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_habit_container" />
+
+    <LinearLayout
+        android:id="@+id/dialog_habit_gvcontainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_habit_tv">
+
+        <GridView
+            android:id="@+id/dialog_habit_gridView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="15dp"
+            android:columnWidth="50dp"
+            android:horizontalSpacing="2dp"
+            android:numColumns="4"
+            android:stretchMode="spacingWidth"
+            android:verticalSpacing="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_habit_gvcontainer">
+
+        <Button
+            android:id="@+id/dialog_habit_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/blue_stroke"
+            android:text="@string/Cancel"
+            android:textColor="@color/myWhite" />
+
+        <Button
+            android:id="@+id/dialog_habit_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/blue_stroke"
+            android:text="ok"
+            android:textColor="@color/myWhite" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

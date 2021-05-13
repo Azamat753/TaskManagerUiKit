@@ -35,12 +35,14 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.AchievementActivity;
 import com.lawlett.taskmanageruikit.calendarEvents.CalendarEventsFragment;
 import com.lawlett.taskmanageruikit.finance.FinanceFragment;
+import com.lawlett.taskmanageruikit.habit.fragment.HabitFragment;
 import com.lawlett.taskmanageruikit.help.HelpActivity;
 import com.lawlett.taskmanageruikit.idea.IdeasFragment;
 import com.lawlett.taskmanageruikit.progress.ProgressFragment;
@@ -198,10 +200,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         alertDialog.setContentView(view);
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        TextInputLayout textInputLayout = alertDialog.findViewById(R.id.editText_wrapper);
         EditText editText = alertDialog.findViewById(R.id.editText_create_name);
+        textInputLayout.setHint(R.string.you_name);
         alertDialog.findViewById(R.id.apply_btn).setOnClickListener(v -> {
             if (editText.getText().toString().isEmpty()) {
-                App.showToast(MainActivity.this, getString(R.string.you_name));
+                App.showToast(MainActivity.this, getString(R.string.empty));
             } else {
                 String name = editText.getText().toString();
                 nav_header_name.setText(name);
@@ -211,7 +215,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         alertDialog.show();
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -281,9 +284,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         BottomNavigationItem bottomNavigationItem = new BottomNavigationItem
                 (getString(R.string.progress), ContextCompat.getColor(this, R.color.navigation_background), R.drawable.ic_progress);
         BottomNavigationItem bottomNavigationItem1 = new BottomNavigationItem
-                (getString(R.string.tasks), ContextCompat.getColor(this, R.color.navigation_background), R.drawable.ic_check);
+                (getString(R.string.tasks), ContextCompat.getColor(this, R.color.navigation_background), R.drawable.ic_checklist);
         BottomNavigationItem bottomNavigationItem4 = new BottomNavigationItem
-                (getString(R.string.timing), ContextCompat.getColor(this, R.color.navigation_background), R.drawable.ic_timer);
+                ((getString(R.string.habit)), ContextCompat.getColor(this, R.color.navigation_background), R.drawable.ic_habit);
         BottomNavigationItem bottomNavigationItem2 = new BottomNavigationItem
                 (getString(R.string.events), ContextCompat.getColor(this, R.color.navigation_background), R.drawable.ic_date_white);
         BottomNavigationItem bottomNavigationItem3 = new BottomNavigationItem
@@ -310,8 +313,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     btnHelp.setVisibility(View.VISIBLE);
                     break;
                 case 2:
-                    changeFragment(new TimingFragment());
-                    toolbar_title.setText(R.string.timing);
+                    changeFragment(new HabitFragment());
+                    toolbar_title.setText(R.string.habit);
                     btnGrid.setVisibility(View.GONE);
                     btnHelp.setVisibility(View.GONE);
                     break;

@@ -106,4 +106,10 @@
        <item name="fontFamily">@font/roboto_bold</item>
        <item name="android:textColor">@color/myWhite</item>
    </style>
+    <style name="TextTitleHabit">
+        <item name="android:fontFamily">@font/m_medium</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/myWhite</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

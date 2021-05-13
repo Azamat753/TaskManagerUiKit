@@ -1,5 +1,7 @@
 package com.lawlett.taskmanageruikit.finance;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.finance.adapter.DialogImageAdapter;
 import com.lawlett.taskmanageruikit.finance.adapter.FinanceMainAdapter;
@@ -20,7 +29,9 @@ import com.lawlett.taskmanageruikit.finance.adapter.FrequentSpendingAdapter;
 import com.lawlett.taskmanageruikit.finance.model.FrequentSpendingModel;
 import com.lawlett.taskmanageruikit.finance.model.SpendingModel;
 import com.lawlett.taskmanageruikit.utils.App;
+import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
+import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.OkButtonClickListener;
 import com.lawlett.taskmanageruikit.utils.financeDialog.AdviceDialog;
 import com.lawlett.taskmanageruikit.utils.financeDialog.AlertDialogFragment;
@@ -31,8 +42,12 @@ import com.lawlett.taskmanageruikit.utils.financeDialog.SpendingDialogFragment;
 import com.lawlett.taskmanageruikit.utils.preferences.FinancePreference;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class FinanceFragment extends Fragment implements OkButtonClickListener, DialogImageAdapter.IIdeaOnClickListener {
     private TextView tvBalanceAmount, tvIncomeAmount, tvSavingsAmount, tvSpendingAmount;
@@ -41,6 +56,10 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
     private FrequentSpendingAdapter adapterFS;
     private FinancePreference preference;
     private AlertDialogFragment alertDialog;
+    private String collectionName;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private FirebaseUser user = mAuth.getCurrentUser();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,10 +78,36 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        collectionName = "Финансы" + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
         initViews(view);
         setPreferences();
         setClickers();
         checkLiveData();
+//        readFromFireBaseToPreferences();
+//        writeAllFromRoomToFireStore();
+    }
+
+    private void writeAllFromRoomToFireStore() {
+        if (user != null) {
+            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("spendingPreferences", Context.MODE_PRIVATE);
+            String balance = preference.getBalance();
+            String income = preference.getIncomeAmount();
+            String saving = preference.getSavingsAmount();
+            String spending = preference.getSpendingAmount();
+            Calendar calendar = Calendar.getInstance();
+            String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
+            if (!currentDay.equals(dayFromPreference)) {
+                HashMap<String, String> map = new HashMap<>();
+                map.put("balance", balance);
+                map.put("income", income);
+                map.put("saving", saving);
+                map.put("spending", spending);
+                FireStoreTools.writeOrUpdateDataByFireStore(getString(R.string.finance), collectionName, db, map);
+                sharedPreferences.edit().clear().apply();
+                sharedPreferences.edit().putString("currentDay", currentDay).apply();
+            }
+        }
     }
 
 
@@ -71,6 +116,43 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
             this.list = list;
             adapterFS.update(list);
         });
+    }
+
+    private void readFromFireBaseToPreferences() {
+        if (user != null) {
+            if (preference.getBalance().equals("0") && preference.getIncomeAmount().equals("0") &&
+                    preference.getSavingsAmount().equals("0") && preference.getSpendingAmount().equals("0")) {
+                String balance = "balance";
+                String income = "income";
+                String saving = "saving";
+                String spending = "spending";
+                db.collection(collectionName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                Map<String, Object> dataFromFireBase;
+                                dataFromFireBase = document.getData();
+                                String balanceFB = (String) dataFromFireBase.get(balance);
+                                String incomeFB = (String) dataFromFireBase.get(income);
+                                String savingFB = (String) dataFromFireBase.get(saving);
+                                String spendingFB = (String) dataFromFireBase.get(spending);
+
+                                preference.setBalance(balanceFB);
+                                preference.setIncomeAmount(incomeFB);
+                                preference.setSavingsAmount(savingFB);
+                                preference.setSpendingAmount(spendingFB);
+
+                                tvBalanceAmount.setText(balanceFB);
+                                tvIncomeAmount.setText(incomeFB);
+                                tvSavingsAmount.setText(savingFB);
+                                tvSpendingAmount.setText(spendingFB);
+                            }
+                        }
+                    }
+                });
+            }
+        }
     }
 
     private void initViews(View view) {
@@ -126,7 +208,7 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
 
         ivAddSavings.setOnLongClickListener(v -> {
             new DialogHelper().myDialog2(requireContext(), getString(R.string.attention),
-                    getString(R.string.you_sure_delete),getString(R.string.yes),getString(R.string.no), () -> {
+                    getString(R.string.you_sure_delete), getString(R.string.yes), getString(R.string.no), () -> {
                         preference.setSavingsAmount("0");
                         tvSavingsAmount.setText(preference.getSavingsAmount());
                     });
@@ -169,7 +251,7 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
                 model.setAmount(getResult(amount, model.getAmount(), "+"));
                 App.getDataBase().frequentSpendingDao().update(model);
             } else
-                new DialogHelper().myDialog2(requireContext(), getString(R.string.error), getString(R.string.not_enough_balane),
+                new DialogHelper().myDialog2(requireContext(), getString(R.string.error), getString(R.string.not_enough_balanсe),
                         "", getString(R.string.apply), () -> {
                         });
         }
@@ -189,7 +271,7 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
             tvSpendingAmount.setText(amountSum);
             App.getDataBase().spendingDao().insert(spendingModel);
         } else
-            new DialogHelper().myDialog2(requireContext(), getString(R.string.error), getString(R.string.not_enough_balane),
+            new DialogHelper().myDialog2(requireContext(), getString(R.string.error), getString(R.string.not_enough_balanсe),
                     "", getString(R.string.apply), () -> {
                     });
     }
@@ -222,5 +304,4 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
                             App.getDataBase().frequentSpendingDao().delete(list.get(viewHolder.getAdapterPosition())));
         }
     };
-
 }

@@ -69,7 +69,7 @@
     <string name="need_all_fields">Необхідно заповнити всі поля</string>
     <string name="try_color">Спробувати</string>
     <string name="done_t">Виконані завдання</string>
-    <string name="colunn_empty">Колонка порожня</string>
+    <string name="column_empty">Колонка порожня</string>
     <string name="write_idea">Записати ідею</string>
     <string name="color">Колір</string>
     <string name="camera">Камера</string>
@@ -168,7 +168,7 @@
     <string name="want_save_data_in_google">Вы хотите защитить свои записи ?</string>
     <string name="you_name">Ваше имя</string>
     <string name="rate_app">Поставить оценку</string>
-    <string name="not_enough_balane">Недостаточно средств на балансе !</string>
+    <string name="not_enough_balanсe">Недостаточно средств на балансе !</string>
     <string name="attention_alert">Внимание!</string>
     <string name="advice1_1">\"Относитесь к деньгам с уважением \"</string>
     <string name="advice1_2">Ваши деньги это ваше «законсервированное» время и энергия, которые вы потратили, чтобы их заработать.</string>
@@ -221,4 +221,7 @@
     <string name="saving">Сбережения</string>
     <string name="frequent_spending">Частые траты</string>
     <string name="enter_amount">Введите сумму</string>
+    <string name="habit">Привычки</string>
+    <string name="habit_name">Привычка</string>
+    <string name="days_amount">Количество дней</string>
 </resources>
