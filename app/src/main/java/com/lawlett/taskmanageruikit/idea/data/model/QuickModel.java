@@ -13,12 +13,30 @@ public class QuickModel implements Serializable {
     private String image;
     private int color;
     private String createData;
+    private String personalTask;
+    private String description;
 
     public QuickModel(String title, String createData, String image, int color) {
         this.title = title;
         this.createData = createData;
         this.image = image;
         this.color = color;
+    }
+
+    public String getPersonalTask() {
+        return personalTask;
+    }
+
+    public void setPersonalTask(String personalTask) {
+        this.personalTask = personalTask;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public long getId() {

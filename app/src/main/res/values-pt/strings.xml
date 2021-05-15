@@ -221,8 +221,45 @@
     <string name="saving">Economia</string>
     <string name="frequent_spending">Gastos frequentes</string>
     <string name="enter_amount">Digite o valor</string>
-    <string name="habit">Привычки</string>
-    <string name="habit_name">Привычка</string>
-    <string name="days_amount">Количество дней</string>
-
+    <string name="habit">Hábito</string>
+    <string name="habit_name">Hábito</string>
+    <string name="days_amount">Número de dias</string>
+    <string name="day_amount">Digite o número de dias:</string>
+    <string name="habit_add">Para adicionar um hábito, clique em +</string>
+    <string name="your_habit_is_done">Hoje você já marcou a conclusão desta tarefa</string>
+    <string name="you_is_done_habit_today">Você realmente completou a tarefa hoje?</string>
+    <string name="edit">Corrigir</string>
+    <string name="change_day">Alterar o número de dias</string>
+    <string name="helper_finance_dialog" >
+        Equilíbrio.\n
+Aqui você pode ver seu saldo atual.
+Seu saldo aumenta à medida que você adiciona renda.
+Diminui com a adição de despesas ou gastos frequentes.\n
+        \nEconomia.\n
+Aqui você pode gravar seu estado atual
+poupança pressionando o botão Mais.  (Também) você não
+você pode gastar com as economias atuais . Com dever
+clique no botão pode remover o valor total da poupança.\n
+\nRendimento.\n
+Ao clicar no botão Mais você pode adicionar sua renda .
+Cada vez que você adiciona renda, seu saldo aumenta.\n
+\nDispêndio.\n
+Ao clicar no botão menos você pode adicionar
+suas despesas. Você precisa inserir o valor e a descrição
+consumo (desejável). Para sua conveniência, criamos
+seção: histórico de despesas, no topo da seção "despesas"
+você pode acompanhar suas despesas.\n
+\nGastos frequentes.\n
+Ao clicar no botão Mais você pode adicionar o seu
+gastos frequentes (item). Isso é útil para
+você conseguiu rastrear o que costuma gastar dinheiro.
+Ao clicar no item, você pode adicionar o valor gasto
+e veja a quantidade total de dinheiro gasto. Também,
+deslizando para a direita, você pode remover um item da lista de gastos frequentes.
+   </string>
+    <string name="home_menu">Principal</string>
+    <string name="finance">Finanças</string>
+    <string name="set_notification">Definir notificação</string>
+    <string name="you_forgot_habbit">\"Você não esqueceu o hábito\"</string>
+    <string name="set_notification_on">\"Notificação definida para\"</string>
 </resources>

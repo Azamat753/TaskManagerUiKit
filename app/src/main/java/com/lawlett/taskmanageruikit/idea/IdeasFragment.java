@@ -40,9 +40,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.idea.data.model.QuickModel;
 import com.lawlett.taskmanageruikit.idea.recycler.IdeaAdapter;
@@ -83,7 +80,6 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
     private ImageView imageView;
     private String titleIdea;
     private QuickModel quickModel;
-    private StorageReference storageReference;
 
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, ViewGroup container,
@@ -103,13 +99,6 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
         getRoomRecordsData();
         btnGridChange();
         initItemTouchHelper();
-    }
-
-    private void uploadImage(String imageUrl) {
-        if (user != null) {
-            storageReference = FirebaseStorage.getInstance().getReference().child(imageUrl);
-            UploadTask task = storageReference.putFile(Uri.parse(imageUrl));
-        }
     }
 
     private void getRoomRecordsData() {
@@ -146,7 +135,7 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
 
     private void readDataFromFireStore() {
         if (user != null) {
-
+            requestPermissionForReadExternalStorage();
             String createDateKey = "createData";
             String imageKey = "image";
             String titleKey = "title";
@@ -331,7 +320,6 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
         Random rnd = new Random();
         int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
         quickModel = new QuickModel(titleIdea, currentDate + " " + month + " " + year, imageIdeaUri, color);
-        uploadImage(imageIdeaUri);
         if (user!=null){
             FireStoreTools.writeOrUpdateDataByFireStore(titleIdea, collectionName, db, quickModel);
         }

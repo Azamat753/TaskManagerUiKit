@@ -221,8 +221,45 @@
     <string name="saving">Savings</string>
     <string name="frequent_spending">Frequent spending</string>
     <string name="enter_amount">Enter the amount</string>
-    <string name="habit">Привычки</string>
-    <string name="habit_name">Привычка</string>
-    <string name="days_amount">Количество дней</string>
-
+    <string name="habit">Habits</string>
+    <string name="habit_name">Habit</string>
+    <string name="days_amount">Number of days</string>
+    <string name="day_amount">Enter the number of days:</string>
+    <string name="habit_add">To add a habit, click on +</string>
+    <string name="your_habit_is_done">Today you have already marked the completion of this task</string>
+    <string name="you_is_done_habit_today">Did you really complete the task today?</string>
+    <string name="edit">Edit</string>
+    <string name="change_day">Change the number of days</string>
+    <string name="helper_finance_dialog">
+        Balance.\n
+Here you can see your current balance.
+Your balance increases when you add income.
+Decreases when you add an expense or frequent expenses.\n
+        \nSavings.\n
+Here you can record your current
+savings status by clicking on the plus button.  (See also) You
+can\'t spend out of your current savings . With a long
+click on the button, you can delete the entire amount of savings .\n
+\nRevenue.\n
+        By clicking on the plus button, you can add your income .
+Every time you add income, your balance increases.\n
+\nExpenses.\n
+By clicking on the minus button, you can add
+your expenses. You need to enter the amount and description of the
+expense (preferably). For your convenience, we have created a
+section: expense history, at the top in the "EXPENSES" section
+you can track your expenses.\n
+\nFrequent spending.\n
+By clicking on the plus button, you can add your
+frequent spending (Item). This is useful so that
+you can track what you often spend money on.
+By clicking on the Item, you can add the amount spent
+and see the total amount of money spent. Also, by
+swiping to the right, you can remove an Item from the list of frequent spenders.
+   </string>
+        <string name="home_menu">Main</string>
+    <string name="finance">Finance</string>
+    <string name="set_notification">Set a notification</string>
+    <string name="you_forgot_habbit">\"You haven\'t forgotten the habit\"</string>
+    <string name="set_notification_on">\"The notification is set to \"</string>
 </resources>

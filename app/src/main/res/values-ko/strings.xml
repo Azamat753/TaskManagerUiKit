@@ -221,8 +221,45 @@
     <string name="saving">저축</string>
     <string name="frequent_spending">빈번한 지출</string>
     <string name="enter_amount">금액을 입력하십시오</string>
-    <string name="habit">Привычки</string>
-    <string name="habit_name">Привычка</string>
-    <string name="days_amount">Количество дней</string>
-
+    <string name="habit">습관</string>
+    <string name="habit_name">습관</string>
+    <string name="days_amount">일 수</string>
+    <string name="day_amount">일 수를 입력하십시오:</string>
+    <string name="habit_add">습관을 추가하려면+를 클릭하십시오</string>
+    <string name="your_habit_is_done">오늘 당신은 이미이 작업의 완료를 표시했습니다</string>
+    <string name="you_is_done_habit_today">오늘 정말 작업을 완료 했습니까?</string>
+    <string name="edit">편집하다</string>
+    <string name="change_day">일수 변경</string>
+    <string name="helper_finance_dialog" >
+        대차 대조표.\n
+여기에서 현재 잔액을 볼 수 있습니다.
+소득을 추가하면 잔액이 증가합니다.
+비용 또는 빈번한 비용을 추가 할 때 감소합니다.\n
+        \n저축.\n
+여기에서 현재를 기록 할 수 있습니다
+플러스 버튼을 클릭하여 저축 상태.  (참조)당신
+현재 저축에서 쓸 수 없습니다. 긴 함께
+버튼을 클릭하면 저축의 전체 금액을 삭제할 수 있습니다.\n
+\n수익.\n
+더하기 버튼을 클릭하면 수입을 더할 수 있습니다.
+소득을 추가 할 때마다 잔액이 증가합니다.\n
+\n경비.\n
+마이너스 버튼을 클릭하면 다음을 추가 할 수 있습니다
+귀하의 비용. 의 양과 설명을 입력해야합니다
+비용(바람직하게는). 귀하의 편의를 위해,우리는
+섹션:"비용"섹션의 상단에있는 비용 내역
+당신은 당신의 비용을 추적 할 수 있습니다.\n
+    \n빈번한 지출.\n
+플러스 버튼을 클릭하면,당신은 당신의
+빈번한 지출(항목). 이 있도록 유용합니다
+자주 돈을 쓰는 것을 추적 할 수 있습니다.
+항목을 클릭하면 지출 한 금액을 추가 할 수 있습니다
+그리고 지출 한 총 금액을보십시오. 또한,에 의해
+오른쪽으로 스 와이프하면 잦은 지출자 목록에서 항목을 제거할 수 있습니다.
+   </string>
+    <string name="home_menu">중요한 것은</string>
+    <string name="finance">금융</string>
+    <string name="set_notification">알림 설정</string>
+    <string name="you_forgot_habbit">\"당신은 습관을 잊지 않았습니다\"</string>
+    <string name="set_notification_on">\"알림은 다음으로 설정됩니다\"</string>
 </resources>

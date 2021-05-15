@@ -55,7 +55,7 @@
     <string name="create_question_answer">Créer une réponse</string>
     <string name="qst_example">Quelle est votre couleur préférée ?</string>
     <string name="change_theme">Changer de sujet</string>
-    <string name="planner">Планировщик</string>
+    <string name="planner">Planner</string>
     <string name="add_event">Ajouter un événement</string>
     <string name="walk_dog">Aller à une réunion</string>
     <string name="begin">Début</string>
@@ -220,7 +220,45 @@
     <string name="saving">Épargne</string>
     <string name="frequent_spending">Dépenses fréquentes</string>
     <string name="enter_amount">Entrez le montant</string>
-    <string name="habit">Привычки</string>
-    <string name="habit_name">Привычка</string>
-    <string name="days_amount">Количество дней</string>
+    <string name="habit">Habitudes</string>
+    <string name="habit_name">Habitude</string>
+    <string name="days_amount">Nombre de jours</string>
+    <string name="day_amount">Entrez le nombre de jours:</string>
+    <string name="habit_add">Pour ajouter une habitude, cliquez sur +</string>
+    <string name="your_habit_is_done">Aujourd\'hui, vous avez déjà noté la réalisation de cette tâche</string>
+    <string name="you_is_done_habit_today">Avez-vous vraiment accompli la tâche aujourd\'hui?</string>
+    <string name="edit">Éditer</string>
+    <string name="change_day">Modifier le nombre de jours</string>
+    <string name="helper_finance_dialog" >
+        Équilibre.\n
+    Ici vous pouvez voir votre solde actuel.
+Votre solde augmente lorsque vous ajoutez des revenus.
+Diminue lorsque vous ajoutez des dépenses ou des dépenses fréquentes.\n
+        \Épargne.\n
+Ici vous pouvez enregistrer votre état actuel
+économies en cliquant sur le bouton plus.  (Aussi) vous n\'Êtes pas
+vous pouvez dépenser de l\'épargne actuelle . Avec la dette
+en cliquant sur le bouton, vous pouvez supprimer le montant total de l\'épargne.\n
+\nRecettes.\n
+En cliquant sur le bouton plus, vous pouvez ajouter votre revenu .
+Chaque fois que vous ajoutez un revenu, votre solde augmente.\n
+\nDépense.\n
+En cliquant sur le bouton moins, vous pouvez ajouter
+vos dépenses. Vous devez entrer le montant et la Description
+le débit (de préférence). Pour votre commodité, nous avons créé
+section: historique des dépenses, en haut de la section " DÉPENSES"
+vous pouvez suivre vos dépenses.\n
+\nDépenses fréquentes.\n
+En cliquant sur le bouton plus, vous pouvez ajouter votre
+dépenses fréquentes (Élément). Ceci est utile pour
+vous avez pu retracer ce que vous dépensez souvent de l\'argent.
+En cliquant sur un Élément, vous pouvez ajouter le montant dépensé
+et voir le montant total de l\'argent dépensé. Aussi,
+glisser vers la droite, vous pouvez supprimer un Élément de la liste des dépenses fréquentes.
+   </string>
+    <string name="home_menu">Principal</string>
+    <string name="finance">Financier</string>
+    <string name="set_notification">Définir la notification</string>
+    <string name="you_forgot_habbit">\"Vous n\'avez pas oublié l\'habitude\"</string>
+    <string name="set_notification_on">\"Notification installée sur\"</string>
 </resources>

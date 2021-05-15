@@ -204,23 +204,61 @@
     <string name="advice18_2">\" Los productos de calidad, por regla general, son más caros, pero el uso es más barato.\"</string>
     <string name="advice19_1">Asegúrese de que sus ingresos siempre crezcan más rápido que sus gastos.</string>
     <string name="advice19_2">\" Dicho esto, sus ingresos siempre deben ser mayores que sus gastos. Este es uno de los principios básicos del bienestar financiero.\"</string>
-    <string name="advice20_1">Всегда считайте деньги, даже если они маленькие.</string>
-    <string name="advice20_2">\" Небольшие ежедневные траты могут складываться в огромные суммы за годы и в еще большие за десятилетия. Каждый раз, когда вы говорите себе что-то вроде «1000 рублей не деньги, не жалко и потерять», вы отбираете у себя самого в будущем десятки и сотни тысяч, в которые бы превратилась эта тысяча, если бы вы её грамотно инвестировали.\"</string>
-    <string name="advice21_1">Сравните цены в разных местах перед тем как что-то купить.</string>
-    <string name="advice21_2">\" Лучше всего измерять цену в часах вашей жизни — сколько времени вам придется работать, чтобы набрать нужную сумму на эту покупку. Так вам будет проще сравнивать цену товара, которую вы платите с его ценностью для вас. Готовы ли вы отдать час жизни за чашку кофе? А месяц жизни за новый телефон?\"</string>
-    <string name="advice22">\"Не завидуйте другим людям, а учитесь у них тому, в чем они разбираются лучше вас. \"</string>
-    <string name="advice23">Осознайте, что ваше финансовое благополучие целиком и полностью зависит от вас и ваших действий.</string>
-    <string name="advice24_1">Сядьте на «денежную диету» прямо сейчас!</string>
-    <string name="advice24_2">\" Измените свой образ жизни прямо сейчас, не откладывая. Это позволит вам сэкономить в течение года тысячи долларов.\"</string>
-    <string name="advices">Советы</string>
-    <string name="costs">Расходы</string>
-    <string name="help">Помощь</string>
-    <string name="income">Доход</string>
-    <string name="balance">Баланс</string>
-    <string name="saving">Сбережения</string>
-    <string name="frequent_spending">Частые траты</string>
-    <string name="enter_amount">Введите сумму</string>
-    <string name="habit">Привычки</string>
-    <string name="habit_name">Привычка</string>
-    <string name="days_amount">Количество дней</string>
+    <string name="advice20_1">Siempre cuente el dinero, incluso si es pequeño.</string>
+    <string name="advice20_2">\" Pequeños las dietas pueden producir en grandes cantidades, durante años y en más de una década. Cada vez que te dices a TI mismo algo como "1000 rublos no es dinero, no es una pena perderlo", te quitas en el futuro decenas y cientos de miles, en los que este mil se convertiría si lo invirtieras de manera competente.\"</string>
+    <string name="advice21_1">Comparar precios en diferentes lugares antes de comprar algo.</string>
+    <string name="advice21_2">\" Lo mejor es medir el precio en las horas de su vida: cuánto tiempo tendrá que trabajar para obtener la cantidad correcta para esa compra. Por lo tanto, será más fácil comparar el precio de un artículo que paga con su valor para usted. ¿Estás listo para dar una hora de vida por una taza de café? ¿Y un mes de vida por un Teléfono nuevo?\"</string>
+    <string name="advice22">\"No envidias a otras personas, sino que aprendas de ellas lo que saben mejor que tú.\"</string>
+    <string name="advice23">Tenga en cuenta que su bienestar financiero depende completamente de usted y sus acciones.</string>
+    <string name="advice24_1">¡Siéntese en la" dieta del dinero " ahora mismo!</string>
+    <string name="advice24_2">\" Cambia tu estilo de vida ahora mismo sin posponer las cosas. Esto le ahorrará miles de dólares durante todo el año.\"</string>
+    <string name="advices">Consejos</string>
+    <string name="costs">Gastos</string>
+    <string name="help">Asistencia</string>
+    <string name="income">Ingreso</string>
+    <string name="balance">Balance</string>
+    <string name="saving">Ahorro</string>
+    <string name="frequent_spending">Gasto frecuente</string>
+    <string name="enter_amount">Introduzca la cantidad</string>
+    <string name="habit">Hábitos</string>
+    <string name="habit_name">Hábito</string>
+    <string name="days_amount">Número de días</string>
+    <string name="day_amount">Introduzca el número de días:</string>
+    <string name="habit_add">Para agregar un hábito, haga clic en +</string>
+    <string name="your_habit_is_done">Hoy ya ha notado la realización de esta tarea</string>
+    <string name="you_is_done_habit_today">¿Realmente has hecho la tarea hoy?</string>
+    <string name="edit">Corregir</string>
+    <string name="change_day">Cambiar el número de días</string>
+    <string name="helper_finance_dialog" >
+        Balance.\n
+Cambiar el número de díasaquí puedes ver tu saldo actual.
+Su saldo aumenta a medida que agrega ingresos.
+Disminuye cuando se agrega gasto o gasto frecuente.\n
+        \nAhorro.\n
+Aquí puede registrar su estado actual
+ahorro haciendo clic en el botón más.  (También) usted no
+puede gastar de sus ahorros actuales . Con deuda
+haga clic en el botón puede eliminar la cantidad total de ahorros.\n
+\nIngreso.\n
+Al hacer clic en el botón más, puede agregar sus ingresos .
+Con cada ingreso agregado, su saldo aumenta.\n
+\nGastos.\n
+Al hacer clic en el botón menos se puede añadir
+sus gastos. Debe ingresar la cantidad y la descripción
+(preferiblemente). Para su comodidad, hemos creado
+sección: historial de gastos, arriba en " GASTOS"
+puede hacer un seguimiento de sus gastos.\n
+\nGasto frecuente.\n
+Al hacer clic en el botón más, puede agregar su
+gasto frecuente (Elemento). Esto es útil para
+usted podría rastrear en lo que a menudo gasta dinero.
+Al hacer clic en un Elemento, puede agregar la cantidad gastada
+y ver la cantidad total de dinero gastado. También,
+al deslizar hacia la derecha, puede eliminar un Elemento de la lista de gastos frecuentes.
+   </string>
+    <string name="home_menu">Principal</string>
+    <string name="finance">Finanza</string>
+    <string name="set_notification">Establecer notificación</string>
+    <string name="you_forgot_habbit">\"No te has olvidado del hábito\"</string>
+    <string name="set_notification_on">\"Notificación establecida en\"</string>
 </resources>

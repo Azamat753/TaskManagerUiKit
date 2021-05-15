@@ -220,7 +220,45 @@
     <string name="saving">Risparmio</string>
     <string name="frequent_spending">Spese frequenti</string>
     <string name="enter_amount">Inserisci l\'importo</string>
-    <string name="habit">Привычки</string>
-    <string name="habit_name">Привычка</string>
-    <string name="days_amount">Количество дней</string>
+    <string name="habit">Abitudini</string>
+    <string name="habit_name">Abitudine</string>
+    <string name="days_amount">Numero di giorni</string>
+    <string name="day_amount">Inserisci il numero di giorni:</string>
+    <string name="habit_add">Per aggiungere un\'abitudine clicca su +</string>
+    <string name="your_habit_is_done">Oggi hai già notato l\'esecuzione di questa attività</string>
+    <string name="you_is_done_habit_today">Hai davvero completato la missione oggi?</string>
+    <string name="edit">Redigere</string>
+    <string name="change_day">Modificare il numero di giorni</string>
+    <string name="helper_finance_dialog" >
+        Equilibrio.\n
+Qui puoi vedere il tuo saldo corrente.
+Il tuo saldo aumenta con l\'aggiunta di entrate.
+Diminuisce con l\'aggiunta di spese o spese frequenti.\n
+        \nRisparmio.\n
+Qui puoi registrare il tuo stato attuale
+risparmio premendo il pulsante più.  (Anche) non sei
+può spendere dal risparmio corrente . Con un debito
+fare clic sul pulsante può rimuovere l\'intero importo del risparmio.\n
+\nRedditi.\n
+Facendo clic sul pulsante più è possibile aggiungere il vostro reddito .
+Ogni volta che aggiungi un reddito, il tuo saldo aumenta.\n
+\nSpese.\n
+Facendo clic sul pulsante meno è possibile aggiungere
+le vostre spese. È necessario inserire l\'importo e la descrizione
+consumo (preferibilmente). Per la vostra comodità, abbiamo creato
+sezione: Storia delle spese, in alto nella sezione " spese"
+puoi tenere traccia delle tue spese.\n
+\nSpese frequenti.\n
+Facendo clic sul pulsante più è possibile aggiungere il proprio
+spese frequenti (elemento). Questo è utile per
+siete stati in grado di rintracciare ciò che spesso spendere soldi.
+Cliccando su un elemento è possibile aggiungere l\'importo speso
+e vedere l\'importo totale del denaro speso. Anche,
+scorri verso destra, puoi rimuovere un elemento dall\'elenco delle spese frequenti.
+   </string>
+    <string name="home_menu">Principale</string>
+    <string name="finance">Finanza</string>
+    <string name="set_notification">Imposta notifica</string>
+    <string name="you_forgot_habbit">\"Non hai dimenticato l\'abitudine\"</string>
+    <string name="set_notification_on">\"Notifica impostata su\"</string>
 </resources>

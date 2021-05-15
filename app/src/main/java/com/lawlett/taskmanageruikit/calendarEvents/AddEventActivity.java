@@ -115,7 +115,6 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
                         Uri.parse("package:" + this.getPackageName()));
                 startActivityForResult(intent, 1);
             }  //Permission Granted-System will work
-
         }
     }
 

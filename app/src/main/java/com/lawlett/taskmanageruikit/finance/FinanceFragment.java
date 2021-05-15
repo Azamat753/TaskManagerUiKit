@@ -33,6 +33,7 @@ import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.DialogHelper;
 import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.OkButtonClickListener;
+import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.financeDialog.AdviceDialog;
 import com.lawlett.taskmanageruikit.utils.financeDialog.AlertDialogFragment;
 import com.lawlett.taskmanageruikit.utils.financeDialog.AlertDialogFragmentQt2;
@@ -78,7 +79,9 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        collectionName = "Финансы" + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        if (user!=null){
+            collectionName = "Финансы" + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+        }
         initViews(view);
         setPreferences();
         setClickers();
@@ -299,9 +302,8 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            new DialogHelper().myDialog2(requireContext(), getString(R.string.attention),
-                    getString(R.string.you_sure_delete), getString(R.string.yes), getString(R.string.no), () ->
-                            App.getDataBase().frequentSpendingDao().delete(list.get(viewHolder.getAdapterPosition())));
+            PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.task_dialog_message), () -> App.getDataBase().frequentSpendingDao().delete(list.get(viewHolder.getAdapterPosition())));
+            adapterFS.notifyDataSetChanged();
         }
     };
 }

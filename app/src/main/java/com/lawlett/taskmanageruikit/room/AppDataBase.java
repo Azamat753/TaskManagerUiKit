@@ -22,6 +22,7 @@ import com.lawlett.taskmanageruikit.timing.model.TimingModel;
 @Database(entities = {QuickModel.class, PersonalModel.class, WorkModel.class, MeetModel.class,
         HomeModel.class, DoneModel.class, PrivateModel.class, CalendarTaskModel.class,
         TimingModel.class, AchievementModel.class, LevelModel.class, SpendingModel.class, FrequentSpendingModel.class,HabitModel.class}, version = 5, exportSchema = false)
+
 public abstract class AppDataBase extends RoomDatabase {
 
     public abstract QuickDao ideaDao();

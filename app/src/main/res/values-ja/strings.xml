@@ -220,7 +220,45 @@
     <string name="saving">貯蓄</string>
     <string name="frequent_spending">頻繁な支出</string>
     <string name="enter_amount">金額を入力してください</string>
-    <string name="habit">Привычки</string>
-    <string name="habit_name">Привычка</string>
-    <string name="days_amount">Количество дней</string>
+    <string name="habit">習慣</string>
+    <string name="habit_name">習慣</string>
+    <string name="days_amount">日数</string>
+    <string name="day_amount">日数を入力します:</string>
+    <string name="habit_add">習慣を追加するには、+をクリックします</string>
+    <string name="your_habit_is_done">今日では、すでにこのタスクの完了をマークしています</string>
+    <string name="you_is_done_habit_today">あなたは本当に今日のタスクを完了しましたか？</string>
+    <string name="edit">編集</string>
+    <string name="change_day">日数を変更する</string>
+    <string name="helper_finance_dialog" >
+        貸借対照表.\n
+ここでは、現在の残高を見ることができます。
+収入を追加すると残高が増えます。
+経費または頻繁な経費を追加すると減少します.\n
+        \n貯蓄。\n
+ここでは、現在の
+プラスボタンをクリックして貯蓄状況。  （も参照）あなた
+あなたの現在の貯蓄から費やすことはできません。 長いのを使って
+ボタンをクリックすると、貯蓄の全額を削除することができます.\n
+\n収益.\n
+プラスボタンをクリックすることで、あなたの収入を追加できます。
+収入を追加するたびに、あなたのバランスが増加.\n
+\n費用.\n
+マイナスボタンをクリックすると、追加できます
+あなたの費用。 あなたはの量と説明を入力する必要があります
+費用（好ましくは）。 あなたの便宜のために、私達はaを作成しました
+セクション："経費"セクションの上部にある経費履歴
+費用を追跡できます.\n
+\n頻繁な支出.\n
+プラスボタンをクリックすると、あなたの追加することが
+頻繁な支出（アイテム）。 これは次のように便利です
+頻繁にお金を使うものを追跡できる。
+アイテムをクリックすると、費やした金額を追加できます
+そして、費やしたお金の総額を参照してください。 また、によって
+右にスワイプすると、頻繁な浪費者のリストから項目を削除できます。
+   </string>
+    <string name="home_menu">主なもの</string>
+    <string name="finance">金融</string>
+    <string name="set_notification">通知を設定する</string>
+    <string name="you_forgot_habbit">\"あなたは習慣を忘れていない\"</string>
+    <string name="set_notification_on">\"通知は次のように設定されています\"</string>
 </resources>

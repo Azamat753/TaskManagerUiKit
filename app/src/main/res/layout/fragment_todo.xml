@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".tasks.TasksFragment">
 
-
     <ProgressBar
         android:id="@+id/tasks_progress_bar"
         android:layout_width="wrap_content"

@@ -165,62 +165,100 @@
     <string name="date">Tarih</string>
     <string name="sync">Senkronize et</string>
     <string name="want_save_data_in_google">Kayıtlarınızı korumak ister misiniz ?</string>
-    <string name="you_name">Ваше имя</string>
-    <string name="rate_app">Поставить оценку</string>
-    <string name="not_enough_balanсe">Недостаточно средств на балансе !</string>
-    <string name="attention_alert">Внимание!</string>
-    <string name="advice1_1">\"Относитесь к деньгам с уважением \"</string>
-    <string name="advice1_2">Ваши деньги это ваше «законсервированное» время и энергия, которые вы потратили, чтобы их заработать.</string>
-    <string name="advice2">\"Заведите себе привычку вести учет доходов и расходов в электронном или письменном виде. \"</string>
-    <string name="advice3_1">Избавьтесь от кредитных карт, потребительских кредитов и прочих долгов.</string>
-    <string name="advice3_2">\" Долги давят психологически, вгоняют людей в стресс и заставляют беспокоиться о завтрашнем дне. В итоге, за пользование чужими деньгами вы заплатите не только своими деньгами, но и своим здоровьем и своей энергией.\"</string>
-    <string name="advice4_1">Живите по средствам.</string>
-    <string name="advice4_2">\" Когда вы нарушаете это правило, вы теряете гармонию в собственной жизни. Вы тратите деньги, которых не заработали, Фактически, пользуясь тем, что вам не принадлежит, вы можете лишиться этого в любой момент! Осознайте разницу между своими потребностями — тем, что вам действительно нужно, и своими желаниями — тем, что «неплохо было бы иметь». Расставьте приоритеты так, чтобы сначала закрывать все потребности, а то что остается пускать на хотелки и развлечения.\"</string>
-    <string name="advice5_1">Откажитесь от импульсивных покупок и необязательных трат.</string>
-    <string name="advice5_2">\" Составляйте список покупок перед походом в магазин и придерживайтесь его.\"</string>
-    <string name="advice6_1">Работайте над повышением своих доходов.</string>
-    <string name="advice6_2">\" Узнайте, за что конкретно вам платят деньги, и развивайтесь в этой области. Приобретение более глубоких знаний в узкой нише, расширение сферы ваших компетенций и ответственности, повышение качества выполненной работы, а также более быстрое выполнение работы, могут стать ключом к повышению ваших доходов.\"</string>
-    <string name="advice7_2">\" Увеличение дохода — это результат длительной и регулярной работы, поэтому запаситесь терпением и начинайте двигаться к цели небольшими шагами.\"</string>
-    <string name="advice7_1">Не ждите быстрых результатов.</string>
-    <string name="advice8_1">Создавайте и приобретайте дополнительные источники дохода.</string>
-    <string name="advice8_2">\" Секрет финансовой стабильности многих успешных людей заключается в множественных источниках дохода.\"</string>
-    <string name="advice9">Берегите деньги — не тратьте их на азартные игры, финансовые пирамиды, сомнительные предприятия и сделки.</string>
-    <string name="advice10_1">Не давайте деньги в долг</string>
-    <string name="advice10_2">\" Велики риски и с людьми отношения испортить и деньги потерять. Оставьте банкам их работу\"</string>
-    <string name="advice11_1">Не разбрасывайтесь даже небольшими деньгами.</string>
-    <string name="advice11_2">\" Копейка бережет не только рубль, но и доллар, и евро!\"</string>
-    <string name="advice12_1">Откажитесь от вредных финансовых привычек,</string>
-    <string name="advice12_2">\" Регулярно вытягивающих у вас деньги из кошелька, но не приносящих уже былого удовольствия. Мы тратим деньги, чтобы получить какие-то эмоции. При одинаковой цене разные вещи могут приносить разное количество эмоций. Например, кофе в кафе за 200 рублей, который вы привыкли выпивать после обеда, уже не вызывает восторга и удовлетворения, но все еще обходится вашему бюджету в 1000 рублей в неделю. За ту же тысячу вы могли бы получить гораздо больше эмоций, сходив на массаж или в кино.\"</string>
-    <string name="advice13_1">Не стесняйтесь спросить о скидке и воспользоваться специальными предложениями.</string>
-    <string name="advice13_2">\" Продавцу наверняка будет выгоднее предложить вам скидку и продать товар, чем отказать в скидке и не продать ничего.\"</string>
-    <string name="advice14_1">Изучайте литературу по финансовой грамотности.</string>
-    <string name="advice14_2">\" Ваше благосостояние напрямую зависит от уровня вашей финансовой грамотности!\"</string>
-    <string name="advice15">Заведите себе личный финансовый план и следуйте ему.</string>
-    <string name="advice16_1">Сначала платите себе — поздно пытаться откладывать деньги после того, как вы их уже потратили.</string>
-    <string name="advice16_2">\" Откладывать часть денег на достижение своих финансовых целей нужно сразу же, как только вы их получили.\"</string>
-    <string name="advice17_1">Инвестирование проще, и доступнее чем вы думаете.</string>
-    <string name="advice17_2">\" К тому же некоторые финансовые инструменты позволяют во многом автоматизировать этот процесс. Главное понять, настолько ли это важно для вас, что вы готовы начать действовать?\"</string>
-    <string name="advice18_1">Покупайте необходимые качественные вещи.</string>
-    <string name="advice18_2">\" Качественные продукты, как правило стоят дороже, зато в использовании обходится дешевле.\"</string>
-    <string name="advice19_1">Следите за тем, чтобы ваши доходы всегда росли быстрее ваших расходов.</string>
-    <string name="advice19_2">\" При этом ваши доходы всегда должны быть больше ваших расходов. Это один из основных принципов финансового благополучия.\"</string>
-    <string name="advice20_1">Всегда считайте деньги, даже если они маленькие.</string>
-    <string name="advice20_2">\" Небольшие ежедневные траты могут складываться в огромные суммы за годы и в еще большие за десятилетия. Каждый раз, когда вы говорите себе что-то вроде «1000 рублей не деньги, не жалко и потерять», вы отбираете у себя самого в будущем десятки и сотни тысяч, в которые бы превратилась эта тысяча, если бы вы её грамотно инвестировали.\"</string>
-    <string name="advice21_1">Сравните цены в разных местах перед тем как что-то купить.</string>
-    <string name="advice21_2">\" Лучше всего измерять цену в часах вашей жизни — сколько времени вам придется работать, чтобы набрать нужную сумму на эту покупку. Так вам будет проще сравнивать цену товара, которую вы платите с его ценностью для вас. Готовы ли вы отдать час жизни за чашку кофе? А месяц жизни за новый телефон?\"</string>
-    <string name="advice22">\"Не завидуйте другим людям, а учитесь у них тому, в чем они разбираются лучше вас. \"</string>
-    <string name="advice23">Осознайте, что ваше финансовое благополучие целиком и полностью зависит от вас и ваших действий.</string>
-    <string name="advice24_1">Сядьте на «денежную диету» прямо сейчас!</string>
-    <string name="advice24_2">\" Измените свой образ жизни прямо сейчас, не откладывая. Это позволит вам сэкономить в течение года тысячи долларов.\"</string>
-    <string name="advices">Советы</string>
-    <string name="costs">Расходы</string>
-    <string name="help">Помощь</string>
-    <string name="income">Доход</string>
-    <string name="balance">Баланс</string>
-    <string name="saving">Сбережения</string>
-    <string name="frequent_spending">Частые траты</string>
-    <string name="enter_amount">Введите сумму</string>
-    <string name="habit">Привычки</string>
-    <string name="habit_name">Привычка</string>
-    <string name="days_amount">Количество дней</string>
+    <string name="you_name">Adınız</string>
+    <string name="rate_app">Değerlendirme koymak</string>
+    <string name="not_enough_balanсe">Bilançoda yeterli para yok !</string>
+    <string name="attention_alert">Dikkat!</string>
+    <string name="advice1_1">\"Parayı saygıyla tedavi et\"</string>
+    <string name="advice1_2">Paranız, onları kazanmak için harcadığınız» konserve " zamanınız ve enerjinizdir.</string>
+    <string name="advice2">\"Gelir ve giderlerin kayıtlarını elektronik veya yazılı olarak tutma alışkanlığını yaşayın.\"</string>
+    <string name="advice3_1">Kredi kartlarından, tüketici kredilerinden ve diğer borçlardan kurtulun.</string>
+    <string name="advice3_2">\" Borçlar psikolojik olarak baskı yapar, insanları strese sokar ve yarın hakkında endişelenir. Sonuç olarak, başkalarının parasını kullanmak için sadece paranızı değil, aynı zamanda sağlığınızı ve enerjinizi de ödeyeceksiniz.\"</string>
+    <string name="advice4_1">Yaşamak anlamına gelir.</string>
+    <string name="advice4_2">\" Bu kuralı kırdığınızda, kendi hayatınızdaki uyumu kaybedersiniz. Kazanmadığınız parayı harcıyorsunuz, aslında, sahip olmadığınız şeyleri kullanarak, istediğiniz zaman kaybedebilirsiniz! İhtiyaçlarınız arasındaki farkın farkında olun - gerçekten ihtiyacınız olan şey ve arzularınız « "sahip olmak güzel olurdu". Öncelik verin, böylece ilk önce tüm ihtiyaçları kapatın ve sonra da eğlence ve eğlence için izin vermeye devam edin.\"</string>
+    <string name="advice5_1">Dürtüsel alımlardan ve isteğe bağlı harcamalardan vazgeçin.</string>
+    <string name="advice5_2">\" Mağazaya gitmeden önce bir alışveriş listesi yapın ve ona sadık kalın.\"</string>
+    <string name="advice6_1">Çalışın üzerinde bir artış gelir.</string>
+    <string name="advice6_2">\" Tam olarak ne için para ödediğinizi öğrenin ve bu alanda gelişin. Dar bir niş içinde daha derin bilgi edinmek, yetkinliklerinizi ve sorumluluk alanınızı genişletmek, yapılan işin kalitesini artırmak ve daha hızlı iş yapmak, gelirinizi artırmanın anahtarı olabilir.\"</string>
+    <string name="advice7_2">\" Artan gelir, uzun ve düzenli bir çalışmanın sonucudur, bu nedenle sabırlı olun ve küçük adımlarla hedefe doğru hareket etmeye başlayın.\"</string>
+    <string name="advice7_1">Hızlı sonuçlar beklemeyin.</string>
+    <string name="advice8_1">Ek gelir kaynakları oluşturun ve satın alın.</string>
+    <string name="advice8_2">\" Birçok başarılı insanın finansal istikrarının sırrı çoklu gelir kaynaklarında yatmaktadır.\"</string>
+    <string name="advice9">Parayı koruyun-kumar, finansal piramitler, şüpheli işletmeler ve anlaşmalar için harcamayın.</string>
+    <string name="advice10_1">Borç para vermeyin</string>
+    <string name="advice10_2">\" Büyük riskler ve insanlarla ilişkiler yağma ve para kaybetmek. Bankalara işlerini bırak\"</string>
+    <string name="advice11_1">Değil разбрасывайтесь bile çok küçük bir para.</string>
+    <string name="advice11_2">\" Bir kuruş sadece ruble değil, aynı zamanda dolar ve EURO\'yu da korur!\"</string>
+    <string name="advice12_1">Kötü finansal alışkanlıklardan vazgeçin,</string>
+    <string name="advice12_2">\" Düzenli olarak cüzdanınızdan para çekerek, ancak zaten eski zevk getirmiyor. Biraz duygu almak için para harcıyoruz. Aynı fiyata, farklı şeyler farklı miktarda duygu getirebilir. Örneğin, akşam yemeğinden sonra içmeye alışkın olduğunuz 200 ruble için bir kafede kahve, artık zevk ve tatmin edici değil, yine de haftada 1000 ruble bütçenize mal oluyor. Aynı bin için, bir masaj ya da sinemaya giderek çok daha fazla duygu alabilirsiniz.\"</string>
+    <string name="advice13_1">İndirim hakkında soru sormaktan çekinmeyin ve özel fırsatlardan yararlanın.</string>
+    <string name="advice13_2">\" Satıcı, size bir indirim sunmaktan ve ürünü satmaktan, indirimden vazgeçmekten ve hiçbir şey satmamaktan daha karlı olacaktır.\"</string>
+    <string name="advice14_1">Finansal okuryazarlık literatürünü inceleyin.</string>
+    <string name="advice14_2">\" Refahınız doğrudan finansal okuryazarlığınızın seviyesine bağlıdır!\"</string>
+    <string name="advice15">Kendinize kişisel bir finansal plan yapın ve takip edin.</string>
+    <string name="advice16_1">Önce kendinize ödeme yapın-zaten harcadıktan sonra para biriktirmeye çalışmak için çok geç.</string>
+    <string name="advice16_2">\" Finansal hedeflerinize ulaşmak için paranın bir kısmını bir kenara koyun, onları aldıktan hemen sonra.\"</string>
+    <string name="advice17_1">Yatırım daha kolay ve düşündüğünüzden daha uygun fiyatlı.</string>
+    <string name="advice17_2">\" Buna ek olarak, bazı finansal araçlar büyük ölçüde bu süreci otomatikleştirmek için izin verir. Anlamanız gereken en önemli şey, sizin için bu kadar önemli olup olmadığıdır, harekete geçmeye hazır mısınız?\"</string>
+    <string name="advice18_1">Gerekli kaliteli şeyleri satın alın.</string>
+    <string name="advice18_2">\" Yüksek kaliteli ürünler genellikle daha pahalıdır, ancak kullanımda daha ucuzdur.\"</string>
+    <string name="advice19_1">Gelirinizin her zaman harcamalarınızdan daha hızlı büyüdüğünden emin olun.</string>
+    <string name="advice19_2">\" Bununla birlikte, geliriniz her zaman harcamalarınızdan daha büyük olmalıdır. Bu, finansal refahın temel ilkelerinden biridir.\"</string>
+    <string name="advice20_1">Küçük olsalar bile her zaman parayı Sayın.</string>
+    <string name="advice20_2">\" Küçük günlük harcamalar yıllar içinde büyük miktarlarda ve on yıllar içinde daha büyük miktarlarda toplanabilir. Kendinize «1000 ruble para değil, kaybetmek için üzülmeyin» gibi bir şey söylediğinizde, doğru bir şekilde yatırım yaptıysanız, bu binlerce kişinin dönüşeceği gelecekte onlarca ve yüz binlerce kişiyi seçersiniz.\"</string>
+    <string name="advice21_1">Bir şey satın almadan önce farklı yerlerde fiyatları karşılaştırın.</string>
+    <string name="advice21_2">\" Fiyatınızı hayatınızın saatlerinde ölçmek en iyisidir-bu satın alma işlemi için doğru miktarı elde etmek için ne kadar süre çalışmanız gerekir. Bu nedenle, ödediğiniz ürünün fiyatını sizin için değeri ile karşılaştırmak daha kolay olacaktır. Bir fincan kahve için bir saat hayat vermeye hazır mısınız? Ve yeni bir telefon için bir ay mı?\"</string>
+    <string name="advice22">\"Diğer insanları kıskanmayın, sizden daha iyi anladıkları şeyleri onlardan öğrenin.\"</string>
+    <string name="advice23">Finansal refahınızın tamamen size ve eylemlerinize bağlı olduğunu fark edin.</string>
+    <string name="advice24_1">Şu anda «para diyetine " oturun!</string>
+    <string name="advice24_2">\" Yaşam tarzınızı şu anda ertelemeden değiştirin. Bu yıl binlerce dolar tasarruf sağlayacaktır.\"</string>
+    <string name="advices">Sovyet</string>
+    <string name="costs">Harcama</string>
+    <string name="help">Yardım</string>
+    <string name="income">Gelir</string>
+    <string name="balance">Denge</string>
+    <string name="saving">Tasarruf</string>
+    <string name="frequent_spending">Sık harcamalar</string>
+    <string name="enter_amount">Tutarı girin</string>
+    <string name="habit">Alışkanlıklar</string>
+    <string name="habit_name">Alışkanlık</string>
+    <string name="days_amount">Gün sayısı</string>
+    <string name="day_amount">Gün sayısını girin:</string>
+    <string name="habit_add">Bir alışkanlık eklemek için + \' ya tıklayın</string>
+    <string name="your_habit_is_done">Bugün zaten bu görevi yerine getirmeyi işaretlediniz</string>
+    <string name="you_is_done_habit_today">Bugün görevi gerçekten tamamladınız mı?</string>
+    <string name="edit">Düzeltme</string>
+    <string name="change_day">Gün sayısını değiştir</string>
+    <string name="helper_finance_dialog" >
+        Denge.\n
+Burada mevcut bakiyenizi görebilirsiniz.
+Gelir eklendiğinde bakiyeniz artar.
+Gider veya sık harcama eklendiğinde azalır.\n
+        \nTasarruf.\n
+Burada mevcut durumunuzu kaydedebilirsiniz
+artı düğmesine basarak tasarruf.  (Ayrıca) sen değilsin
+mevcut tasarruflardan harcayabilirsiniz . Borç altında
+düğmeye bir tıklama ile tüm tasarruf miktarını silebilirsiniz.\n
+\nGelir.\n
+Artı düğmesine tıklayarak gelir ekleyebilirsiniz .
+Her gelir eklendiğinde bakiyeniz artar.\n
+\nHarcama.\n
+Eksi düğmesine tıklayarak ekleyebilirsiniz
+masraflarınız. Miktarı ve açıklamayı girmeniz gerekiyor
+akış hızı (tercihen). Size kolaylık sağlamak için yarattık
+bölüm: harcama geçmişi, en üstte harcamalar"
+harcamalarınızı takip edebilirsiniz.\n
+\nSık harcamalar.\n
+Artı düğmesine tıklayarak kendi ekleyebilirsiniz
+sık harcamalar (öğe). Bunu yapmak için yararlıdır
+sen-ebil iz üzerinde olduğunu sık sık para harcamak.
+Bir öğeye tıklayarak harcanan miktarı ekleyebilirsiniz
+ve harcanan paranın toplam miktarını görmek. Da,
+sağa kaydırarak, sık harcama listesinden bir öğeyi kaldırabilirsiniz.
+   </string>
+    <string name="home_menu">Ana</string>
+    <string name="finance">Finans</string>
+    <string name="set_notification">Bildirimi ayarla</string>
+    <string name="you_forgot_habbit">\"Alışkanlığı unutmadın\"</string>
+    <string name="set_notification_on">\"Bildirim ayarlandı\"</string>
 </resources>

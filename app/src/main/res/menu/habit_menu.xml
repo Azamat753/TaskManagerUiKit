@@ -9,5 +9,8 @@
     <item
         android:id="@+id/habit_change_day"
         android:title="@string/change_day"/>
+    <item
+        android:id="@+id/habit_notification"
+        android:title="@string/set_notification"/>
 
 </menu>

@@ -8,8 +8,11 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.multidex.MultiDex;
 import androidx.room.Room;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.lawlett.taskmanageruikit.room.AppDataBase;
 
@@ -26,18 +29,38 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        dataBase = Room.databaseBuilder(this, AppDataBase.class, "database")
-             .fallbackToDestructiveMigration().allowMainThreadQueries().build();
+        if (dataBase == null) {
+            synchronized (AppDataBase.class) {
+                if (dataBase == null) {
+                    dataBase = Room.databaseBuilder(getApplicationContext(), AppDataBase.class,
+                            "database").
+                            addMigrations(migration).allowMainThreadQueries().build();
+                }
+            }
+//
+//            dataBase = Room.databaseBuilder(this, AppDataBase.class, "database") worked
+//                    .fallbackToDestructiveMigration().allowMainThreadQueries().build();
 
-        createNotificationChannel();
-        resources = getResources();
+            createNotificationChannel();
+            resources = getResources();
 
+        }
     }
+
+    static Migration migration = new Migration(4, 5) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE `FrequentSpendingModel` (`id` INTEGER NOT NULL, " + "`name` TEXT ," + " `image` Integer NOT NULL ," + " `amount` TEXT , PRIMARY KEY(`id`))");
+            database.execSQL("CREATE TABLE `HabitModel` (`id` Integer NOT NULL," + " `title`TEXT," + " `image` Integer NOT NULL," + " `allDays` TEXT," + " `currentDay` Integer NOT NULL ," + " `myDay` Integer NOT NULL,PRIMARY KEY(`id`)) ");
+            database.execSQL("CREATE TABLE `SpendingModel` (`id` INTEGER NOT NULL," + " `description`TEXT ," + " `amount` TEXT," + " `date` INTEGER NOT NULL,PRIMARY KEY(`id`)) ");
+        }
+    };
+
     public static AppDataBase getDataBase() {
         return dataBase;
     }
 
-    public static void showToast(Context context,String text){
+    public static void showToast(Context context, String text) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
 
@@ -46,9 +69,11 @@ public class App extends Application {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
+
     public static Resources getAppResources() {
         return resources;
     }
+
     public void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(

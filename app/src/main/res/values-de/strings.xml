@@ -220,7 +220,45 @@
     <string name="saving">Einsparung</string>
     <string name="frequent_spending">Häufige Ausgaben</string>
     <string name="enter_amount">Geben Sie den Betrag ein</string>
-    <string name="habit">Привычки</string>
-    <string name="habit_name">Привычка</string>
-    <string name="days_amount">Количество дней</string>
+    <string name="habit">Gewohnheiten</string>
+    <string name="habit_name">Gewohnheit</string>
+    <string name="days_amount">Anzahl der Tage</string>
+    <string name="day_amount">Geben Sie die Anzahl der Tage ein:</string>
+    <string name="habit_add">Um eine Gewohnheit hinzuzufügen, klicken Sie auf +</string>
+    <string name="your_habit_is_done">Heute haben Sie bereits die Ausführung dieser Aufgabe markiert</string>
+    <string name="you_is_done_habit_today">Haben Sie die Aufgabe heute wirklich erfüllt?</string>
+    <string name="edit">Redigieren</string>
+    <string name="change_day">Anzahl der Tage ändern</string>
+    <string name="helper_finance_dialog" >
+        Das Gleichgewicht.\n
+Hier können Sie Ihr aktuelles Guthaben sehen.
+Ihr Guthaben erhöht sich, wenn Sie Einnahmen hinzufügen.
+Reduziert, wenn Kosten oder häufige Ausgaben hinzugefügt werden.\n
+        \nEinsparung.\n
+Hier können Sie Ihren aktuellen Status aufzeichnen
+einsparungen durch Drücken der Plus-Taste.  (Auch) Sie nicht
+sie können aus der aktuellen Ersparnis ausgeben . Mit Schulden
+mit einem Klick auf die Schaltfläche können Sie den gesamten Betrag der Ersparnis löschen.\n
+\nEinnahmen.\n
+Durch Drücken der Plus-Taste können Sie Ihr Einkommen hinzufügen .
+Jedes Mal, wenn Sie ein Einkommen hinzufügen, erhöht sich Ihr Guthaben.\n
+\nKosten.\n
+Durch Drücken der Minus - Taste können Sie hinzufügen
+ihre Ausgaben. Sie müssen den Betrag und die Beschreibung eingeben
+kosten (vorzugsweise). Für Ihre Bequemlichkeit haben wir erstellt
+abschnitt: Ausgabenhistorie, oben im Abschnitt " AUSGABEN"
+sie können Ihre Ausgaben verfolgen.\n
+\nHäufige Ausgaben.\n
+Mit einem Klick auf die Plus-Taste können Sie Ihre
+häufige Ausgaben (Element). Dies ist nützlich, um
+sie konnten verfolgen, wofür Sie oft Geld ausgeben.
+Durch Klicken auf das Element können Sie den ausgegebenen Betrag hinzufügen
+und sehen Sie die Summe des ausgegebenen Geldes. Auch,
+streichen Sie nach rechts, können Sie ein Element aus der Liste der häufigen Ausgaben entfernen.
+   </string>
+    <string name="home_menu">Die Hauptsache</string>
+    <string name="finance">Finanz</string>
+    <string name="set_notification">Benachrichtigung einstellen</string>
+    <string name="you_forgot_habbit">\"Du hast die Gewohnheit nicht vergessen\"</string>
+    <string name="set_notification_on">\"Installiert Benachrichtigung auf\"</string>
 </resources>

@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.lawlett.taskmanageruikit.R;
+import com.lawlett.taskmanageruikit.help.HelpActivity;
 import com.lawlett.taskmanageruikit.tasksPage.addTask.CustomTaskDialog;
 import com.lawlett.taskmanageruikit.tasksPage.addTask.DoneActivity;
 import com.lawlett.taskmanageruikit.tasksPage.data.model.DoneModel;
@@ -50,7 +51,7 @@ public class TasksFragment extends Fragment {
             home_amount, private_amount, done_amount, done_title,
             home_title, meet_title, personal_title, work_title;
     private Integer doneAmount, personalAmount, workAmount, meetAmount, homeAmount, privateAmount;
-    private ConstraintLayout personConst, workConst, meetConst, homeConst, privateConst,customConst;
+    private ConstraintLayout personConst, workConst, meetConst, homeConst, privateConst, customConst;
     private LinearLayout addConst, doneConst, bubble;
     private List<DoneModel> list;
     private int buttonListen;
@@ -70,7 +71,7 @@ public class TasksFragment extends Fragment {
         initViews(view);
         try {
             setTitleAndImages();
-        }catch (Resources.NotFoundException e){
+        } catch (Resources.NotFoundException e) {
             e.printStackTrace();
         }
         setBubble();
@@ -82,9 +83,10 @@ public class TasksFragment extends Fragment {
     private void setBubble() {
         if (!TaskDialogPreference.isShown()) {
             bubble.setVisibility(View.VISIBLE);
-        } else {
-            bubble.setVisibility(View.GONE);
+            bubble.setOnClickListener(view -> startActivity(new Intent(requireActivity(), HelpActivity.class)));
+            TaskDialogPreference.saveShown();
         }
+        bubble.setVisibility(View.GONE);
     }
 
     private void setTitleAndImages() {
@@ -118,7 +120,16 @@ public class TasksFragment extends Fragment {
     }
 
     private void initClickers() {
-        customConst.setOnClickListener(v -> startActivity(new Intent(getContext(), DoneActivity.class)));
+        customConst.setOnClickListener(
+                view -> {
+                    String name = TaskDialogPreference.getTitle();
+                    if (!name.isEmpty()) {
+                        startActivity(new Intent(requireContext(), DoneActivity.class));
+                    } else {
+                        showCustomTaskDialog();
+                    }
+                }
+        );
         personConst.setOnClickListener(v -> startActivity(new Intent(getContext(), PersonalActivity.class)));
         workConst.setOnClickListener(v -> startActivity(new Intent(getContext(), WorkActivity.class)));
         meetConst.setOnClickListener(v -> startActivity(new Intent(getContext(), MeetActivity.class)));
@@ -177,8 +188,8 @@ public class TasksFragment extends Fragment {
         personal_title = view.findViewById(R.id.person_task_title);
         work_title = view.findViewById(R.id.work_task_title);
         bubble = view.findViewById(R.id.bubble);
-        doneConst=view.findViewById(R.id.doneconst);
-        customConst=view.findViewById(R.id.newconst);
+        doneConst = view.findViewById(R.id.doneconst);
+        customConst = view.findViewById(R.id.newconst);
         ProgressBar progressBar = view.findViewById(R.id.tasks_progress_bar);
     }
 
@@ -285,7 +296,7 @@ public class TasksFragment extends Fragment {
             HashMap<String, Object> map = new HashMap<>();
             map.put("categoryName", title.trim());
             map.put("categoryIcon", icon);
-        FireStoreTools.writeOrUpdateDataByFireStore(documentName, Constants.CATEGORY_COLLECTION + "-"+"("+user.getDisplayName()+")"+user.getUid(), db, map);
+            FireStoreTools.writeOrUpdateDataByFireStore(documentName, Constants.CATEGORY_COLLECTION + "-" + "(" + user.getDisplayName() + ")" + user.getUid(), db, map);
         }
     }
 
