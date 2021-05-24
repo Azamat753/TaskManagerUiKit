@@ -63,10 +63,10 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
     private void initClickers() {
         theme_layout.setOnClickListener(v -> {
             if (!ThemePreference.getInstance(SettingsActivity.this).getTheme()) {
-                ThemePreference.getInstance(SettingsActivity.this).saveNightTheme();
+                ThemePreference.getInstance(SettingsActivity.this).saveLightTheme();
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             } else {
-                ThemePreference.getInstance(SettingsActivity.this).saveLightTheme();
+                ThemePreference.getInstance(SettingsActivity.this).saveNightTheme();
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             }
         });

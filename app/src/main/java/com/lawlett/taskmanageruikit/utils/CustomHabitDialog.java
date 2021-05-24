@@ -88,6 +88,7 @@ public class CustomHabitDialog extends Dialog implements View.OnClickListener {
             title.setText(habitModel.getTitle());
             amount.setText(habitModel.getAllDays());
             imageView.setImageResource(habitModel.getImage());
+            img = habitModel.getImage();
         }
         amount.addTextChangedListener(new TextWatcher() {
             @Override

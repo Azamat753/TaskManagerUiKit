@@ -1,5 +1,7 @@
 package com.lawlett.taskmanageruikit.finance.adapter;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,19 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.finance.model.MainRecyclerModel;
-import com.lawlett.taskmanageruikit.utils.App;
 
 import java.util.ArrayList;
 
 public class FinanceMainAdapter extends RecyclerView.Adapter<FinanceMainAdapter.MainViewHolder> {
     ArrayList<MainRecyclerModel> list;
     DialogImageAdapter.IIdeaOnClickListener listener;
-    public FinanceMainAdapter(DialogImageAdapter.IIdeaOnClickListener listener) {
+
+    public FinanceMainAdapter(Context context,DialogImageAdapter.IIdeaOnClickListener listener) {
         this.listener = listener;
         list = new ArrayList<>();
-        list.add(new MainRecyclerModel(App.getAppResources().getString(R.string.advices), R.drawable.ic_advice));
-        list.add(new MainRecyclerModel(App.getAppResources().getString(R.string.costs), R.drawable.ic_currency_usd));
-        list.add(new MainRecyclerModel(App.getAppResources().getString(R.string.help), R.drawable.ic_baseline_help_outline_24));
+        list.add(new MainRecyclerModel(context.getString(R.string.advices), R.drawable.ic_advice));
+        list.add(new MainRecyclerModel(context.getString(R.string.costs), R.drawable.ic_currency_usd));
+        list.add(new MainRecyclerModel(context.getString(R.string.help), R.drawable.ic_baseline_help_outline_24));
     }
 
     @NonNull
@@ -55,7 +57,11 @@ public class FinanceMainAdapter extends RecyclerView.Adapter<FinanceMainAdapter.
 
         public void onBind(MainRecyclerModel model) {
             itemTextView.setText(model.getTitle());
-            itemImageView.setImageResource(model.getImage());
+            try {
+                itemImageView.setImageResource(model.getImage());
+            }catch (Resources.NotFoundException e){
+                e.printStackTrace();
+            }
         }
     }
 }

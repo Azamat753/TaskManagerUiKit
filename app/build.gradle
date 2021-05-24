@@ -10,8 +10,8 @@ android {
         applicationId "com.lawlett.taskmanageruikit"
         minSdkVersion 17
         targetSdkVersion 30
-        versionCode 18
-        versionName "1.2"
+        versionCode 21
+        versionName "1.2.2"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         buildConfigField "String", "API_KEY", "\"${api_key}\""

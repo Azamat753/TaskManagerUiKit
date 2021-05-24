@@ -21,9 +21,9 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:fontFamily="@font/roboto_bold"
-            android:text="Расходы"
+            android:text="@string/costs"
             android:textColor="@color/white"
             android:textSize="16sp" />
     </LinearLayout>
@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="20dp"
-        android:text="Назад"
+        android:text="@string/cancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/spending_recycler" />
 

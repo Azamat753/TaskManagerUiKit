@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:padding="20dp"
-            android:text="Ok"
+            android:text="@string/apply"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/spending_amount_edt_qt2"
             app:layout_constraintTop_toTopOf="@id/cancel_tv_qt2" />
@@ -67,7 +67,7 @@
             android:foreground="?attr/selectableItemBackground"
             tools:ignore="UnusedAttribute"
             android:padding="20dp"
-            android:text="Отмена"
+            android:text="@string/cancel"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/spending_description_edt"
             app:layout_constraintTop_toBottomOf="@id/spending_description_edt" />

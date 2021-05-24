@@ -25,6 +25,7 @@ public class App extends Application {
     public static final String CHANNEL_ID = "exampleChannel";
     public static final String CHANNEL_ID_HOURS = "exampleChannelHours";
     private static Resources resources;
+    private static Context context;
 
     @Override
     public void onCreate() {
@@ -37,12 +38,9 @@ public class App extends Application {
                             addMigrations(migration).allowMainThreadQueries().build();
                 }
             }
-//
-//            dataBase = Room.databaseBuilder(this, AppDataBase.class, "database") worked
-//                    .fallbackToDestructiveMigration().allowMainThreadQueries().build();
-
             createNotificationChannel();
             resources = getResources();
+            context = getApplicationContext();
 
         }
     }

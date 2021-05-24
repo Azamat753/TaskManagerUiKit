@@ -44,7 +44,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
             if (v == newGoogleBtn) {
                 google_button.performClick();
             }
-            PlannerDialog.showPlannerDialog(this, getString(R.string.you_sure_read_private_policy), this::signIn);
+            PlannerDialog.showPlannerDialog(this,getString(R.string.planner) ,getString(R.string.you_sure_read_private_policy), this::signIn);
         });
     }
 
@@ -61,7 +61,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
 
     private void createRequest() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken(getString(R.string.server_client_id))
                 .requestEmail()
                 .build();
 

@@ -102,7 +102,6 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
             String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
             String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
             if (!currentDay.equals(dayFromPreference)) {
-                deleteAllDocumentsFromFireStore();
                 for (int i = 0; i < list.size(); i++) {
                     FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getHomeTask(), collectionName, db, homeModel);
                 }
@@ -187,7 +186,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(HomeActivity.this, getString(R.string.you_sure_delete), () -> {
+                PlannerDialog.showPlannerDialog(HomeActivity.this, getString(R.string.attention), getString(R.string.you_sure_delete), () -> {
                     pos = viewHolder.getAdapterPosition();
                     homeModel = list.get(pos);
                     if (!homeModel.isDone) {
@@ -216,7 +215,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
 
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && isCurrentlyActive) {
                     int direction = dX > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
-                        Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    Vibrator vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                     switch (direction) {
                         case DIRECTION_RIGHT:
                             View itemView = viewHolder.itemView;
@@ -238,6 +237,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
             }
         }).attachToRecyclerView(recyclerView);
     }
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -398,7 +398,7 @@ public class HomeActivity extends AppCompatActivity implements HomeAdapter.IHChe
     }
 
     private void showDialogLevel(String l) {
-        AchievementDialog.showAchievementDialog(this, getString(R.string.you_got)+"\n" + l);
+        AchievementDialog.showAchievementDialog(this, getString(R.string.you_got) + "\n" + l);
     }
 
     private void incrementAllDone() {

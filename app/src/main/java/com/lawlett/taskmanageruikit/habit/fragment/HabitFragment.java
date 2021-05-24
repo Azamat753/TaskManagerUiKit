@@ -82,7 +82,7 @@ public class HabitFragment extends Fragment implements HabitAdapter.IMClickListe
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (user!=null){
+        if (user != null) {
             collectionName = "Привычки" + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
         }
         initViews(view);
@@ -91,25 +91,28 @@ public class HabitFragment extends Fragment implements HabitAdapter.IMClickListe
         getRoomRecordsData();
     }
 
-    private void RequestPermission() {
+    private boolean RequestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(requireContext())) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:" + requireActivity().getPackageName()));
                 startActivityForResult(intent, 1);
+                return false;
             }
+
         }
+        return true;
     }
 
     private void setNotification(long time, HabitModel habitModel) {
         Intent i = new Intent(requireContext(), MessageService.class);
         i.putExtra("displayText", "sample text");
         i.putExtra(MessageService.TITLE, "Planner");
-        i.putExtra(MessageService.TEXT, getString(R.string.you_forgot_habbit)+" "+habitModel.getTitle() + " ?");
+        i.putExtra(MessageService.TEXT, getString(R.string.you_forgot_habbit) + " " + habitModel.getTitle() + " ?");
         PendingIntent pi = PendingIntent.getBroadcast(requireContext(), (int) habitModel.getId(), i, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager mAlarm = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
         mAlarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pi);
-        App.showToast(requireContext(),getString(R.string.set_notification_on)+" " + habitModel.getTitle());
+        App.showToast(requireContext(), getString(R.string.set_notification_on) + " " + habitModel.getTitle());
     }
 
     private void initAdapter() {
@@ -216,8 +219,8 @@ public class HabitFragment extends Fragment implements HabitAdapter.IMClickListe
         customHabitDialog.setDialogResult((title, amount, image) -> {
             habitModel = new HabitModel(title, image, amount, 0, -1);
             App.getDataBase().habitDao().insert(habitModel);
-            if (user!=null){
-                FireStoreTools.writeOrUpdateDataByFireStore(habitModel.getTitle(),collectionName,db,habitModel);
+            if (user != null) {
+                FireStoreTools.writeOrUpdateDataByFireStore(habitModel.getTitle(), collectionName, db, habitModel);
             }
         });
         habitAdapter.notifyDataSetChanged();
@@ -237,10 +240,10 @@ public class HabitFragment extends Fragment implements HabitAdapter.IMClickListe
 
     @Override
     public void onItemLongClick(HabitModel habitModel) {
-        PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.task_dialog_message), () -> {
+        PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.attention),getString(R.string.task_dialog_message), () -> {
             App.getDataBase().habitDao().delete(habitModel);
-            if (user!=null){
-                FireStoreTools.deleteDataByFireStore(habitModel.getTitle(),collectionName,db,null);
+            if (user != null) {
+                FireStoreTools.deleteDataByFireStore(habitModel.getTitle(), collectionName, db, null);
             }
             habitAdapter.notifyDataSetChanged();
         });
@@ -253,12 +256,12 @@ public class HabitFragment extends Fragment implements HabitAdapter.IMClickListe
         popupMenu.setOnMenuItemClickListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.habit_menu_delete:
-                    PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.task_dialog_message), new PlannerDialog.PlannerDialogClick() {
+                    PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.attention),getString(R.string.task_dialog_message), new PlannerDialog.PlannerDialogClick() {
                         @Override
                         public void clickOnYes() {
                             App.getDataBase().habitDao().delete(habitModel);
-                            if (user!=null){
-                                FireStoreTools.deleteDataByFireStore(habitModel.getTitle(),collectionName,db,null);
+                            if (user != null) {
+                                FireStoreTools.deleteDataByFireStore(habitModel.getTitle(), collectionName, db, null);
                             }
                         }
                     });
@@ -270,8 +273,8 @@ public class HabitFragment extends Fragment implements HabitAdapter.IMClickListe
                         habitModel.setAllDays(amount);
                         habitModel.setImage(image);
                         App.getDataBase().habitDao().update(habitModel);
-                        if (user!=null){
-                            FireStoreTools.writeOrUpdateDataByFireStore(habitModel.getTitle(),collectionName,db,habitModel);
+                        if (user != null) {
+                            FireStoreTools.writeOrUpdateDataByFireStore(habitModel.getTitle(), collectionName, db, habitModel);
                         }
                     });
                     customHabitDialog.show();
@@ -280,22 +283,24 @@ public class HabitFragment extends Fragment implements HabitAdapter.IMClickListe
                     showUpdateDaysDialog(habitModel);
                     return true;
                 case R.id.habit_notification:
-                    RequestPermission();
-                    Calendar mcurrentTime = Calendar.getInstance();
-                    int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-                    int minute = mcurrentTime.get(Calendar.MINUTE);
-                    TimePickerDialog mTimePicker;
-                    mTimePicker = new TimePickerDialog(requireActivity(), (timePicker, selectedHour, selectedMinute) -> {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), selectedHour, selectedMinute);
-                        long time = calendar.getTimeInMillis();
-                        setNotification(time, habitModel);
-                    }, hour, minute, true);
-                    mTimePicker.setTitle(getString(R.string.select_time));
-                    mTimePicker.show();
-                    return true;
+                    if (RequestPermission()) {
+                        Calendar mcurrentTime = Calendar.getInstance();
+                        int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                        int minute = mcurrentTime.get(Calendar.MINUTE);
+                        TimePickerDialog mTimePicker;
+                        mTimePicker = new TimePickerDialog(requireActivity(), (timePicker, selectedHour, selectedMinute) -> {
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), selectedHour, selectedMinute);
+                            long time = calendar.getTimeInMillis();
+                            setNotification(time, habitModel);
+                        }, hour, minute, true);
+                        mTimePicker.setTitle(getString(R.string.select_time));
+                        mTimePicker.show();
+                        return true;
+                    }
                 default:
                     return false;
+
             }
         });
         habitAdapter.notifyDataSetChanged();
@@ -311,8 +316,8 @@ public class HabitFragment extends Fragment implements HabitAdapter.IMClickListe
             habitModel.setMyDay(currentDay);
             habitModel.setCurrentDay(habitModel.getCurrentDay() + 1);
             App.getDataBase().habitDao().update(habitModel);
-            if (user!=null){
-                FireStoreTools.writeOrUpdateDataByFireStore(habitModel.getTitle(),collectionName,db,habitModel);
+            if (user != null) {
+                FireStoreTools.writeOrUpdateDataByFireStore(habitModel.getTitle(), collectionName, db, habitModel);
             }
         } else {
             Toast.makeText(requireContext(), R.string.your_habit_is_done, Toast.LENGTH_SHORT).show();
@@ -338,8 +343,8 @@ public class HabitFragment extends Fragment implements HabitAdapter.IMClickListe
                 this.habitModel = habitModel;
                 this.habitModel.setAllDays(name);
                 App.getDataBase().habitDao().update(habitModel);
-                if (user!=null){
-                    FireStoreTools.writeOrUpdateDataByFireStore(habitModel.getTitle(),collectionName,db,habitModel);
+                if (user != null) {
+                    FireStoreTools.writeOrUpdateDataByFireStore(habitModel.getTitle(), collectionName, db, habitModel);
                 }
                 alertDialog.cancel();
             }

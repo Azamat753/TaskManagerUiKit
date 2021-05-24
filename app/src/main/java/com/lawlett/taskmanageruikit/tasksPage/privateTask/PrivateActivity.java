@@ -122,7 +122,7 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(PrivateActivity.this, getString(R.string.you_sure_delete), () -> {
+                PlannerDialog.showPlannerDialog(PrivateActivity.this,getString(R.string.attention), getString(R.string.you_sure_delete), () -> {
                     pos = viewHolder.getAdapterPosition();
                     privateModel = list.get(pos);
                     if (!privateModel.isDone) {
@@ -181,7 +181,6 @@ public class PrivateActivity extends AppCompatActivity implements PrivateAdapter
             String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
             String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
             if (!currentDay.equals(dayFromPreference)) {
-                deleteAllDocumentsFromFireStore();
                 for (int i = 0; i < list.size(); i++) {
                     FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getPrivateTask(), collectionName, db, privateModel);
                 }

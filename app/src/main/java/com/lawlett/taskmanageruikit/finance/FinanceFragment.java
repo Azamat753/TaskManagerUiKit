@@ -2,6 +2,7 @@ package com.lawlett.taskmanageruikit.finance;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,12 +42,14 @@ import com.lawlett.taskmanageruikit.utils.financeDialog.FrequentSpendingDialog;
 import com.lawlett.taskmanageruikit.utils.financeDialog.HelpDialogFragment;
 import com.lawlett.taskmanageruikit.utils.financeDialog.SpendingDialogFragment;
 import com.lawlett.taskmanageruikit.utils.preferences.FinancePreference;
+import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -73,6 +76,7 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        loadLocale();
         return inflater.inflate(R.layout.fragment_finance, container, false);
     }
 
@@ -89,6 +93,20 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
 //        readFromFireBaseToPreferences();
 //        writeAllFromRoomToFireStore();
     }
+    private void loadLocale() {
+        String language = LanguagePreference.getInstance(requireContext()).getLanguage();
+        setLocale(language);
+    }
+
+    private void setLocale(String lang) {
+        Locale locale = new Locale(lang);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        requireActivity().getBaseContext().getResources().updateConfiguration(config, requireActivity().getBaseContext().getResources().getDisplayMetrics());
+        LanguagePreference.getInstance(requireContext()).saveLanguage(lang);
+    }
+
 
     private void writeAllFromRoomToFireStore() {
         if (user != null) {
@@ -172,12 +190,13 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(frequentSpendRecycler);
 
         RecyclerView topRecycler = view.findViewById(R.id.finance_recycler);
-        FinanceMainAdapter adapter = new FinanceMainAdapter(position -> {
+        FinanceMainAdapter adapter = new FinanceMainAdapter(requireContext(),position -> {
             switch (position) {
                 case 0:
                     new AdviceDialog().show(getChildFragmentManager(), "advice dialog");
                     break;
                 case 1:
+                    new SpendingDialogFragment().show(getChildFragmentManager(), "spending dialog");
                     new SpendingDialogFragment().show(getChildFragmentManager(), "spending dialog");
                     break;
                 case 2:
@@ -302,7 +321,7 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.task_dialog_message), () -> App.getDataBase().frequentSpendingDao().delete(list.get(viewHolder.getAdapterPosition())));
+            PlannerDialog.showPlannerDialog(requireActivity(),getString(R.string.attention) ,getString(R.string.task_dialog_message), () -> App.getDataBase().frequentSpendingDao().delete(list.get(viewHolder.getAdapterPosition())));
             adapterFS.notifyDataSetChanged();
         }
     };

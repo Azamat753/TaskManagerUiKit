@@ -4,15 +4,19 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center"
+    android:background="@drawable/layout_bg"
     android:gravity="center_vertical">
 
-    <ImageView
+    <TextView
+        android:id="@+id/main_alert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/myWhite"
         android:layout_centerHorizontal="true"
+        android:text="@string/planner"
+        android:textSize="26sp"
         android:layout_marginTop="12dp"
-        android:elevation="2dp"
-        android:src="@mipmap/app_round" />
+        android:elevation="2dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,7 +32,7 @@
             android:layout_marginStart="25dp"
             android:layout_marginTop="37dp"
             android:text="@string/choose_language"
-            android:textColor="@color/settings_text_color"
+            android:textColor="@color/myWhite"
             android:textSize="18sp" />
 
         <androidx.recyclerview.widget.RecyclerView

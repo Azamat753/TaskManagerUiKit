@@ -19,14 +19,14 @@ public class ThemePreference {
     }
 
     public boolean getTheme() {
-        return preferences.getBoolean("night_mode", true);
+        return preferences.getBoolean("night_mode", false);
     }
 
     public void saveNightTheme() {
-        preferences.edit().putBoolean("night_mode", true).apply();
+        preferences.edit().putBoolean("night_mode", false).apply();
     }
 
     public void saveLightTheme() {
-        preferences.edit().putBoolean("night_mode", false).apply();
+        preferences.edit().putBoolean("night_mode", true).apply();
     }
 }

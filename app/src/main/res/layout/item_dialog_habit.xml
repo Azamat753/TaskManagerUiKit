@@ -79,7 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textCapSentences"
-            android:maxLength="22"
+            android:maxLength="12"
             android:paddingTop="8dp"
             android:textAlignment="inherit"
             android:textColor="@color/myWhite" />
@@ -163,7 +163,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:background="@drawable/blue_stroke"
-            android:text="@string/Cancel"
+            android:text="@string/cancel"
             android:textColor="@color/myWhite" />
 
         <Button

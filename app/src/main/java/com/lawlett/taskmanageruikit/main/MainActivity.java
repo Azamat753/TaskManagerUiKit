@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -40,6 +41,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.AchievementActivity;
+import com.lawlett.taskmanageruikit.auth.GoogleSignInActivity;
 import com.lawlett.taskmanageruikit.calendarEvents.CalendarEventsFragment;
 import com.lawlett.taskmanageruikit.finance.FinanceFragment;
 import com.lawlett.taskmanageruikit.habit.fragment.HabitFragment;
@@ -83,6 +85,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initBottomNavigation();
         checkInstance();
         initClickers();
+        googleSyncAlert();
+    }
+
+    private void googleSyncAlert() {
+        if (user == null) {
+            SharedPreferences sharedPreferences = getSharedPreferences("googleSync", Context.MODE_PRIVATE);
+            boolean isShow = sharedPreferences.getBoolean("isShow", false);
+            if (!isShow) {
+                sharedPreferences.edit().putBoolean("isShow", true).apply();
+                PlannerDialog.showPlannerDialog(this, getString(R.string.planner),getString(R.string.want_save_data_in_google), () -> {
+                    startActivity(new Intent(this, GoogleSignInActivity.class));
+                });
+            }
+        }
     }
 
     private void initDrawerNavigation(Bundle savedInstanceState) {
@@ -96,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         nav_header_name = hView.findViewById(R.id.nav_header_tv);
         navigationView.setNavigationItemSelectedListener(this);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_open, R.string.nav_close);
-        actionBarDrawerToggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.white));
+        actionBarDrawerToggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.settings_text_color));
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         setUserNameAndProfile();
@@ -133,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            PlannerDialog.showPlannerDialog(this, getString(R.string.are_you_sure), this::finishAffinity);
+            PlannerDialog.showPlannerDialog(this, getString(R.string.planner),getString(R.string.are_you_sure), this::finishAffinity);
         }
     }
 
@@ -203,6 +219,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextInputLayout textInputLayout = alertDialog.findViewById(R.id.editText_wrapper);
         EditText editText = alertDialog.findViewById(R.id.editText_create_name);
         textInputLayout.setHint(R.string.you_name);
+        if(!nav_header_name.getText().toString().equals(getString(R.string.you_name))){
+            editText.setText(nav_header_name.getText().toString());
+        }
         alertDialog.findViewById(R.id.apply_btn).setOnClickListener(v -> {
             if (editText.getText().toString().isEmpty()) {
                 App.showToast(MainActivity.this, getString(R.string.empty));

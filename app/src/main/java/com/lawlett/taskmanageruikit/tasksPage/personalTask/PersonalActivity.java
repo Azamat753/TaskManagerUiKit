@@ -170,7 +170,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(PersonalActivity.this, getString(R.string.you_sure_delete), () -> {
+                PlannerDialog.showPlannerDialog(PersonalActivity.this, getString(R.string.attention), getString(R.string.you_sure_delete), () -> {
                     position = viewHolder.getAdapterPosition();
                     personalModel = list.get(position);
                     if (!personalModel.isDone) {
@@ -278,7 +278,6 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
             String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
             String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
             if (!currentDay.equals(dayFromPreference)) {
-                deleteAllDocumentsFromFireStore();
                 for (int i = 0; i < list.size(); i++) {
                     FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getPersonalTask(), collectionName, db, personalModel);
                 }
@@ -470,7 +469,7 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
     }
 
     private void showDialogLevel(String l) {
-        AchievementDialog.showAchievementDialog(this, getString(R.string.you_got)+"\n" + l);
+        AchievementDialog.showAchievementDialog(this, getString(R.string.you_got) + "\n" + l);
     }
 
     private void decrementDone() {

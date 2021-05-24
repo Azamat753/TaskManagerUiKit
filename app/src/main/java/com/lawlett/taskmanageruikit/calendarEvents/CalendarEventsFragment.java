@@ -84,9 +84,6 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
             String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
             if (!currentDay.equals(dayFromPreference)) {
                 for (int i = 0; i < list.size(); i++) {
-                    FireStoreTools.deleteDataByFireStore(list.get(i).getTitle(), collectionName, db, null);
-                }
-                for (int i = 0; i < list.size(); i++) {
                     FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getTitle(), collectionName, db, list.get(i));
                 }
                 sharedPreferences.edit().clear().apply();
@@ -211,7 +208,7 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.you_sure_delete), () -> {
+                PlannerDialog.showPlannerDialog(requireActivity(),getString(R.string.attention), getString(R.string.you_sure_delete), () -> {
                     pos = viewHolder.getAdapterPosition();
                     App.getDataBase().eventsDao().delete(list.get(pos));
                     Toast.makeText(getContext(), R.string.delete, Toast.LENGTH_SHORT).show();

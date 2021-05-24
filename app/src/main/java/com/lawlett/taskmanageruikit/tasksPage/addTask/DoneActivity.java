@@ -113,7 +113,6 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
             String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
             String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
             if (!currentDay.equals(dayFromPreference)) {
-                deleteAllDocumentsFromFireStore();
                 for (int i = 0; i < list.size(); i++) {
                     FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getDoneTask(), collectionName, db, doneModel);
                 }
@@ -207,7 +206,7 @@ public class DoneActivity extends AppCompatActivity implements DoneAdapter.IMChe
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(DoneActivity.this, getString(R.string.you_sure_delete), () -> {
+                PlannerDialog.showPlannerDialog(DoneActivity.this,getString(R.string.attention), getString(R.string.you_sure_delete), () -> {
                     pos = viewHolder.getAdapterPosition();
                     doneModel = list.get(pos);
                     if (!doneModel.isDone) {

@@ -91,7 +91,6 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
             String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
             String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
             if (!currentDay.equals(dayFromPreference)) {
-                deleteAllDocumentsFromFireStore();
                 for (int i = 0; i < list.size(); i++) {
                     FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getWorkTask(), collectionName, db, workModel);
                 }
@@ -186,8 +185,8 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(WorkActivity.this, getString(R.string.you_sure_delete), () -> {
-                    pos = viewHolder.getAdapterPosition();
+                PlannerDialog.showPlannerDialog(WorkActivity.this,getString(R.string.attention), getString(R.string.you_sure_delete), () -> {
+                    pos = viewHolder.getLayoutPosition();
                     workModel = list.get(pos);
                     if (!workModel.isDone) {
                         App.getDataBase().workDao().delete(list.get(pos));

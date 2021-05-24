@@ -3,23 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="345dp"
+    android:background="@drawable/layout_bg"
     android:layout_height="wrap_content"
     android:layout_gravity="center">
 
-    <ImageView
-        android:id="@+id/planner_logo"
+    <TextView
+        android:id="@+id/alert_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
-        android:elevation="2dp"
-        app:srcCompat="@mipmap/app_round" />
+        android:textSize="30sp"
+        android:textColor="@color/royalStart"
+        android:text="@string/delete" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:layout_marginTop="70dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/layout_bg"
+        android:layout_marginTop="70dp"
         android:padding="30dp">
 
         <TextView
@@ -27,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:textColor="@color/white"
+            android:textColor="@color/royalStart"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -40,13 +42,13 @@
             android:id="@+id/yesBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:foreground="?attr/selectableItemBackground"
             tools:ignore="UnusedAttribute"
             android:background="@android:color/transparent"
             android:text="@string/yes"
             android:padding="12dp"
-            android:textColor="@color/white"
+            android:textColor="@color/royalStart"
+            android:layout_marginTop="10dp"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/alert_title"
@@ -59,9 +61,9 @@
             android:id="@+id/noBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:text="@string/no"
-            android:textColor="@color/white"
+            android:textColor="@color/royalStart"
+            android:layout_marginTop="10dp"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/alert_title"

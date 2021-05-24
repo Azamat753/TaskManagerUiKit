@@ -19,7 +19,7 @@
             android:layout_margin="16dp"
             android:inputType="textCapSentences"
             android:background="@drawable/rounded_rec8"
-            android:hint="Введите название"
+            android:hint="@string/enter_name"
             android:padding="8dp"
             style="@style/financeText"
             android:textSize="18sp"
@@ -30,7 +30,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Выберите картинку:"
+            android:text="@string/add_icon"
             style="@style/financeText"
             android:layout_marginTop="8dp"
             android:layout_marginStart="5dp"
@@ -51,7 +51,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ok"
+            android:text="@string/apply"
             android:id="@+id/ok_tv"
             style="@style/financeText"
             app:layout_constraintTop_toBottomOf="@id/frequent_dialog_recycler"
@@ -63,7 +63,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Отмена"
+            android:text="@string/cancel"
             android:id="@+id/cancel_tv"
             style="@style/financeText"
             android:padding="20dp"
@@ -76,6 +76,6 @@
     <ImageView
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@drawable/mipmap_logo_1_3"
+        android:src="@mipmap/app_round"
         android:layout_centerHorizontal="true"/>
 </RelativeLayout>

@@ -46,6 +46,9 @@ public class HelpActivity extends AppCompatActivity {
         helpModelList.add(new HelpModel(getString(R.string.delete_title), getResources().getString(R.string.delete_task), R.raw.delete1));
         helpModelList.add(new HelpModel(getString(R.string.timer_title), getString(R.string.timer_text), R.raw.timer1));
         helpModelList.add(new HelpModel(getString(R.string.stopwatch_title), getString(R.string.stopwatch_text), R.raw.stopwatch1));
+        helpModelList.add(new HelpModel(getString(R.string.profile), getString(R.string.you_can_edit_profile), R.raw.profile));
+        helpModelList.add(new HelpModel(getString(R.string.notification_for_habit), getString(R.string.you_can_set_notification), R.raw.setnotification));
+        helpModelList.add(new HelpModel(getString(R.string.protect_data),getString(R.string.you_can_save_cloud),R.raw.signin));
     }
 
     private void initListeners() {

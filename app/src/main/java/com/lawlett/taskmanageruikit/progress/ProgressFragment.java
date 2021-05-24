@@ -1,9 +1,6 @@
 package com.lawlett.taskmanageruikit.progress;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -24,13 +21,11 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.lawlett.taskmanageruikit.R;
-import com.lawlett.taskmanageruikit.auth.GoogleSignInActivity;
 import com.lawlett.taskmanageruikit.calendarEvents.CalendarEventsFragment;
 import com.lawlett.taskmanageruikit.idea.IdeasFragment;
 import com.lawlett.taskmanageruikit.tasks.TasksFragment;
 import com.lawlett.taskmanageruikit.timing.model.TimingModel;
 import com.lawlett.taskmanageruikit.utils.App;
-import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.preferences.AddDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.HomeDoneSizePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.MeetDoneSizePreference;
@@ -86,21 +81,9 @@ public class ProgressFragment extends Fragment {
         countUpPercent();
         setShow();
         checkNewCategory();
-        googleSyncAlert();
     }
 
-    private void googleSyncAlert() {
-        if (user == null) {
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("googleSync", Context.MODE_PRIVATE);
-        boolean isShow = sharedPreferences.getBoolean("isShow", false);
-        if (!isShow) {
-            sharedPreferences.edit().putBoolean("isShow", true).apply();
-                PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.want_save_data_in_google), () -> {
-                    startActivity(new Intent(requireActivity(), GoogleSignInActivity.class));
-                });
-            }
-        }
-    }
+
 
     @SuppressLint("SetTextI18n")
     private void initClickers() {

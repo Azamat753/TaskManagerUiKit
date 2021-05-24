@@ -115,7 +115,7 @@
     <string name="enter_secret_word">Digite a palavra secreta</string>
     <string name="attention">Atenção!</string>
     <string name="task_dialog_message">Tem certeza de que deseja excluir?</string>
-    <string name="Cancel">Cancelamento</string>
+    <string name="cancel">Cancelamento</string>
     <string name="choosed">Você escolheu: </string>
     <string name="change_image_title">Alterar a imagem e o nome da categoria</string>
     <string name="remove_category">Excluir categoria</string>
@@ -230,7 +230,7 @@
     <string name="you_is_done_habit_today">Você realmente completou a tarefa hoje?</string>
     <string name="edit">Corrigir</string>
     <string name="change_day">Alterar o número de dias</string>
-    <string name="helper_finance_dialog" >
+    <string name="helper_finance_dialog">
         Equilíbrio.\n
 Aqui você pode ver seu saldo atual.
 Seu saldo aumenta à medida que você adiciona renda.
@@ -262,4 +262,49 @@ deslizando para a direita, você pode remover um item da lista de gastos frequen
     <string name="set_notification">Definir notificação</string>
     <string name="you_forgot_habbit">\"Você não esqueceu o hábito\"</string>
     <string name="set_notification_on">\"Notificação definida para\"</string>
+    <string name="profile">Perfil</string>
+    <string name="you_can_edit_profile">Você pode editar seu perfil</string>
+    <string name="advice25_1">A sorte em uma inspeção mais detalhada acaba sendo apenas o resultado de muito trabalho e preparação cuidadosa.</string>
+    <string name="advice26_1">Se você decidiu fazer algo, mas não começou a fazê – lo dentro de 72 horas-85% das vezes você nunca fará isso.</string>
+    <string name="advice27_1">\"Quem faz espera sucesso. Quem "tenta" espera que algo o atrapalhe.\"</string>
+    <string name="advice27_2">Metade do esforço não dá metade do resultado, mas um resultado zero.</string>
+    <string name="advice28_1">Quem trabalha o dia todo-não há tempo para ganhar dinheiro.</string>
+    <string name="advice29_1">O maior talento é ser capaz de encontrar motivação para suas próprias ações.</string>
+    <string name="advice30_1">O bem-estar financeiro é impossível sem restrições financeiras e planejamento de suas despesas. A liberdade financeira passa por restrições financeiras.</string>
+    <string name="advice_31_1">É melhor começar mal do que ficar ocioso.</string>
+    <string name="advice32_1">Pense na sua saúde. O sucesso é impossível sem boa saúde.</string>
+    <string name="advice_32_2">\" Riqueza sem saúde não trará alegria.\"</string>
+    <string name="advice_33_1">É melhor ir ao alvo na velocidade da tartaruga do que na velocidade da luz inventar desculpas por que você está parado.</string>
+    <string name="advice_34_1">Pegue seu hobby favorito e construa uma carreira nele.</string>
+    <string name="advice35_1">\"Para bons ganhos, é necessário um bom conhecimento.\"</string>
+    <string name="advice_35_2">Tente aprender constantemente, ler, expandir seus horizontes. Os tolos só têm sorte no casino, e raramente.</string>
+    <string name="advice_36_1">Riqueza não é quanto você gastou em um cassino, Restaurante, resort ou loja.</string>
+    <string name="advice36_2">\" Riqueza é o que você reservou e economizou.\"</string>
+    <string name="advice37_1">Uma vez sortudo apenas para tolos. Os espertos têm sempre sorte.</string>
+    <string name="advice38_1">Você não é responsável por todos os eventos</string>
+    <string name="advice38_2">Mas você é sempre responsável por sua interpretação dos eventos e por sua reação a eles.</string>
+    <string name="advice39_1">\"Sentar e esperar por um milagre é tão estúpido quanto um atleta sentado em casa em frente à TV,\"</string>
+    <string name="advice39_2">assista aos Jogos Olímpicos e espere obter uma medalha de ouro neles.</string>
+    <string name="advice40_1">O dinheiro sempre tem exatamente o significado que atribuímos a ele.</string>
+    <string name="advice41_1">O dinheiro por si só não faz ninguém feliz ou infeliz. Eles não são bons nem ruins.</string>
+    <string name="advice_41_2">Uma pessoa feliz com dinheiro ficará ainda mais feliz. Um pessimista que faz um problema com tudo terá ainda mais problemas com dinheiro. O dinheiro traz à tona o caráter do proprietário. Eles são como uma lupa.</string>
+    <string name="advice42_1">\"Ninguém fica Rico apenas porque ganha muito.\"</string>
+    <string name="advice42_2">Você só é rico quando pode viver com juros sobre seu capital sem ter que trabalhar: o dinheiro funciona para você.</string>
+    <string name="advice43_1">Posição fundamental: nunca aceite o conselho de uma pessoa que não é quem você se tornaria de bom grado.</string>
+    <string name="advice44_1">Viver sem responsabilidade significa degradar-se a um estado de vítima impotente.</string>
+    <string name="advice44_2">\" Significa viver de acordo com as regras que os outros escreveram para você.\"</string>
+    <string name="advice45_1">A maioria das pessoas superestima o que pode fazer em um ano e subestima o que pode fazer em dez anos.</string>
+    <string name="advice46_1">\"Vemos rosas, mas não notamos espinhos. Nós vemos o sucesso, mas não a preparação para isso.\"</string>
+    <string name="advice46_2">E não vemos os contratempos de outras pessoas. Ficaremos surpresos ao saber com que cuidado os "sortudos"preparam sua sorte.</string>
+    <string name="advice47_1">Há uma diferença fundamental entre o jogo que você está jogando para não perder e o que você quer ganhar.</string>
+    <string name="advice48_1">Você não é pago tanto quanto vale? Não se você trabalha por esse dinheiro –</string>
+    <string name="advice48_2">\" então vale tanto. Se algo não estiver satisfeito-mude seu trabalho, estilo de vida, mude a si mesmo.\"</string>
+    <string name="notification_for_habit">Aviso para hábitos</string>
+    <string name="you_can_set_notification">Você pode definir a hora certa para você</string>
+    <string name="need">É necessário</string>
+    <string name="amount">Montante:</string>
+    <string name="description">Descrição:</string>
+    <string name="enter_name">Digite um nome</string>
+    <string name="protect_data">Proteção dos dados</string>
+    <string name="you_can_save_cloud">Você pode salvar seus dados na nuvem</string>
 </resources>

@@ -114,7 +114,7 @@
     <string name="invalid_entered">Datos ingresados incorrectamente</string>
     <string name="attention">¡Atención!</string>
     <string name="task_dialog_message">¿Estás seguro de que quieres eliminar?</string>
-    <string name="Cancel">Cancelación</string>
+    <string name="cancel">Cancelación</string>
     <string name="choosed">Usted ha elegido:</string>
     <string name="change_image_title">Cambiar la imagen y el nombre de la categoría</string>
     <string name="remove_category">Eliminar categoría</string>
@@ -169,7 +169,7 @@
     <string name="rate_app">Poner una evaluación</string>
     <string name="not_enough_balanсe">¡No hay suficientes fondos en el balance !</string>
     <string name="attention_alert">¡Atención!</string>
-        <string name="advice1_1">\"Trate el dinero con respeto\"</string>
+    <string name="advice1_1">\"Trate el dinero con respeto\"</string>
     <string name="advice1_2">Su dinero es su tiempo y energía "conservados" que ha gastado para ganarlo.</string>
     <string name="advice2">\"Adquiera el hábito de mantener registros de ingresos y gastos en forma electrónica o escrita.\"</string>
     <string name="advice3_1">Deshágase de las tarjetas de crédito, los préstamos al consumidor y otras deudas.</string>
@@ -229,7 +229,7 @@
     <string name="you_is_done_habit_today">¿Realmente has hecho la tarea hoy?</string>
     <string name="edit">Corregir</string>
     <string name="change_day">Cambiar el número de días</string>
-    <string name="helper_finance_dialog" >
+    <string name="helper_finance_dialog">
         Balance.\n
 Cambiar el número de díasaquí puedes ver tu saldo actual.
 Su saldo aumenta a medida que agrega ingresos.
@@ -261,4 +261,49 @@ al deslizar hacia la derecha, puede eliminar un Elemento de la lista de gastos f
     <string name="set_notification">Establecer notificación</string>
     <string name="you_forgot_habbit">\"No te has olvidado del hábito\"</string>
     <string name="set_notification_on">\"Notificación establecida en\"</string>
+    <string name="profile">Perfil</string>
+    <string name="you_can_edit_profile">Puedes editar tu perfil</string>
+    <string name="advice25_1">La suerte en una inspección más cercana resulta ser solo el resultado de un gran trabajo y una preparación cuidadosa.</string>
+    <string name="advice26_1">Si decide hacer algo pero no ha comenzado a hacerlo dentro de las 72 horas, el 85% de las veces nunca lo hará.</string>
+    <string name="advice27_1">\"El que lo hace espera tener éxito. El que "intenta" espera que algo se interponga en su camino.\"</string>
+    <string name="advice27_2">El medio esfuerzo no produce la mitad del resultado, sino el resultado cero.</string>
+    <string name="advice28_1">Quien trabaja todo el día, no tiene tiempo para ganar dinero.</string>
+    <string name="advice29_1">El mayor talento es poder encontrar la motivación para sus propias acciones.</string>
+    <string name="advice30_1">El bienestar financiero es imposible sin restricciones financieras y la planificación de sus gastos. La libertad financiera pasa por restricciones financieras.</string>
+    <string name="advice_31_1">Es mejor comenzar mal que estar bien inactivo.</string>
+    <string name="advice32_1">Piensa en tu salud. El éxito no es posible sin una buena salud.</string>
+    <string name="advice_32_2">\" La riqueza sin salud no traerá alegría.\"</string>
+    <string name="advice_33_1">Es mejor ir a la meta a la velocidad de una tortuga que a la velocidad de la luz inventar excusas por las que te quedas quieto.</string>
+    <string name="advice_34_1">Toma tu pasatiempo favorito y construye una carrera en él.</string>
+    <string name="advice35_1">\"Para obtener buenas ganancias, se necesita un buen conocimiento.\"</string>
+    <string name="advice_35_2">Trate de aprender constantemente, Leer, ampliar sus horizontes. Los tontos solo tienen suerte en el casino, y eso es raro.</string>
+    <string name="advice_36_1">La riqueza no se trata de cuánto gastó en un casino, Restaurante, Resort o tienda.</string>
+    <string name="advice36_2">\" La riqueza es algo que has ahorrado y ahorrado.\"</string>
+    <string name="advice37_1">Una vez, solo los tontos tienen suerte. El inteligente siempre tiene suerte.</string>
+    <string name="advice38_1">No eres responsable de todos los eventos</string>
+    <string name="advice38_2">Pero Siempre eres responsable de tu interpretación de los eventos y de tu reacción a ellos.</string>
+    <string name="advice39_1">\"Sentarse y esperar un milagro es tan tonto como un atleta sentarse en casa frente al televisor,\"</string>
+    <string name="advice39_2">Mira Los juegos Olímpicos y espera obtener una medalla de oro en ellos.</string>
+    <string name="advice40_1">El dinero siempre tiene exactamente el valor que le damos.</string>
+    <string name="advice41_1">El dinero en sí mismo no hace a nadie feliz o infeliz. No son buenos ni malos.</string>
+    <string name="advice_41_2">Una persona feliz con dinero será aún más feliz. Un pesimista que de todo hace un problema, con el dinero tendrá aún más problemas. El dinero revela el carácter del propietario. Son como una lupa.</string>
+    <string name="advice42_1">\"Nadie se hace rico solo por el hecho de que gana mucho.\"</string>
+    <string name="advice42_2">Solo eres rico cuando puedes vivir con intereses de tu capital sin tener que trabajar: el dinero funciona para TI.</string>
+    <string name="advice43_1">Posición de principio: nunca tome el Consejo de una persona que no sea alguien en quien estaría dispuesto a convertirse.</string>
+    <string name="advice44_1">Vivir sin responsabilidad es degradarse a un estado de víctima impotente.</string>
+    <string name="advice44_2">\" Significa vivir según las reglas que otros han escrito para TI.\"</string>
+    <string name="advice45_1">La mayoría de las personas sobreestiman lo que pueden hacer en un año y subestiman lo que pueden hacer en diez años.</string>
+    <string name="advice46_1">\"Vemos rosas, pero no notamos espinas. Vemos el éxito, pero no la preparación para ello.\"</string>
+    <string name="advice46_2">Y no vemos los fracasos de otros. Nos sorprenderá saber cuán cuidadosamente cocinan su suerte los "afortunados".</string>
+    <string name="advice47_1">Hay una diferencia fundamental entre el juego que lideras para no perder y el que quieres ganar.</string>
+    <string name="advice48_1">¿No te pagan tanto como vales? No si trabajas por ese dinero –</string>
+    <string name="advice48_2">\" así que tanto vale la pena. Si algo no está satisfecho, cambie su trabajo, estilo de vida, cámbiese.\"</string>
+    <string name="notification_for_habit">Aviso para los hábitos</string>
+    <string name="you_can_set_notification">Usted puede establecer en el momento adecuado para usted</string>
+    <string name="need">Es necesario</string>
+    <string name="amount">Suma:</string>
+    <string name="description">Descripción:</string>
+    <string name="enter_name">Introduzca el nombre</string>
+    <string name="protect_data">Protección de datos</string>
+    <string name="you_can_save_cloud">Puede guardar sus datos en la nube</string>
 </resources>

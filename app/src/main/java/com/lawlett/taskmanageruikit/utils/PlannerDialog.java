@@ -19,7 +19,7 @@ public class PlannerDialog extends App {
         PlannerDialog.listener = listener;
     }
 
-    public static void showPlannerDialog(Activity activity,String alertTitle, PlannerDialogClick plannerDialog) {
+    public static void showPlannerDialog(Activity activity,String title,String alertTitle, PlannerDialogClick plannerDialog) {
         LayoutInflater inflater = LayoutInflater.from(activity);
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.delete_alert_layout, null);
         Dialog alertDialog = new Dialog(activity);
@@ -27,6 +27,8 @@ public class PlannerDialog extends App {
         alertDialog.setContentView(view);
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         TextView alertTitleView = alertDialog.findViewById(R.id.alert_title);
+        TextView alertMainText = alertDialog.findViewById(R.id.alert_main);
+        alertMainText.setText(title);
         alertTitleView.setText(alertTitle);
         alertDialog.findViewById(R.id.yesBtn).setOnClickListener(v -> {
             plannerDialog.clickOnYes();

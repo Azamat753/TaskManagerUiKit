@@ -91,7 +91,6 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
             String currentDay = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
             String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
             if (!currentDay.equals(dayFromPreference)) {
-                deleteAllDocumentsFromFireStore();
                 for (int i = 0; i < list.size(); i++) {
                     FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getMeetTask(), collectionName, db, meetModel);
                 }
@@ -188,7 +187,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(MeetActivity.this, getString(R.string.you_sure_delete), () -> {
+                PlannerDialog.showPlannerDialog(MeetActivity.this, getString(R.string.attention), getString(R.string.you_sure_delete), () -> {
                     position = viewHolder.getAdapterPosition();
                     meetModel = list.get(position);
                     if (!meetModel.isDone) {
@@ -396,21 +395,21 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
         if (size < 26) {
             if (size % 5 == 0) {
                 int lvl = size / 5;
-                String level = getString(R.string.attaboy) +" "+ lvl;
+                String level = getString(R.string.attaboy) + " " + lvl;
                 addToLocalDate(lvl, level);
                 showDialogLevel(level);
             }
         } else if (size > 26 && size < 51) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Persistent)+" " + lev;
+                String level = getString(R.string.Persistent) + " " + lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
         } else if (size > 51 && size < 76) {
             if (size % 5 == 0) {
                 int lev = size / 5;
-                String level = getString(R.string.Overwhelming)+" " + lev;
+                String level = getString(R.string.Overwhelming) + " " + lev;
                 addToLocalDate(lev, level);
                 showDialogLevel(level);
             }
@@ -423,7 +422,7 @@ public class MeetActivity extends AppCompatActivity implements MeetAdapter.IMChe
     }
 
     private void showDialogLevel(String l) {
-        AchievementDialog.showAchievementDialog(this, getString(R.string.you_got)+"\n" + l);
+        AchievementDialog.showAchievementDialog(this, getString(R.string.you_got) + "\n" + l);
     }
 
     private void incrementAllDone() {

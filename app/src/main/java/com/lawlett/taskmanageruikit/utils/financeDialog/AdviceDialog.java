@@ -1,7 +1,6 @@
 package com.lawlett.taskmanageruikit.utils.financeDialog;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,13 +33,8 @@ public class AdviceDialog extends DialogFragment {
 
     private void setTvText() {
         AdvicePreference prefs = new AdvicePreference(requireContext());
-
-        Log.e("TAG", "setTvText: " + AdviceText.getTitleAdvice(prefs.getDayPosition()));
-        Log.e("TAG", "setTvText: " + AdviceText.getDescAdvice(prefs.getDayPosition()));
-
-        title.setText(AdviceText.getTitleAdvice(prefs.getDayPosition()));
-        subTitle.setText(AdviceText.getDescAdvice(prefs.getDayPosition()));
-
+        title.setText(AdviceText.getTitleAdvice(prefs.getDayPosition(),requireContext()));
+        subTitle.setText(AdviceText.getDescAdvice(prefs.getDayPosition(),requireContext()));
     }
 
     private void initViews(View view) {

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Planner</string>
-    <string name="your_api_key">my_api_key</string>
-
+    <string name="your_api_key">AIzaSyAH3_lbMbxBw2mF_DtwQQFo7GDCr4WQyw0</string>
+    <string name="server_client_id" translatable="false">366548567791-jurvb1tb9f1m26nftui32hgg30ue7p22.apps.googleusercontent.com</string>
     <string name="clear_list">Очистить список</string>
     <string name="clearSetting">Очистить данные о пароле</string>
     <string name="progress">Прогресс</string>
@@ -113,7 +113,7 @@
     <string name="invalid_entered">Не правильно введены данные</string>
     <string name="attention">Внимание!</string>
     <string name="task_dialog_message">Вы уверены, что хотите удалить?</string>
-    <string name="Cancel">Отмена</string>
+    <string name="cancel">Отмена</string>
     <string name="choosed">Вы выбрали: </string>
     <string name="change_image_title">Поменять картинку и название категории</string>
     <string name="remove_category">Удалить категорию</string>
@@ -263,4 +263,49 @@
     <string name="set_notification">Установить уведомление</string>
     <string name="you_forgot_habbit">Вы не забыли о привычке </string>
     <string name="set_notification_on">Установлено уведомление на </string>
+    <string name="profile">Профиль</string>
+    <string name="you_can_edit_profile">Вы можете редактировать свой профиль</string>
+    <string name="advice25_1">Удача при ближайшем рассмотрении оказывается всего лишь результатом большой работы и тщательной подготовки.</string>
+    <string name="advice26_1">Если Вы решили что-то сделать, но не начали это делать в течение 72 часов – в 85% случаев Вы не сделаете это никогда.</string>
+    <string name="advice27_1">\"Тот, кто делает, ожидает успеха. Тот, кто «пробует», ожидает, что ему что-то помешает. \"</string>
+    <string name="advice27_2">Половинное усилие дает не половину результата, а нулевой результат.</string>
+    <string name="advice28_1">Кто весь день работает – тому некогда зарабатывать деньги.</string>
+    <string name="advice29_1">Самый большой талант заключается в том, чтобы уметь находить мотивацию для собственных действий.</string>
+    <string name="advice30_1">Финансовое благополучие невозможно без финансовых ограничений и планирования своих трат. Финансовая свобода идет через финансовые ограничения.</string>
+    <string name="advice_31_1">Лучше плохо начинать, чем хорошо бездействовать.</string>
+    <string name="advice32_1">Думайте о своем здоровье. Успех невозможен без хорошего здоровья.</string>
+    <string name="advice_32_2">\" Богатство без здоровья не принесет радость.\"</string>
+    <string name="advice_33_1">Лучше идти к цели со скоростью черепахи, чем со скоростью света придумывать оправдания, почему ты стоишь на месте.</string>
+    <string name="advice_34_1">Возьмите свое любимое хобби и постройте на нем карьеру.</string>
+    <string name="advice35_1">\"Для хороших заработков нужны хорошие знания. \"</string>
+    <string name="advice_35_2">Старайтесь постоянно учиться, читать, расширять кругозор. Дуракам везет только в казино, и то редко.</string>
+    <string name="advice_36_1">Богатство – это не сколько Вы потратили в казино, ресторане, на курорте или в магазине.</string>
+    <string name="advice36_2">\" Богатство – это то, что Вы отложили и сберегли.\"</string>
+    <string name="advice37_1">Один раз везет только дуракам. Умным везет всегда.</string>
+    <string name="advice38_1">Вы ответственны не за все события</string>
+    <string name="advice38_2">Но Вы всегда отвечаете за Вашу интерпретацию событий и за Вашу реакцию на них.</string>
+    <string name="advice39_1">\"Сидеть и ждать чуда так же глупо, как спортсмену сидеть дома перед телевизором, \"</string>
+    <string name="advice39_2">смотреть Олимпийские Игры и надеяться получить на них золотую медаль.</string>
+    <string name="advice40_1">Деньги всегда имеют именно то значение, которое мы им придаем.</string>
+    <string name="advice41_1">Деньги сами по себе никого не делают счастливым или несчастным. Они не хороши и не плохи.</string>
+    <string name="advice_41_2">Счастливый человек с деньгами станет ещё счастливее. Пессимист, который из всего делает проблему, с деньгами получит ещё больше проблем. Деньги выявляют характер владельца. Они как увеличительное стекло.</string>
+    <string name="advice42_1">\"Никто не становится богатым лишь в силу того, что много зарабатывает. \"</string>
+    <string name="advice42_2">Вы богаты только тогда, когда можете жить на проценты от Вашего капитала без необходимости работать: деньги работают на Вас.</string>
+    <string name="advice43_1">Принципиальное положение: никогда не принимайте совет человека, который не является тем, кем Вы охотно бы стали.</string>
+    <string name="advice44_1">Жить без ответственности – значит деградировать до состояния бессильной жертвы.</string>
+    <string name="advice44_2">\" Это значит жить по правилам, которые написали для Вас другие.\"</string>
+    <string name="advice45_1">Большинство людей переоценивают то, что могут сделать за год, и недооценивают то, что могут сделать за десять лет.</string>
+    <string name="advice46_1">\"Мы видим розы, но не замечаем шипов. Мы видим успех, но не подготовку к нему. \"</string>
+    <string name="advice46_2">И мы не видим чужих неудач. Мы будем поражены, узнав, как тщательно готовят свою удачу «счастливчики».</string>
+    <string name="advice47_1">Существует принципиальное различие между игрой, которую вы ведете, чтобы не проиграть, и той, в которой вы хотите выиграть.</string>
+    <string name="advice48_1">Вам не платят столько, сколько Вы стоите? Нет, если Вы работаете за эти деньги –</string>
+    <string name="advice48_2">\" значит, столько Вы стоите. Если что-то не устраивает – меняйте работу, образ жизни, меняйте себя.\"</string>
+    <string name="notification_for_habit">Уведомление для привычек</string>
+    <string name="you_can_set_notification">Вы можете установить на нужное для вас время</string>
+    <string name="need">Нужно</string>
+    <string name="amount">Сумма:</string>
+    <string name="description">Описание:</string>
+    <string name="enter_name">Введите название</string>
+    <string name="protect_data">Защита данных</string>
+    <string name="you_can_save_cloud">Вы можете сохранить свои данные в облаке</string>
 </resources>

@@ -35,11 +35,15 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.idea.data.model.QuickModel;
 import com.lawlett.taskmanageruikit.idea.recycler.IdeaAdapter;
@@ -169,9 +173,6 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
             String dayFromPreference = sharedPreferences.getString(Constants.CURRENT_DAY, "");
             if (!currentDay.equals(dayFromPreference)) {
                 for (int i = 0; i < list.size(); i++) {
-                    FireStoreTools.deleteDataByFireStore(list.get(i).getTitle(), collectionName, db, null);
-                }
-                for (int i = 0; i < list.size(); i++) {
                     FireStoreTools.writeOrUpdateDataByFireStore(list.get(i).getTitle(), collectionName, db, list.get(i));
                 }
                 sharedPreferences.edit().clear().apply();
@@ -215,12 +216,11 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
         EditText editText = alertDialog.findViewById(R.id.editText_create_idea);
         imageView = alertDialog.findViewById(R.id.idea_image);
         editText.setText(quickModel.getTitle());
+        Glide.with(requireContext()).load(quickModel.getImage()).placeholder(R.drawable.ic_choose_image).into(imageView);
         imageView.setImageURI(Uri.parse(quickModel.getImage()));
         alertDialog.findViewById(R.id.apply_btn).setOnClickListener(v -> {
             if (editText.getText().toString().isEmpty()) {
                 App.showToast(requireContext(), requireContext().getString(R.string.add_title));
-            } else if (!hasImage(imageView)) {
-                App.showToast(requireContext(), requireContext().getString(R.string.add_icon));
             } else {
                 titleIdea = editText.getText().toString();
                 quickModel.setTitle(titleIdea);
@@ -229,7 +229,9 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
                 } else {
                     quickModel.setImage(quickModel.getImage());
                 }
-                FireStoreTools.writeOrUpdateDataByFireStore(titleIdea, collectionName, db, quickModel);
+                if (user!=null){
+                    FireStoreTools.writeOrUpdateDataByFireStore(titleIdea, collectionName, db, quickModel);
+                }
                 App.getDataBase().ideaDao().update(quickModel);
                 alertDialog.cancel();
             }
@@ -260,7 +262,7 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
         alertDialog.findViewById(R.id.apply_btn).setOnClickListener(v -> {
             if (editText.getText().toString().isEmpty()) {
                 Toast.makeText(requireContext(), requireContext().getString(R.string.add_title), Toast.LENGTH_SHORT).show();
-            } else if (!hasImage(imageView)) {
+            } else if (imageIdeaUri==null) {
                 Toast.makeText(requireContext(), requireContext().getString(R.string.add_icon), Toast.LENGTH_SHORT).show();
             } else {
                 titleIdea = editText.getText().toString();
@@ -325,6 +327,7 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
         }
         App.getDataBase().ideaDao().insert(quickModel);
         adapter.notifyDataSetChanged();
+        imageIdeaUri="";
     }
 
     @Override
@@ -335,6 +338,9 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
                 Uri selectedImageUri = data == null ? null : data.getData();
                 imageIdeaUri = selectedImageUri.toString();
                 imageView.setImageURI(selectedImageUri);
+                if (user!=null){
+                    uploadImage(imageIdeaUri);
+                }
             }
         }
     }
@@ -382,7 +388,7 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.you_sure_delete), () -> {
+                PlannerDialog.showPlannerDialog(requireActivity(),getString(R.string.attention) ,getString(R.string.you_sure_delete), () -> {
                     pos = viewHolder.getAdapterPosition();
                     App.getDataBase().ideaDao().delete(list.get(pos));
                     Toast.makeText(getContext(), R.string.delete, Toast.LENGTH_SHORT).show();
@@ -448,6 +454,12 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
             adapter.isChange.setValue(false);
         });
     }
+    private void uploadImage(String imageUrl) {
+        if (user != null) {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(imageUrl);
+            UploadTask task = storageReference.putFile(Uri.parse(imageUrl));
+        }
+    }
 
     public void showImageDialog(QuickModel model) {
         LayoutInflater inflater = LayoutInflater.from(requireActivity());
@@ -457,7 +469,7 @@ public class IdeasFragment extends Fragment implements IdeaAdapter.ItemOnClickLi
         alertDialog.setContentView(view);
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         ImageView imageView = alertDialog.findViewById(R.id.alert_image);
-        imageView.setImageURI(Uri.parse(model.getImage()));
+        Glide.with(requireContext()).load(model.getImage()).placeholder(R.drawable.ic_choose_image).into(imageView);
         alertDialog.show();
     }
 

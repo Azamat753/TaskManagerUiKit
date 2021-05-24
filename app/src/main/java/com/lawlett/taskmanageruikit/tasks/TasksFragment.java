@@ -239,7 +239,7 @@ public class TasksFragment extends Fragment {
     }
 
     private void showAlertDialog() {
-        PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.change_image_title), this::showCustomHomeDialog);
+        PlannerDialog.showPlannerDialog(requireActivity(), getString(R.string.planner), getString(R.string.change_image_title), this::showCustomHomeDialog);
     }
 
     public void showCustomTaskDialog() {

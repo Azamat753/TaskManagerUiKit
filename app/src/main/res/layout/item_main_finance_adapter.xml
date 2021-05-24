@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:fontFamily="@font/roboto_bold"
-                android:text="РАСХОДЫ"
+                android:text="@string/costs"
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
