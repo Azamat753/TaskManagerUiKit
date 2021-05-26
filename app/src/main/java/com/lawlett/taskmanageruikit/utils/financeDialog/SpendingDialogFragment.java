@@ -1,23 +1,19 @@
 package com.lawlett.taskmanageruikit.utils.financeDialog;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.finance.adapter.SpendingDialogAdapter;
 
 public class SpendingDialogFragment extends DialogFragment {
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

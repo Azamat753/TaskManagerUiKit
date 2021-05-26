@@ -29,6 +29,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.auth.GoogleSignInActivity;
+import com.lawlett.taskmanageruikit.help.HelpActivity;
+import com.lawlett.taskmanageruikit.help.HelpTextActivity;
 import com.lawlett.taskmanageruikit.splash.SplashActivity;
 import com.lawlett.taskmanageruikit.utils.Constants;
 import com.lawlett.taskmanageruikit.utils.PassCodeActivity;
@@ -45,7 +47,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class SettingsActivity extends AppCompatActivity implements BaseRadioAdapter.LanguageChooseListener {
-    private LinearLayout language_tv, clear_password_layout, clearMinutes_layout, share_layout, rate_layout, reviews, sign_in;
+    private LinearLayout language_tv, clear_password_layout, clearMinutes_layout, share_layout, rate_layout, reviews, sign_in,about_app;
     private ImageView back;
     private ImageView imageTheme;
     private ConstraintLayout theme_layout;
@@ -153,6 +155,12 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
             mailIntent.setData(data);
             startActivity(Intent.createChooser(mailIntent, "Send mail..."));
         });
+        about_app.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SettingsActivity.this, HelpTextActivity.class));
+            }
+        });
     }
 
     private void setThemeImage() {
@@ -174,6 +182,7 @@ public class SettingsActivity extends AppCompatActivity implements BaseRadioAdap
         reviews = findViewById(R.id.six_layout);
         sign_in = findViewById(R.id.seven_layout);
         rate_layout = findViewById(R.id.rate_layout);
+        about_app=findViewById(R.id.eight_layout);
     }
 
     private void checkUser() {

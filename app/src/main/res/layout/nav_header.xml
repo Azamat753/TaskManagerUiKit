@@ -25,6 +25,8 @@
         android:maxLength="16"
         android:fontFamily="@font/roboto_bold"
         android:foreground="?attr/selectableItemBackground"
+        android:singleLine="true"
+        android:maxLines="1"
         android:padding="16dp"
         android:text="@string/you_name"
         android:textColor="@color/settings_text_color"

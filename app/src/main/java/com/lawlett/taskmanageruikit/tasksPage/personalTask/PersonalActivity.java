@@ -114,8 +114,8 @@ public class PersonalActivity extends AppCompatActivity implements PersonalAdapt
                 KeyboardHelper.hideKeyboard(PersonalActivity.this, changeTask_image, editText);
                 if (user != null) {
                     progressBar.setVisibility(View.VISIBLE);
-                    personalModel = list.get(position); //todo Для обновления тасков в облаке нужно имя документа которое было назначено в первый раз при создании,нужно создать поля в руме documentName и при обновление таскать его
-                    String newDocumentName = editText.getText().toString();//todo Временное решение
+                    personalModel = list.get(position);
+                    String newDocumentName = editText.getText().toString();
                     personalModel.personalTask = editText.getText().toString();
                     FireStoreTools.deleteDataByFireStore(oldDocumentName, collectionName, db, progressBar);
                     FireStoreTools.writeOrUpdateDataByFireStore(newDocumentName, collectionName, db, personalModel);

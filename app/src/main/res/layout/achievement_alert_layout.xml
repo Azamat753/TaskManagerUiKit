@@ -4,13 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="345dp"
     android:layout_height="wrap_content"
+    android:background="@drawable/layout_bg"
     android:layout_gravity="center">
 
-    <ImageView
+    <TextView
         android:id="@+id/planner_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:text="@string/achievement_app"
+        android:textColor="@color/myWhite"
+        android:textSize="26sp"
         android:layout_marginTop="12dp"
         android:elevation="2dp"
         app:srcCompat="@mipmap/app_round" />
@@ -27,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:textColor="@color/white"
+            android:textColor="@color/myWhite"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -44,10 +48,9 @@
             app:layout_constraintStart_toStartOf="parent"
             android:foreground="?attr/selectableItemBackground"
             tools:ignore="UnusedAttribute"
-            android:background="@android:color/transparent"
             android:text="@string/apply"
             android:padding="12dp"
-            android:textColor="@color/white"
+            android:textColor="@color/myWhite"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/alert_title"

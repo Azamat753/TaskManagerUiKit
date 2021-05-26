@@ -131,7 +131,6 @@ public class FinanceFragment extends Fragment implements OkButtonClickListener, 
         }
     }
 
-
     private void checkLiveData() {
         App.getDataBase().frequentSpendingDao().getAll().observe(getViewLifecycleOwner(), list -> {
             this.list = list;

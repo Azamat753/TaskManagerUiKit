@@ -39,6 +39,7 @@ import com.lawlett.taskmanageruikit.utils.ICalendarEventOnClickListener;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.preferences.LanguagePreference;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -270,6 +271,7 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
             @SuppressLint({"LogNotTimber", "NewApi"})
             @Override
             public void onDateSelected(Calendar date, int position) {
+
             }
 
             @Override
@@ -280,6 +282,10 @@ public class CalendarEventsFragment extends Fragment implements ICalendarEventOn
             @SuppressLint("LogNotTimber")
             @Override
             public boolean onDateLongClicked(Calendar date, int position) {
+                String currentDate =  DateFormat.getDateInstance().format(date.getTime());
+                Intent intent = new Intent(requireContext(),AddEventActivity.class);
+                intent.putExtra("currentDate",currentDate);
+                startActivity(intent);
                 return true;
             }
         });

@@ -2,6 +2,7 @@ package com.lawlett.taskmanageruikit.achievement;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -27,16 +28,22 @@ public class AchievementActivity extends AppCompatActivity {
     private AchievementViewModel mViewModel;
     private RecyclerView recyclerView;
     private AchievementAdapter adapter;
+    private TextView achievementHint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_achievement);
+        initViews();
         initViewModel();
         initRecyclerView();
         subscribeAchievementData();
         insertedAchievements();
 
+    }
+
+    private void initViews() {
+        achievementHint = findViewById(R.id.achievement_hint);
     }
 
     private void insertedAchievements() {
@@ -83,6 +90,11 @@ public class AchievementActivity extends AppCompatActivity {
         mViewModel.data.observe(this, levelModels -> {
             adapter.clearAll();
             adapter.setData(levelModels);
+            if (levelModels.isEmpty()) {
+                achievementHint.setVisibility(View.VISIBLE);
+            }else {
+                achievementHint.setVisibility(View.GONE);
+            }
         });
     }
 

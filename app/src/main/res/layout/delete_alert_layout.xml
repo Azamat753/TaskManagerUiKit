@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
         android:textSize="30sp"
-        android:textColor="@color/royalStart"
+        android:textColor="@color/myWhite"
         android:text="@string/delete" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:textColor="@color/royalStart"
+            android:textColor="@color/myWhite"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -44,10 +44,9 @@
             android:layout_height="wrap_content"
             android:foreground="?attr/selectableItemBackground"
             tools:ignore="UnusedAttribute"
-            android:background="@android:color/transparent"
             android:text="@string/yes"
             android:padding="12dp"
-            android:textColor="@color/royalStart"
+            android:textColor="@color/myWhite"
             android:layout_marginTop="10dp"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -62,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no"
-            android:textColor="@color/royalStart"
+            android:textColor="@color/myWhite"
             android:layout_marginTop="10dp"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"

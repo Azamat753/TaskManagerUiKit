@@ -39,6 +39,9 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.lawlett.taskmanageruikit.R;
 import com.lawlett.taskmanageruikit.achievement.AchievementActivity;
 import com.lawlett.taskmanageruikit.auth.GoogleSignInActivity;
@@ -54,6 +57,7 @@ import com.lawlett.taskmanageruikit.tasks.TasksFragment;
 import com.lawlett.taskmanageruikit.timing.fragment.TimingFragment;
 import com.lawlett.taskmanageruikit.utils.App;
 import com.lawlett.taskmanageruikit.utils.Constants;
+import com.lawlett.taskmanageruikit.utils.FireStoreTools;
 import com.lawlett.taskmanageruikit.utils.PlannerDialog;
 import com.lawlett.taskmanageruikit.utils.preferences.HeaderImagePreference;
 import com.lawlett.taskmanageruikit.utils.preferences.HeaderNamePreference;
@@ -64,7 +68,9 @@ import com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationItem;
 import com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationView;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private TextView toolbar_title, nav_header_name;
@@ -73,6 +79,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser user = mAuth.getCurrentUser();
     private BottomNavigationView bottomNavigationView;
+    private String collectionName;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -94,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             boolean isShow = sharedPreferences.getBoolean("isShow", false);
             if (!isShow) {
                 sharedPreferences.edit().putBoolean("isShow", true).apply();
-                PlannerDialog.showPlannerDialog(this, getString(R.string.planner),getString(R.string.want_save_data_in_google), () -> {
+                PlannerDialog.showPlannerDialog(this, getString(R.string.planner), getString(R.string.want_save_data_in_google), () -> {
                     startActivity(new Intent(this, GoogleSignInActivity.class));
                 });
             }
@@ -118,6 +126,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setUserNameAndProfile();
         if (savedInstanceState == null) {
             checkInstance();
+        }
+    }
+
+    private void saveNameToFireBase() {
+        if (user != null) {
+            collectionName = "userName" + "-" + "(" + user.getDisplayName() + ")" + user.getUid();
+            String imageFromPreference = HeaderImagePreference.getInstance(MainActivity.this).returnImage();
+            String nameFromPreference = HeaderNamePreference.getInstance(MainActivity.this).returnName();
+            if (!imageFromPreference.isEmpty() && !nameFromPreference.isEmpty()) {
+                Map<String, String> map = new HashMap<>();
+                map.put("name", nameFromPreference);
+                map.put("image",imageFromPreference);
+                FirebaseStorage.getInstance().getReference().child(imageFromPreference);
+                FireStoreTools.writeOrUpdateDataByFireStore("userName", collectionName, db, map);
+            }
         }
     }
 
@@ -149,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            PlannerDialog.showPlannerDialog(this, getString(R.string.planner),getString(R.string.are_you_sure), this::finishAffinity);
+            PlannerDialog.showPlannerDialog(this, getString(R.string.planner), getString(R.string.are_you_sure), this::finishAffinity);
         }
     }
 
@@ -219,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextInputLayout textInputLayout = alertDialog.findViewById(R.id.editText_wrapper);
         EditText editText = alertDialog.findViewById(R.id.editText_create_name);
         textInputLayout.setHint(R.string.you_name);
-        if(!nav_header_name.getText().toString().equals(getString(R.string.you_name))){
+        if (!nav_header_name.getText().toString().equals(getString(R.string.you_name))) {
             editText.setText(nav_header_name.getText().toString());
         }
         alertDialog.findViewById(R.id.apply_btn).setOnClickListener(v -> {
@@ -232,6 +255,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 alertDialog.cancel();
             }
         });
+        saveNameToFireBase();
         alertDialog.show();
     }
 

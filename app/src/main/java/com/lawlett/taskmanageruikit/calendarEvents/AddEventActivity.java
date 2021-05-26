@@ -196,6 +196,10 @@ public class AddEventActivity extends AppCompatActivity implements DatePickerDia
             String getDataTime = calendarTaskModel.getDataTime();
             startData.setText(getDataTime);
         }
+        String dateFromHorizontalCalendar = intent.getStringExtra("currentDate");
+        if (dateFromHorizontalCalendar!=null){
+            startData.setText(dateFromHorizontalCalendar);
+        }
     }
 
     private void setLocale(String lang) {

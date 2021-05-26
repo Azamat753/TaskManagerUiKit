@@ -31,4 +31,5 @@
     <color name="green">#2AAE30</color>
     <color name="iconBackground">#EAEAEA</color>
     <color name="progressBackground">#b5d0ec</color>
+    <color name="alertBackground">#FFFFFF</color>
 </resources>
