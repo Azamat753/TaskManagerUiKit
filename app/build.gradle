@@ -20,9 +20,19 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
     }
     android {
         compileOptions {

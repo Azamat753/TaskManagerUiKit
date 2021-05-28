@@ -22,9 +22,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -183,10 +185,11 @@ public class WorkActivity extends AppCompatActivity implements WorkAdapter.IWChe
                 App.getDataBase().workDao().updateWord(list);
             }
 
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 PlannerDialog.showPlannerDialog(WorkActivity.this,getString(R.string.attention), getString(R.string.you_sure_delete), () -> {
-                    pos = viewHolder.getLayoutPosition();
+                    pos = viewHolder.getAdapterPosition();
                     workModel = list.get(pos);
                     if (!workModel.isDone) {
                         App.getDataBase().workDao().delete(list.get(pos));
